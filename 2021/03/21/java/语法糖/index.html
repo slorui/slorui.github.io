@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="语法糖（Syntax sugar) 语法糖使编程语言更容易表达或阅读  for vs for-each collection实现了iterable接口，内部有iterator，通过调用iterator进行遍历  for和for-each性能相近 for-each从jdk5开始引入，语法简洁，避免越界 缺点：  for可以删除元素，for-each不可删除或替代元素（指针变了，内容没变，但是可以改">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2021/03/21/java/%E8%AF%AD%E6%B3%95%E7%B3%96/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="语法糖（Syntax sugar) 语法糖使编程语言更容易表达或阅读  for vs for-each collection实现了iterable接口，内部有iterator，通过调用iterator进行遍历  for和for-each性能相近 for-each从jdk5开始引入，语法简洁，避免越界 缺点：  for可以删除元素，for-each不可删除或替代元素（指针变了，内容没变，但是可以改">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316100157702.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316100440995.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316102529586.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316103426152.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316103635903.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316103812398.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316104031479.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316104718763.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316105631184.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316105753414.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316105951432.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316110117804.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316110331232.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316110608972.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316111157037.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316111235088.png">
+<meta property="article:published_time" content="2021-03-21T08:53:05.071Z">
+<meta property="article:modified_time" content="2021-03-16T05:58:53.206Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316100157702.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="https://avatars0.githubusercontent.com/u/20333903?v=3&amp;s=460">
+    <h2 class="author">John Doe</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>32</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>0</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-java/语法糖" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/java/%E8%AF%AD%E6%B3%95%E7%B3%96/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.071Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="语法糖syntax-sugar"><a class="markdownIt-Anchor" href="#语法糖syntax-sugar"></a> 语法糖（Syntax sugar)</h3>
+<p>语法糖使编程语言更容易表达或阅读</p>
+<h4 id="for-vs-for-each"><a class="markdownIt-Anchor" href="#for-vs-for-each"></a> for vs for-each</h4>
+<p>collection实现了iterable接口，内部有iterator，通过调用iterator进行遍历</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316100157702.png" alt="image-20210316100157702" /></p>
+<p>for和for-each性能相近</p>
+<p>for-each从jdk5开始引入，语法简洁，避免越界</p>
+<p>缺点：</p>
+<ol>
+<li>for可以删除元素，for-each不可删除或替代元素（指针变了，内容没变，但是可以改变元素属性）</li>
+<li>for-each不知道具体的索引位置</li>
+<li>for-each只能正向</li>
+<li>for-each不能同时遍历两个集合</li>
+</ol>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316100440995.png" alt="image-20210316100440995" /></p>
+<h4 id="枚举"><a class="markdownIt-Anchor" href="#枚举"></a> 枚举</h4>
+<p>java5推出枚举类</p>
+<p>enum关键字声明了当前类是enum的子类（不需要extend）</p>
+<p>enum内部有多少个值，就有多少个实例</p>
+<p>enum类不能new</p>
+<p>enum类可以添加属性、构造函数（只能是default或者private，内部调用）、方法</p>
+<p>枚举方法：<br />
+ordinal（）返回枚举索引</p>
+<p>compareTo（）比较枚举索引大小</p>
+<p>valueOf（）根据字符串查找枚举对象</p>
+<p>values（）返回所有枚举值</p>
+<h4 id="不定项参数"><a class="markdownIt-Anchor" href="#不定项参数"></a> 不定项参数</h4>
+<p>java5提供了不定项参数，本质是一个数组</p>
+<p>一个方法只能由一个不定项参数，且必须位于最后</p>
+<p>重载规则：</p>
+<ol>
+<li>固定参数的方法比可变参数方法优先级更高</li>
+<li>同时匹配到两个可变参数方法时，报错</li>
+</ol>
+<h4 id="静态导入"><a class="markdownIt-Anchor" href="#静态导入"></a> 静态导入</h4>
+<p>import导入程序所需的类</p>
+<p>import static导入一个类的静态方法和静态遍历（JKD5引入）</p>
+<p>尽量少使用通配符，否则可能多个类有相同的属性</p>
+<h4 id="装箱和拆箱"><a class="markdownIt-Anchor" href="#装箱和拆箱"></a> 装箱和拆箱</h4>
+<p>从java5引入，简化基本类型和对象的转化，编译器帮忙转化</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316102529586.png" alt="image-20210316102529586" /></p>
+<p>基本类型和包装类运算，会拆箱运算</p>
+<p>下面我们进行一个归类：<br />
+Integer派别：Integer、Short、Byte、Character、Long这几个类的valueOf方法的实现是类似的。 都再某个范围返回固定生成的对象，大于时才产生新的对象。<br />
+Double派别：Double、Float的valueOf方法的实现是类似的。每次都返回不同的对象。</p>
+<p>equals传入基本类型，会装箱成对应的包装类传入，然后拆箱比较</p>
+<h4 id="多异常并列"><a class="markdownIt-Anchor" href="#多异常并列"></a> 多异常并列</h4>
+<p>jdk7引入，多个异常不能有直接或间接继承关系</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316103426152.png" alt="image-20210316103426152" /></p>
+<h4 id="整数类型二进制赋值"><a class="markdownIt-Anchor" href="#整数类型二进制赋值"></a> 整数类型二进制赋值</h4>
+<p>java7新语法，整数用二进制赋值，避免二进制计算（byte/short/int/long)</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316103635903.png" alt="image-20210316103635903" /></p>
+<p>0b或0B开头是二进制</p>
+<h4 id="数字中的下划线"><a class="markdownIt-Anchor" href="#数字中的下划线"></a> 数字中的下划线</h4>
+<p>java7新语法，</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316103812398.png" alt="image-20210316103812398" /></p>
+<h4 id="接口的默认方法"><a class="markdownIt-Anchor" href="#接口的默认方法"></a> 接口的默认方法</h4>
+<p>java最初接口方法没有实现，公开的</p>
+<p>java8接口可以有默认方法和静态方法，为lambda表达式提供支持</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316104031479.png" alt="image-20210316104031479" /></p>
+<p>接口的默认方法：</p>
+<ol>
+<li>dufault作为关键字，其他和普通函数一样</li>
+<li>默认方法不能重写Object方法</li>
+<li>实现类可以继承、重写父类接口的默认方法</li>
+<li>接口可以继承和重写父类接口的默认方法</li>
+<li>当父类和父接口有同样（同名同参数）默认方法，子类继承父类默认方法，兼容7以前的代码</li>
+<li>子类继承的两个接口至少有一个是默认方法，必须重写，不然报错</li>
+</ol>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316104718763.png" alt="image-20210316104718763" /></p>
+<p>这样写才能调用父接口的默认方法</p>
+<p>java8接口的静态方法属于接口，不属于子类、子接口，不能继承，只能直接调用接口</p>
+<p>java9接口的私有方法</p>
+<ol>
+<li>解决多个默认方法和静态方法内容重复</li>
+<li>私有方法属于本接口</li>
+<li>静态私有方法可以被静态、默认方法调用，非静态私有方法只能被默认方法调用</li>
+</ol>
+<h5 id="接口和抽象类jdk12以前"><a class="markdownIt-Anchor" href="#接口和抽象类jdk12以前"></a> 接口和抽象类（jdk12以前）</h5>
+<p>相同点：</p>
+<ol>
+<li>都是抽象的，不能被实例化</li>
+<li>都可以实现方法</li>
+<li>都可以不需要继承者实现所有方法（有些有实现的方法，可以直接继承）</li>
+</ol>
+<p>不同点：</p>
+<ol>
+<li>抽象类只能继承一个，接口可以实现多个</li>
+<li>接口的变量默认是public static final，必须有初值，子类不能修改。抽象类的遍历默认default，子类可以修改</li>
+<li>接口没有构造方法，抽象类有构造函数</li>
+<li>接口没有main，抽象类可以有main</li>
+<li>接口有public、default、private，抽象类有public、private、protected、和不写（default）</li>
+</ol>
+<h4 id="try-with-resouce"><a class="markdownIt-Anchor" href="#try-with-resouce"></a> try-with-resouce</h4>
+<p>jdk7提供，java如果打开外部资源文件，使用后需要正确关闭</p>
+<p>原理：资源对象必须实现AutoCloseable接口，既实现了close（）方法</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316105631184.png" alt="image-20210316105631184" /></p>
+<p>jdk7必须再try内部定义，否则需要一个临时变量，jdk9可以直接使用外部变量</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316105753414.png" alt="image-20210316105753414" /></p>
+<p>编译器默认改造</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316105951432.png" alt="image-20210316105951432" /></p>
+<h4 id="resourcebundle文件加载"><a class="markdownIt-Anchor" href="#resourcebundle文件加载"></a> ResourceBundle文件加载</h4>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316110117804.png" alt="image-20210316110117804" /></p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316110331232.png" alt="image-20210316110331232" /></p>
+<h4 id="var"><a class="markdownIt-Anchor" href="#var"></a> var</h4>
+<p>java以前是强类型语言，定义时就确定了类型，不能改类型</p>
+<p>java10推出了var，局部变量推断</p>
+<ol>
+<li>避免了信息冗余</li>
+<li>对其了变量名</li>
+<li>容易阅读</li>
+</ol>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316110608972.png" alt="image-20210316110608972" /></p>
+<p>本质上还是强类型语言，编译器进行推断后写入字节码文件，推断后不能更改</p>
+<p>限制：</p>
+<ol>
+<li>只能用在局部变量，不能用再类成员变量</li>
+<li>可以再for/for-each循环使用</li>
+<li>声明时必须初始化</li>
+<li>不能用在参数和返回类型</li>
+<li>大面积使用会使代码阅读性变差</li>
+<li>只再编译时使用</li>
+</ol>
+<h4 id="switch"><a class="markdownIt-Anchor" href="#switch"></a> switch</h4>
+<p>支持的类型：byte、short、char、int、String（7.0支持）、enum（5.0支持）</p>
+<p>不支持的类型：long、float、double（switch字节码函数只支持int类型）</p>
+<p>jdk12提出多分支合并</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316111157037.png" alt="image-20210316111157037" /></p>
+<p>jdk12提出表达式赋值</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316111235088.png" alt="image-20210316111235088" /></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/java/%E8%AF%AD%E6%B3%95%E7%B3%96/" data-id="ckmixaegn0002asvx4g6o92rh" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/21/kernal/10.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/21/java/%E6%B3%9B%E5%9E%8B/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Hexo</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="https://avatars0.githubusercontent.com/u/20333903?v=3&amp;s=460">
+    <h2 class="author">John Doe</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>32</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>0</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 John Doe<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

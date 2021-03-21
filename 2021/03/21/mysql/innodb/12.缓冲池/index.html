@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="缓冲池 磁盘数据库一般通过缓冲池弥补cpu和磁盘速度的差距  12.2 概述  12.2.1 缓冲池 页从缓冲池刷新会磁盘不是再每次更新后，而是以一定的频率，通过checkpoint机制刷回磁盘 缓冲池中缓存的数据页类型又：索引页，数据页，undo页，插入缓存，自适应哈希索引，锁信息。 前四个会持久化，自适应哈希和锁信息不会持久化，生命周期再存储引擎运行过程中 每个事务锁信息再trx_struc">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2021/03/21/mysql/innodb/12.%E7%BC%93%E5%86%B2%E6%B1%A0/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="缓冲池 磁盘数据库一般通过缓冲池弥补cpu和磁盘速度的差距  12.2 概述  12.2.1 缓冲池 页从缓冲池刷新会磁盘不是再每次更新后，而是以一定的频率，通过checkpoint机制刷回磁盘 缓冲池中缓存的数据页类型又：索引页，数据页，undo页，插入缓存，自适应哈希索引，锁信息。 前四个会持久化，自适应哈希和锁信息不会持久化，生命周期再存储引擎运行过程中 每个事务锁信息再trx_struc">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-21T08:53:05.338Z">
+<meta property="article:modified_time" content="2021-03-15T08:18:59.401Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="https://avatars0.githubusercontent.com/u/20333903?v=3&amp;s=460">
+    <h2 class="author">John Doe</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>32</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>0</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-mysql/innodb/12.缓冲池" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/mysql/innodb/12.%E7%BC%93%E5%86%B2%E6%B1%A0/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.338Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="缓冲池"><a class="markdownIt-Anchor" href="#缓冲池"></a> 缓冲池</h3>
+<p>磁盘数据库一般通过缓冲池弥补cpu和磁盘速度的差距</p>
+<h4 id="122-概述"><a class="markdownIt-Anchor" href="#122-概述"></a> 12.2 概述</h4>
+<h5 id="1221-缓冲池"><a class="markdownIt-Anchor" href="#1221-缓冲池"></a> 12.2.1 缓冲池</h5>
+<p>页从缓冲池刷新会磁盘不是再每次更新后，而是以一定的频率，通过checkpoint机制刷回磁盘</p>
+<p>缓冲池中缓存的数据页类型又：索引页，数据页，undo页，插入缓存，自适应哈希索引，锁信息。</p>
+<p>前四个会持久化，自适应哈希和锁信息不会持久化，生命周期再存储引擎运行过程中</p>
+<p>每个事务锁信息再trx_struct对象的lock_heap变量分配，当空间大于8KB，就从缓冲池分配，这种情况可能出现大事务</p>
+<h5 id="1222-lru-free和flush链表"><a class="markdownIt-Anchor" href="#1222-lru-free和flush链表"></a> 12.2.2 LRU、Free和Flush链表</h5>
+<p>缓冲池是一块很大的内存区（16KB的倍数）。</p>
+<p>缓冲池有一个free链表，保存至未使用的内存页空间，当free链表页被使用完毕。当再申请空间时，需要LRU算法淘汰使用的页</p>
+<p>数据库的缓冲池都是通过LRU算法管理的。InnoDB对LRU进行了优化，LRU加入了midpoint位置，读取的新页放到midpoint位置，位于3/8处，这样可以避免大量数据扫描时把常用页刷出链表</p>
+<p>自适应哈希和锁信息的页申请空间后并不放入LRU链表</p>
+<p>缓冲池中的页不仅需要被读取，还需要修改，修改的页肯定发生在LRU链表中，当LRU链表页被修改后，被称为脏页。数据库通过checkpoint机制刷回磁盘。flush链表的页就是脏页。脏页既存在于flush，也存在于LRU。</p>
+<p>缓冲池mutex已经拆分位缓冲池mutex，flush链表mutex，哈希表re-latch，buf_block_t的mutex</p>
+<h4 id="123-缓冲池的管理"><a class="markdownIt-Anchor" href="#123-缓冲池的管理"></a> 12.3 缓冲池的管理</h4>
+<h5 id="1231-lru算法"><a class="markdownIt-Anchor" href="#1231-lru算法"></a> 12.3.1 LRU算法</h5>
+<h5 id="1232-lru链表维护"><a class="markdownIt-Anchor" href="#1232-lru链表维护"></a> 12.3.2 LRU链表维护</h5>
+<h5 id="1233-页的分配"><a class="markdownIt-Anchor" href="#1233-页的分配"></a> 12.3.3 页的分配</h5>
+<p>当free_list被分配完毕，需要从LRU链表尾部替换。条件：</p>
+<ol>
+<li>页不是脏的</li>
+<li>页没有其他线程使用</li>
+</ol>
+<p>如果页是脏的，需要先刷新到磁盘。页如果被其他线程使用，页不能立即替换出去</p>
+<p>找到可替换页后，需要对页进行free操作，从缓冲池的哈希表删除页，若有自适应哈希，还删除自适应哈希</p>
+<h4 id="124-页的读取"><a class="markdownIt-Anchor" href="#124-页的读取"></a> 12.4 页的读取</h4>
+<h5 id="1241-物理读取"><a class="markdownIt-Anchor" href="#1241-物理读取"></a> 12.4.1 物理读取</h5>
+<p>InnoDB启动时，缓冲池时空的，所有页都在free链表，数据库读写都再缓冲池完成，这时主要是从外村读取页到缓冲池</p>
+<h5 id="1242-随机预读"><a class="markdownIt-Anchor" href="#1242-随机预读"></a> 12.4.2 随机预读</h5>
+<p>随机预读指判断某个区域的页是否大多已经被访问，并且是否位热点页，若满足条件，则认位该区域的页都可能被访问，提前进行读取。预读根据某区域内的space和offset顺序读取，可以提高性能。</p>
+<p>预取区域根据每32个页进行管理。预读要求32个页的大部分被访问过，默认阈值是9，而且活跃</p>
+<h5 id="1243-线性预读"><a class="markdownIt-Anchor" href="#1243-线性预读"></a> 12.4.3 线性预读</h5>
+<p>线性预读判断页的访问是否是顺序的，InnoDB就会出发线性预读，连续读取之后的页</p>
+<p>读取一个页，若页是某个区域的边界，本区域的部分页被顺序访问，出发线性预读，顺序读取32个页</p>
+<h5 id="1244-逻辑读取"><a class="markdownIt-Anchor" href="#1244-逻辑读取"></a> 12.4.4 逻辑读取</h5>
+<p>逻辑读取是从缓冲池访问指定的页。若页已经再缓冲池，通过缓冲池的哈希表进行搜索。页需要加锁访问，然而对非叶子节点的访问是通过所有本身的latch保护的，不需要对页加锁</p>
+<h4 id="125-页的刷新"><a class="markdownIt-Anchor" href="#125-页的刷新"></a> 12.5 页的刷新</h4>
+<h5 id="1251-检查点"><a class="markdownIt-Anchor" href="#1251-检查点"></a> 12.5.1 检查点</h5>
+<p>检查点技术解决了以下问题：</p>
+<ol>
+<li>缩短数据库恢复时间</li>
+<li>缓冲池不够时，脏页刷回磁盘</li>
+<li>redo log不可用，刷新脏页</li>
+</ol>
+<p>InnoDB存在两种检查点：</p>
+<ol>
+<li>Sharp Checkpoint：数据库关闭时所有脏页刷会磁盘</li>
+<li>Fuzzy Checkpoint：部分脏页刷回磁盘</li>
+</ol>
+<p>Fuzzy Checkpoint发生的情况：</p>
+<ol>
+<li>
+<p>Master Thread Checkpoint，每秒和每十秒（异步，不会阻塞用户线程）</p>
+</li>
+<li>
+<p>Asycn/Sync Flush Checkpoint，redo log不可用，强制刷新，此时脏页从flush_list选取</p>
+<p>当checkpoint&lt;0.75*redo log size（最大） 不刷藏</p>
+<p>当0.75<em>redo log size &lt; checkpoint&lt;0.9</em>redo log size 触发Async刷新，从flush list刷足够的脏页回磁盘满足&lt;0.75</p>
+</li>
+</ol>
+<h5 id="1252-部分写"><a class="markdownIt-Anchor" href="#1252-部分写"></a> 12.5.2 部分写</h5>
+<p>页的刷新会遇到部分写，对一个页只写入了一部分内容，如写入4KB（操作系统只保证512B写入原子）</p>
+<p>为了避免部分写，实现了doublewrite，页刷新到磁盘时首先写入doublewrite，然后写入磁盘。发生部分写时，通过doublewrite中的页恢复。doublewrite存在于内存表空间，大小位2MB，一次最多进行128页刷新</p>
+<h5 id="1253-刷新的实现"><a class="markdownIt-Anchor" href="#1253-刷新的实现"></a> 12.5.3 刷新的实现</h5>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/mysql/innodb/12.%E7%BC%93%E5%86%B2%E6%B1%A0/" data-id="ckmixaegy000jasvxgm986a1y" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/21/mysql/innodb/13.%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/21/mysql/innodb/11.insert%20buffer/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Hexo</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="https://avatars0.githubusercontent.com/u/20333903?v=3&amp;s=460">
+    <h2 class="author">John Doe</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>32</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>0</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 John Doe<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

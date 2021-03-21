@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="insert buffer  11.2 基本概念 Insert buffer是InnoDB存储引擎独有的，可以大幅提高数据库非唯一约束的辅助索引的插入性能 随机插入会收到辅助索引的影响，因此大批量导入数据时，一半不建议先建立辅助索引，当导入完成后再建立辅助索引 Insert buffer：插入时首先判断插入的辅助索引叶子是否再缓冲池中，若再直接插入，否则插入的记录放在insert buffer中">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2021/03/21/mysql/innodb/11.insert%20buffer/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="insert buffer  11.2 基本概念 Insert buffer是InnoDB存储引擎独有的，可以大幅提高数据库非唯一约束的辅助索引的插入性能 随机插入会收到辅助索引的影响，因此大批量导入数据时，一半不建议先建立辅助索引，当导入完成后再建立辅助索引 Insert buffer：插入时首先判断插入的辅助索引叶子是否再缓冲池中，若再直接插入，否则插入的记录放在insert buffer中">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-21T08:53:05.324Z">
+<meta property="article:modified_time" content="2021-03-14T02:27:52.812Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="https://avatars0.githubusercontent.com/u/20333903?v=3&amp;s=460">
+    <h2 class="author">John Doe</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>32</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>0</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-mysql/innodb/11.insert buffer" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/mysql/innodb/11.insert%20buffer/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.324Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="insert-buffer"><a class="markdownIt-Anchor" href="#insert-buffer"></a> insert buffer</h3>
+<h4 id="112-基本概念"><a class="markdownIt-Anchor" href="#112-基本概念"></a> 11.2 基本概念</h4>
+<p>Insert buffer是InnoDB存储引擎独有的，可以大幅提高数据库非唯一约束的辅助索引的插入性能</p>
+<p>随机插入会收到辅助索引的影响，因此大批量导入数据时，一半不建议先建立辅助索引，当导入完成后再建立辅助索引</p>
+<p>Insert buffer：插入时首先判断插入的辅助索引叶子是否再缓冲池中，若再直接插入，否则插入的记录放在insert buffer中，根据一些算法将记录通过后台线程慢慢的merge到辅助索引页。好处是：</p>
+<ol>
+<li>减少磁盘离散读取</li>
+<li>将多次插入合并为一次操作</li>
+</ol>
+<p>insert buffer只能缓存非唯一约束索引，唯一索引需要判断插入记录是否唯一，还需要读取辅助索引页。</p>
+<h4 id="113-架构实现"><a class="markdownIt-Anchor" href="#113-架构实现"></a> 11.3 架构实现</h4>
+<h5 id="1131-存储结构"><a class="markdownIt-Anchor" href="#1131-存储结构"></a> 11.3.1 存储结构</h5>
+<p>Insert Buffer也是一棵B+树。键值为待插入辅助索引页的page_no。Insert Buffer默认最多占缓冲池的一半。</p>
+<p>Insert Buffer会把插入的辅助索引记录缓存起来，但是必须保证缓存的记录不会引起页的分裂。当缓存记录过多，会主动读取辅助索引页，将记录合并回页，然后进行悲观插入操作。InnoDB 存在也该Insert Buffer bitmap页，用来追踪每个辅助索引页的剩余空间，当小于某阈值（512B）就必须主动合并。</p>
+<p>以为一个Insert Buffer bitmap只能追踪一个辅助索引页2KB的空间，所以Insert Buffer 最多缓存2KB。</p>
+<p>B+树索引由两个段，root页保存了非叶子节点段和页节点段的段头信息</p>
+<p>insert buffer只有一个数据段，存放所有非叶子节点和页节点。</p>
+<h5 id="1132-逻辑控制"><a class="markdownIt-Anchor" href="#1132-逻辑控制"></a> 11.3.2 逻辑控制</h5>
+<p>insert buffer的合并分为主动和被动。</p>
+<p>主动是指master thread定期随机将记录合并到辅助索引页。每秒有处理能力就合并五个，每十秒必定处理五个</p>
+<p>被动是指用户主动发起辅助索引页的读取操作，回被动的将记录合并到辅助索引页。由于辅助索引页已经读取到缓冲池，后续插入不会记录到insert buffer</p>
+<h4 id="114-相关数据结构"><a class="markdownIt-Anchor" href="#114-相关数据结构"></a> 11.4 相关数据结构</h4>
+<h4 id="115-死锁"><a class="markdownIt-Anchor" href="#115-死锁"></a> 11.5 死锁</h4>
+<h5 id="1151-latch顺序"><a class="markdownIt-Anchor" href="#1151-latch顺序"></a> 11.5.1 latch顺序</h5>
+<p>当辅助索引页读取到缓存而这时发生merge，可能回引起insert buffer索引树的收缩，所以需要持有insert buffer索引树内存对象x-latch</p>
+<p>还有就是异步I/O，当所有线程都在读取辅助索引页，而辅助索引页又需要合并，没有线程能读insert buffer树，就出现了死锁</p>
+<p>为了方式死锁，InnoDB页的逻辑页分为三个层次</p>
+<ol>
+<li>非insert buffer页</li>
+<li>除了insert buffer bitmap页的insert buffer页</li>
+<li>insert buffer bitmap页</li>
+</ol>
+<p>insert buffer有独立的文件空间管理，insert buffer页的段都保存再root页的free list链表中，当进行insert buffer 树的扩展或收缩时，先判断freelist是否有足够的页，这就使得fsp模块与insert buffer模块分离，避免了死锁</p>
+<h5 id="1152-并发控制"><a class="markdownIt-Anchor" href="#1152-并发控制"></a> 11.5.2 并发控制</h5>
+<p>引入了四个insert buffer latch</p>
+<h5 id="1153-异步io线程"><a class="markdownIt-Anchor" href="#1153-异步io线程"></a> 11.5.3 异步I/O线程</h5>
+<p>由于读取辅助索引页发起了异步I/O，因此当Insert buffer合并时，又发起了异步I/O，会陷入等待状态</p>
+<p>将insert buffer的异步I/O放入一个单独的I/O线程</p>
+<h4 id="116-维护"><a class="markdownIt-Anchor" href="#116-维护"></a> 11.6 维护</h4>
+<h5 id="1161-记录合并"><a class="markdownIt-Anchor" href="#1161-记录合并"></a> 11.6.1 记录合并</h5>
+<p>无论是主动还是被动，顺序都是先读取辅助索引页，再读取insert buffer页</p>
+<h5 id="1162-空间收缩"><a class="markdownIt-Anchor" href="#1162-空间收缩"></a> 11.6.2 空间收缩</h5>
+<p>当删除insert buffer中的记录时，这些页会从树删除，放入free list头部，然后通过收缩将页放回insert buffer段的空间</p>
+<p>为了避免每次回收占用大量空间，每次最多回收4个页</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/mysql/innodb/11.insert%20buffer/" data-id="ckmixaeh0000lasvx73ng5wy9" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/21/mysql/innodb/12.%E7%BC%93%E5%86%B2%E6%B1%A0/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/21/mysql/innodb/10.B+%E6%A0%91%E7%B4%A2%E5%BC%95/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Hexo</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="https://avatars0.githubusercontent.com/u/20333903?v=3&amp;s=460">
+    <h2 class="author">John Doe</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>32</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>0</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 John Doe<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
