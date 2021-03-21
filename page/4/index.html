@@ -43,7 +43,7 @@
     <h2 class="author">John Doe</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>32</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>45</strong><br>文章</div></a>
       <a href="/categories"><div><strong>0</strong><br>分类</div></a>
       <a href="/tags"><div><strong>0</strong><br>标签</div></a>
     </div>
@@ -71,10 +71,10 @@
 
         <section id="main">
   
-    <article id="post-java/反射" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mysql/innodb/12.缓冲池" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2021/03/21/java/%E5%8F%8D%E5%B0%84/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:04.807Z" itemprop="datePublished">
+    <a href="/2021/03/21/mysql/innodb/12.%E7%BC%93%E5%86%B2%E6%B1%A0/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.338Z" itemprop="datePublished">
     <span class="post-month">3月</span><br/>
     <span class="post-day">21</span>
   </time>
@@ -86,50 +86,76 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="反射reflection"><a class="markdownIt-Anchor" href="#反射reflection"></a> 反射（reflection）</h3>
-<p>程序可以访问、检测和修改它本身状态的或行为的能力，自描述和自控制</p>
-<p>可以在运行是加载、探测和使用编译器完全位置的类</p>
-<p>给java插上动态语言的翅膀，弥补强类型语言的不足</p>
-<p>java2就有，java5得到完善</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316153709499.png" alt="image-20210316153709499" /></p>
-<p>如何（自由）创建一个对象来调用它的方法</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316154700916.png" alt="image-20210316154700916" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316154724301.png" alt="image-20210316154724301" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316154758231.png" alt="image-20210316154758231" />java四大接口</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316154934592.png" alt="image-20210316154934592" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316155033352.png" alt="image-20210316155033352" /></p>
-<h4 id="关键类"><a class="markdownIt-Anchor" href="#关键类"></a> 关键类</h4>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316155555295.png" alt="image-20210316155555295" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316155718421.png" alt="image-20210316155718421" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316155811896.png" alt="image-20210316155811896" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316155914778.png" alt="image-20210316155914778" /></p>
-<p>invoke需要传入一个对象，静态方法不需要传入对象</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316160008689.png" alt="image-20210316160008689" /></p>
-<h4 id="反射应用"><a class="markdownIt-Anchor" href="#反射应用"></a> 反射应用</h4>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316160102130.png" alt="image-20210316160102130" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316160230400.png" alt="image-20210316160230400" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316160349841.png" alt="image-20210316160349841" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316160604410.png" alt="image-20210316160604410" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316160724706.png" alt="image-20210316160724706" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316160812419.png" alt="image-20210316160812419" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316160853930.png" alt="image-20210316160853930" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316161006952.png" alt="image-20210316161006952" /></p>
-<h4 id="编译器api"><a class="markdownIt-Anchor" href="#编译器api"></a> 编译器API</h4>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316161201843.png" alt="image-20210316161201843" /></p>
-<p>从java1.6推出</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316161232148.png" alt="image-20210316161232148" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316161344115.png" alt="image-20210316161344115" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316161428789.png" alt="image-20210316161428789" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316161529092.png" alt="image-20210316161529092" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316161638118.png" alt="image-20210316161638118" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316161703397.png" alt="image-20210316161703397" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316161835454.png" alt="image-20210316161835454" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316161937737.png" alt="image-20210316161937737" /></p>
+        <h3 id="缓冲池"><a class="markdownIt-Anchor" href="#缓冲池"></a> 缓冲池</h3>
+<p>磁盘数据库一般通过缓冲池弥补cpu和磁盘速度的差距</p>
+<h4 id="122-概述"><a class="markdownIt-Anchor" href="#122-概述"></a> 12.2 概述</h4>
+<h5 id="1221-缓冲池"><a class="markdownIt-Anchor" href="#1221-缓冲池"></a> 12.2.1 缓冲池</h5>
+<p>页从缓冲池刷新会磁盘不是再每次更新后，而是以一定的频率，通过checkpoint机制刷回磁盘</p>
+<p>缓冲池中缓存的数据页类型又：索引页，数据页，undo页，插入缓存，自适应哈希索引，锁信息。</p>
+<p>前四个会持久化，自适应哈希和锁信息不会持久化，生命周期再存储引擎运行过程中</p>
+<p>每个事务锁信息再trx_struct对象的lock_heap变量分配，当空间大于8KB，就从缓冲池分配，这种情况可能出现大事务</p>
+<h5 id="1222-lru-free和flush链表"><a class="markdownIt-Anchor" href="#1222-lru-free和flush链表"></a> 12.2.2 LRU、Free和Flush链表</h5>
+<p>缓冲池是一块很大的内存区（16KB的倍数）。</p>
+<p>缓冲池有一个free链表，保存至未使用的内存页空间，当free链表页被使用完毕。当再申请空间时，需要LRU算法淘汰使用的页</p>
+<p>数据库的缓冲池都是通过LRU算法管理的。InnoDB对LRU进行了优化，LRU加入了midpoint位置，读取的新页放到midpoint位置，位于3/8处，这样可以避免大量数据扫描时把常用页刷出链表</p>
+<p>自适应哈希和锁信息的页申请空间后并不放入LRU链表</p>
+<p>缓冲池中的页不仅需要被读取，还需要修改，修改的页肯定发生在LRU链表中，当LRU链表页被修改后，被称为脏页。数据库通过checkpoint机制刷回磁盘。flush链表的页就是脏页。脏页既存在于flush，也存在于LRU。</p>
+<p>缓冲池mutex已经拆分位缓冲池mutex，flush链表mutex，哈希表re-latch，buf_block_t的mutex</p>
+<h4 id="123-缓冲池的管理"><a class="markdownIt-Anchor" href="#123-缓冲池的管理"></a> 12.3 缓冲池的管理</h4>
+<h5 id="1231-lru算法"><a class="markdownIt-Anchor" href="#1231-lru算法"></a> 12.3.1 LRU算法</h5>
+<h5 id="1232-lru链表维护"><a class="markdownIt-Anchor" href="#1232-lru链表维护"></a> 12.3.2 LRU链表维护</h5>
+<h5 id="1233-页的分配"><a class="markdownIt-Anchor" href="#1233-页的分配"></a> 12.3.3 页的分配</h5>
+<p>当free_list被分配完毕，需要从LRU链表尾部替换。条件：</p>
+<ol>
+<li>页不是脏的</li>
+<li>页没有其他线程使用</li>
+</ol>
+<p>如果页是脏的，需要先刷新到磁盘。页如果被其他线程使用，页不能立即替换出去</p>
+<p>找到可替换页后，需要对页进行free操作，从缓冲池的哈希表删除页，若有自适应哈希，还删除自适应哈希</p>
+<h4 id="124-页的读取"><a class="markdownIt-Anchor" href="#124-页的读取"></a> 12.4 页的读取</h4>
+<h5 id="1241-物理读取"><a class="markdownIt-Anchor" href="#1241-物理读取"></a> 12.4.1 物理读取</h5>
+<p>InnoDB启动时，缓冲池时空的，所有页都在free链表，数据库读写都再缓冲池完成，这时主要是从外村读取页到缓冲池</p>
+<h5 id="1242-随机预读"><a class="markdownIt-Anchor" href="#1242-随机预读"></a> 12.4.2 随机预读</h5>
+<p>随机预读指判断某个区域的页是否大多已经被访问，并且是否位热点页，若满足条件，则认位该区域的页都可能被访问，提前进行读取。预读根据某区域内的space和offset顺序读取，可以提高性能。</p>
+<p>预取区域根据每32个页进行管理。预读要求32个页的大部分被访问过，默认阈值是9，而且活跃</p>
+<h5 id="1243-线性预读"><a class="markdownIt-Anchor" href="#1243-线性预读"></a> 12.4.3 线性预读</h5>
+<p>线性预读判断页的访问是否是顺序的，InnoDB就会出发线性预读，连续读取之后的页</p>
+<p>读取一个页，若页是某个区域的边界，本区域的部分页被顺序访问，出发线性预读，顺序读取32个页</p>
+<h5 id="1244-逻辑读取"><a class="markdownIt-Anchor" href="#1244-逻辑读取"></a> 12.4.4 逻辑读取</h5>
+<p>逻辑读取是从缓冲池访问指定的页。若页已经再缓冲池，通过缓冲池的哈希表进行搜索。页需要加锁访问，然而对非叶子节点的访问是通过所有本身的latch保护的，不需要对页加锁</p>
+<h4 id="125-页的刷新"><a class="markdownIt-Anchor" href="#125-页的刷新"></a> 12.5 页的刷新</h4>
+<h5 id="1251-检查点"><a class="markdownIt-Anchor" href="#1251-检查点"></a> 12.5.1 检查点</h5>
+<p>检查点技术解决了以下问题：</p>
+<ol>
+<li>缩短数据库恢复时间</li>
+<li>缓冲池不够时，脏页刷回磁盘</li>
+<li>redo log不可用，刷新脏页</li>
+</ol>
+<p>InnoDB存在两种检查点：</p>
+<ol>
+<li>Sharp Checkpoint：数据库关闭时所有脏页刷会磁盘</li>
+<li>Fuzzy Checkpoint：部分脏页刷回磁盘</li>
+</ol>
+<p>Fuzzy Checkpoint发生的情况：</p>
+<ol>
+<li>
+<p>Master Thread Checkpoint，每秒和每十秒（异步，不会阻塞用户线程）</p>
+</li>
+<li>
+<p>Asycn/Sync Flush Checkpoint，redo log不可用，强制刷新，此时脏页从flush_list选取</p>
+<p>当checkpoint&lt;0.75*redo log size（最大） 不刷藏</p>
+<p>当0.75<em>redo log size &lt; checkpoint&lt;0.9</em>redo log size 触发Async刷新，从flush list刷足够的脏页回磁盘满足&lt;0.75</p>
+</li>
+</ol>
+<h5 id="1252-部分写"><a class="markdownIt-Anchor" href="#1252-部分写"></a> 12.5.2 部分写</h5>
+<p>页的刷新会遇到部分写，对一个页只写入了一部分内容，如写入4KB（操作系统只保证512B写入原子）</p>
+<p>为了避免部分写，实现了doublewrite，页刷新到磁盘时首先写入doublewrite，然后写入磁盘。发生部分写时，通过doublewrite中的页恢复。doublewrite存在于内存表空间，大小位2MB，一次最多进行128页刷新</p>
+<h5 id="1253-刷新的实现"><a class="markdownIt-Anchor" href="#1253-刷新的实现"></a> 12.5.3 刷新的实现</h5>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/java/%E5%8F%8D%E5%B0%84/" data-id="ckmixaegm0001asvxgf2s14sw" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/03/21/mysql/innodb/12.%E7%BC%93%E5%86%B2%E6%B1%A0/" data-id="ckmixaegy000jasvxgm986a1y" class="article-share-link">分享</a>
       
       
     </footer>
@@ -141,10 +167,10 @@
 
 
   
-    <article id="post-hello-world" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-mysql/innodb/11.insert buffer" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2021/03/21/hello-world/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:21:30.157Z" itemprop="datePublished">
+    <a href="/2021/03/21/mysql/innodb/11.insert%20buffer/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.324Z" itemprop="datePublished">
     <span class="post-month">3月</span><br/>
     <span class="post-day">21</span>
   </time>
@@ -154,43 +180,858 @@
   <div class="article-inner">
     
     
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/hello-world/">Hello World</a>
-    </h1>
-  
-
-        <div>
-          
-          
-              
-
-          
-        </div>
-      </header>
-    
     <div class="article-entry" itemprop="articleBody">
       
-        <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
-<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/writing.html">Writing</a></p>
-<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/server.html">Server</a></p>
-<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/generating.html">Generating</a></p>
-<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
-
-<p>More info: <a target="_blank" rel="noopener" href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+        <h3 id="insert-buffer"><a class="markdownIt-Anchor" href="#insert-buffer"></a> insert buffer</h3>
+<h4 id="112-基本概念"><a class="markdownIt-Anchor" href="#112-基本概念"></a> 11.2 基本概念</h4>
+<p>Insert buffer是InnoDB存储引擎独有的，可以大幅提高数据库非唯一约束的辅助索引的插入性能</p>
+<p>随机插入会收到辅助索引的影响，因此大批量导入数据时，一半不建议先建立辅助索引，当导入完成后再建立辅助索引</p>
+<p>Insert buffer：插入时首先判断插入的辅助索引叶子是否再缓冲池中，若再直接插入，否则插入的记录放在insert buffer中，根据一些算法将记录通过后台线程慢慢的merge到辅助索引页。好处是：</p>
+<ol>
+<li>减少磁盘离散读取</li>
+<li>将多次插入合并为一次操作</li>
+</ol>
+<p>insert buffer只能缓存非唯一约束索引，唯一索引需要判断插入记录是否唯一，还需要读取辅助索引页。</p>
+<h4 id="113-架构实现"><a class="markdownIt-Anchor" href="#113-架构实现"></a> 11.3 架构实现</h4>
+<h5 id="1131-存储结构"><a class="markdownIt-Anchor" href="#1131-存储结构"></a> 11.3.1 存储结构</h5>
+<p>Insert Buffer也是一棵B+树。键值为待插入辅助索引页的page_no。Insert Buffer默认最多占缓冲池的一半。</p>
+<p>Insert Buffer会把插入的辅助索引记录缓存起来，但是必须保证缓存的记录不会引起页的分裂。当缓存记录过多，会主动读取辅助索引页，将记录合并回页，然后进行悲观插入操作。InnoDB 存在也该Insert Buffer bitmap页，用来追踪每个辅助索引页的剩余空间，当小于某阈值（512B）就必须主动合并。</p>
+<p>以为一个Insert Buffer bitmap只能追踪一个辅助索引页2KB的空间，所以Insert Buffer 最多缓存2KB。</p>
+<p>B+树索引由两个段，root页保存了非叶子节点段和页节点段的段头信息</p>
+<p>insert buffer只有一个数据段，存放所有非叶子节点和页节点。</p>
+<h5 id="1132-逻辑控制"><a class="markdownIt-Anchor" href="#1132-逻辑控制"></a> 11.3.2 逻辑控制</h5>
+<p>insert buffer的合并分为主动和被动。</p>
+<p>主动是指master thread定期随机将记录合并到辅助索引页。每秒有处理能力就合并五个，每十秒必定处理五个</p>
+<p>被动是指用户主动发起辅助索引页的读取操作，回被动的将记录合并到辅助索引页。由于辅助索引页已经读取到缓冲池，后续插入不会记录到insert buffer</p>
+<h4 id="114-相关数据结构"><a class="markdownIt-Anchor" href="#114-相关数据结构"></a> 11.4 相关数据结构</h4>
+<h4 id="115-死锁"><a class="markdownIt-Anchor" href="#115-死锁"></a> 11.5 死锁</h4>
+<h5 id="1151-latch顺序"><a class="markdownIt-Anchor" href="#1151-latch顺序"></a> 11.5.1 latch顺序</h5>
+<p>当辅助索引页读取到缓存而这时发生merge，可能回引起insert buffer索引树的收缩，所以需要持有insert buffer索引树内存对象x-latch</p>
+<p>还有就是异步I/O，当所有线程都在读取辅助索引页，而辅助索引页又需要合并，没有线程能读insert buffer树，就出现了死锁</p>
+<p>为了方式死锁，InnoDB页的逻辑页分为三个层次</p>
+<ol>
+<li>非insert buffer页</li>
+<li>除了insert buffer bitmap页的insert buffer页</li>
+<li>insert buffer bitmap页</li>
+</ol>
+<p>insert buffer有独立的文件空间管理，insert buffer页的段都保存再root页的free list链表中，当进行insert buffer 树的扩展或收缩时，先判断freelist是否有足够的页，这就使得fsp模块与insert buffer模块分离，避免了死锁</p>
+<h5 id="1152-并发控制"><a class="markdownIt-Anchor" href="#1152-并发控制"></a> 11.5.2 并发控制</h5>
+<p>引入了四个insert buffer latch</p>
+<h5 id="1153-异步io线程"><a class="markdownIt-Anchor" href="#1153-异步io线程"></a> 11.5.3 异步I/O线程</h5>
+<p>由于读取辅助索引页发起了异步I/O，因此当Insert buffer合并时，又发起了异步I/O，会陷入等待状态</p>
+<p>将insert buffer的异步I/O放入一个单独的I/O线程</p>
+<h4 id="116-维护"><a class="markdownIt-Anchor" href="#116-维护"></a> 11.6 维护</h4>
+<h5 id="1161-记录合并"><a class="markdownIt-Anchor" href="#1161-记录合并"></a> 11.6.1 记录合并</h5>
+<p>无论是主动还是被动，顺序都是先读取辅助索引页，再读取insert buffer页</p>
+<h5 id="1162-空间收缩"><a class="markdownIt-Anchor" href="#1162-空间收缩"></a> 11.6.2 空间收缩</h5>
+<p>当删除insert buffer中的记录时，这些页会从树删除，放入free list头部，然后通过收缩将页放回insert buffer段的空间</p>
+<p>为了避免每次回收占用大量空间，每次最多回收4个页</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/hello-world/" data-id="ckmiwlfic00005ovxgd2o9ynn" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/03/21/mysql/innodb/11.insert%20buffer/" data-id="ckmixaeh0000lasvx73ng5wy9" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-mysql/innodb/10.B+树索引" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/mysql/innodb/10.B+%E6%A0%91%E7%B4%A2%E5%BC%95/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.288Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="b树索引"><a class="markdownIt-Anchor" href="#b树索引"></a> B+树索引</h3>
+<h4 id="b树"><a class="markdownIt-Anchor" href="#b树"></a> B+树</h4>
+<h5 id="1011-概述"><a class="markdownIt-Anchor" href="#1011-概述"></a> 10.1.1 概述</h5>
+<p>B+树是为磁盘或其他直接存取辅助设备设计的一种平衡查找树，所有记录节点都按键值大小顺序存放在同一层叶子节点，各节点指针相连</p>
+<h5 id="1012-插入"><a class="markdownIt-Anchor" href="#1012-插入"></a> 10.1.2 插入</h5>
+<p>三种情况：</p>
+<ol>
+<li>叶子，索引都没满：直接插入</li>
+<li>叶子满，索引没满：插入，分裂叶子</li>
+<li>叶子满，索引满：插入，分裂叶子和索引</li>
+</ol>
+<p>B+树主要作用于磁盘，因此要减少分裂操作，B+树也提高了旋转功能</p>
+<p>旋转发生在页子满时，其左右兄弟节点没满，将记录转移到左右兄弟节点上</p>
+<h5 id="1013-删除"><a class="markdownIt-Anchor" href="#1013-删除"></a> 10.1.3 删除</h5>
+<p>B+树使用填充因子控制树的删除变化，50%是填充因子的最小值</p>
+<p>三种情况</p>
+<ol>
+<li>叶子和索引都不小于填充因子：直接删除，如果该节点还是索引页的节点，用右节点代替</li>
+<li>叶子节点小于填充因子：合并叶子节点和兄弟节点，更新索引</li>
+<li>都小于填充因子：合并叶子节点和兄弟，更新索引，合并索引和兄弟节点</li>
+</ol>
+<h4 id="102-b树索引"><a class="markdownIt-Anchor" href="#102-b树索引"></a> 10.2 B+树索引</h4>
+<h5 id="1021-索引的特点"><a class="markdownIt-Anchor" href="#1021-索引的特点"></a> 10.2.1 索引的特点</h5>
+<h5 id="1022-聚簇索引"><a class="markdownIt-Anchor" href="#1022-聚簇索引"></a> 10.2.2 聚簇索引</h5>
+<p>聚簇索引是将表的主键作为键值构建的B+树</p>
+<p>聚簇索引的记录是按键值顺序存放的，是逻辑顺序，不是物理顺序，开销太大</p>
+<h5 id="1023-辅助索引"><a class="markdownIt-Anchor" href="#1023-辅助索引"></a> 10.2.3 辅助索引</h5>
+<p>辅助索引称为二级索引或非聚簇索引。辅助索引的叶子节点保存&lt;键值，记录地址&gt;。聚簇索引页中保存的是下层页的地址，辅助索引页子节点保存记录的地址。记录的地址一般有</p>
+<ol>
+<li>记录的物理地址，页号，槽号：偏移量（MyISAM，没有聚簇索引，记录放在堆表中，主键索引和非主键索引没区别，只是唯一并且非空）</li>
+<li>记录的主键值（InnoDB）</li>
+</ol>
+<p>因为辅助索引叶子节点存放主键，所有还需要通过一次聚簇索引查询，回表</p>
+<p>辅助索引非叶子节点存放记录&lt;键值、主键值、地址&gt;，辅助索引的非叶子节点也存在主键值信息，辅助索引节点不保存因此列（事务id和undo指针）</p>
+<h5 id="1024-填充因子"><a class="markdownIt-Anchor" href="#1024-填充因子"></a> 10.2.4 填充因子</h5>
+<p>因为小于0.5就会合并，索引填充因子大于0.5，顺序插入可能达到0.9以上，一般为0.69</p>
+<h4 id="103-innodb的b树实现"><a class="markdownIt-Anchor" href="#103-innodb的b树实现"></a> 10.3 InnoDB的B+树实现</h4>
+<h5 id="1032-相关latch"><a class="markdownIt-Anchor" href="#1032-相关latch"></a> 10.3.2 相关latch</h5>
+<p>B+树索引的并发控制通过两部分latch进行，每个页都有一个读写锁，每个索引树对象中还有一个读写锁，可以理解为非叶子节点的读写锁（或B+树索引的读/写锁）</p>
+<h5 id="1033-整理"><a class="markdownIt-Anchor" href="#1033-整理"></a> 10.3.3 整理</h5>
+<p>InnoDB中页是一个无序堆，记录之间通过record header的next header串联。删除记录时，记录所占用的空间放到链表page-free，下次再分配空间时查找第一个空间是否满足，满足则分配记录空间，否则从page-heap-top分配</p>
+<p>对页进行DML操作时，若页空间不足，先进行整理操作，空间仍不够，进行分裂</p>
+<p>对页整理时，先加x-latch，该操作仅记录重做日志的类型。</p>
+<h5 id="1034-分裂"><a class="markdownIt-Anchor" href="#1034-分裂"></a> 10.3.4 分裂</h5>
+<p>InnoDB索引存在磁盘，所以对B+树索引进行了优化，不再将中间记录作为分裂点，而是根据插入情况判断，有效利用磁盘空间</p>
+<p>分裂时，先判断拆入模式（递增，递减，无序）</p>
+<p>步骤：</p>
+<ol>
+<li>确定分裂点记录</li>
+<li>从索引数据段分配一个新页，加上x-latch</li>
+<li>确定需要移动页中开始的第一个记录和移动到的记录</li>
+<li>更新上层节点记录</li>
+<li>将记录移到新页</li>
+<li>待插入记录插入页</li>
+<li>若插入失败，页重新组织，再次进行插入</li>
+<li>若上述失败，再次去1进行分裂</li>
+</ol>
+<h5 id="1035-合并"><a class="markdownIt-Anchor" href="#1035-合并"></a> 10.3.5 合并</h5>
+<p>更新或删除后，页的填充率可能小于0.5，这是会进行合并，若左右节点没有空间，不进行合并</p>
+<p>先对内存对象和待合并页加锁，然后合并页判断左兄弟，左兄弟存在，就合并左兄弟，及时空间不足，也不合并右兄弟</p>
+<h4 id="104-查找"><a class="markdownIt-Anchor" href="#104-查找"></a> 10.4 查找</h4>
+<h5 id="1041-mode"><a class="markdownIt-Anchor" href="#1041-mode"></a> 10.4.1 mode</h5>
+<p>查询可能为小于，小于等于，大于，大于等于等，但再非叶子节点查询只能是小于或小于等于。对于插入，只能是小于等于，找到插入记录的前一条记录。</p>
+<p>若对主键或唯一索引进行查询，使用大于等于，因为InnoDB支持MVCC，即使进行了唯一约束，但页内也可能存在多个键值相同记录（例如被标记为删除的记录）。</p>
+<p>当再一个页查询不到，查到supernm时，会继续去下一个页查询</p>
+<h5 id="1042-latch-mode"><a class="markdownIt-Anchor" href="#1042-latch-mode"></a> 10.4.2 latch mode</h5>
+<p>InnoDB总是先对索引内存对象加上s-latch，然后进行页操作，或insert、update、delete不会导致非叶子节点变化（分裂、合并、树的高度变化）立即释放内存对象s-latch（乐观方式）、否则，换成x-latch（悲观方式）</p>
+<h5 id="1043-cursor"><a class="markdownIt-Anchor" href="#1043-cursor"></a> 10.4.3 cursor</h5>
+<h4 id="105-dml操作"><a class="markdownIt-Anchor" href="#105-dml操作"></a> 10.5 DML操作</h4>
+<h5 id="1051-插入"><a class="markdownIt-Anchor" href="#1051-插入"></a> 10.5.1 插入</h5>
+<p>InnoDB插入分为两部分，首先调用乐观插入，如果发生分裂等，调用悲观插入</p>
+<p>乐观插入时，发现不能插入到页中，先进行一次整理，再次尝试</p>
+<p>插入记录是逻辑记录，需要转化成物理记录，然后计算页的容量是否满足。InnoDB要求预留1/16的空间（填充因子）。当发生update时，不需要立即分裂</p>
+<p>当逻辑记录转化成物理记录后，需要检查锁信息，生成undo日志，若检测到下一个记录被其他事务持有锁，等待</p>
+<p>首先插入，失败进行整理，再次插入，然后更新自适应哈希索引。</p>
+<p>插入完成后，可能有行溢出数据，需要对内存对象加x-latch，之后将溢出的列数据放到行溢出页</p>
+<h5 id="1052-非主键更新"><a class="markdownIt-Anchor" href="#1052-非主键更新"></a> 10.5.2 非主键更新</h5>
+<p>分为乐观和悲观，乐观分为原地更新和普通乐观更新。原地更新只更新记录的列大小没有发生变化。</p>
+<p>一般辅助索引更新都不能是原地更新，是delete mark+insert，因为辅助索引更新会导致B+树索引列的值发生变化。</p>
+<p>乐观更新前提是主键没有发生变化，仅持有记录页的x-latch</p>
+<p>若不能原地更新，原记录会先删除，然后插入新的记录，但主键没变，记录还在同一个页中，只是新旧记录的heap_no发生了变化，需要更新锁信息。（将原记录锁信息移到infimum上，完成后移回来）</p>
+<h5 id="1053-主键更新"><a class="markdownIt-Anchor" href="#1053-主键更新"></a> 10.5.3 主键更新</h5>
+<p>若更新包含主键更新：</p>
+<ol>
+<li>将原纪录标记为删除</li>
+<li>插入新的主键记录</li>
+<li>purge线程判断是否有事务使用原主键记录，没有则删除</li>
+</ol>
+<p>当主键旧记录有外部溢出页数据时，更新主键，新记录继承溢出页，旧记录取消继承，则只能删除旧记录，不能删除溢出页。若回滚时旧记录继承溢出页，溢出页不能删除</p>
+<h5 id="1054-删除"><a class="markdownIt-Anchor" href="#1054-删除"></a> 10.5.4 删除</h5>
+<ol>
+<li>更新delete flag（事务中完成）</li>
+<li>等待purge线程（后台线程）</li>
+</ol>
+<p>聚簇索引和辅助索引的记录都需要加flag，都是update操作，需要加锁</p>
+<p>聚簇索引伪删除需要产生undo log和redo log</p>
+<p>乐观删除（只对页加x-latch）条件：</p>
+<ol>
+<li>
+<p>不包含extern属性的列</p>
+</li>
+<li>
+<p>删除不会发生页的合并</p>
+</li>
+</ol>
+<p>悲观删除对内存索引对象加x-latch</p>
+<h4 id="106-持久游标"><a class="markdownIt-Anchor" href="#106-持久游标"></a> 10.6 持久游标</h4>
+<p>大多少情况下，通过持久游标的对象来处理查询，进行select，update，delete操作时，先定位到第一条记录，开始扫描知道不满足条件。</p>
+<p>持久游标用于保存每次查到的记录，查询下一条记录时，首先恢复上一次查询的记录，再获取下一条记录。</p>
+<p>扫描过程可能出现页的修改，发生分裂合并等情况，需要每次对保存的记录恢复，然后查找下一条记录</p>
+<h4 id="107-自哈希索引"><a class="markdownIt-Anchor" href="#107-自哈希索引"></a> 10.7 自哈希索引</h4>
+<p>InnoDB支持自适应哈希索引，根据查询模式，对活页查询页中的记录进行哈希索引</p>
+<p>自适应是指哈希索引的创建和维护都是存储引擎自己做的，用户不能自己进行创建操作。仅对热点页所在的数据进行哈希索引。</p>
+<p>B+树索引只能找到页，哈希索引找到记录</p>
+<p>B+树索引持久化，哈希索引只存在于内存</p>
+<p>首先判断页根据访问模式是否已经被请求了17次，若是，判断页根据访问模式是否请求了100次，若是创建哈希索引</p>
+<p>每个索引对象保存着索引访问模式，每个页也包含也访问模式信息。通过这两个判断是否进行哈希索引</p>
+<h5 id="1072-创建哈希索引"><a class="markdownIt-Anchor" href="#1072-创建哈希索引"></a> 10.7.2 创建哈希索引</h5>
+<p>若存在相同哈希键值的记录，InnoDB会进行更新，而不是通过链表解决冲突</p>
+<p>使用限制</p>
+<ol>
+<li>查询开始是没有任何其他事务持有btr_search_latch的x-latch</li>
+<li>查询不会引起b+树结构变化，是乐观查询，仅对页加s-latch或x-latch</li>
+</ol>
+<h5 id="1073-哈希索引维护"><a class="markdownIt-Anchor" href="#1073-哈希索引维护"></a> 10.7.3 哈希索引维护</h5>
+<p>自适应哈希的DML开销较大，因为需要持有btr_search_latch的x-latch</p>
+<p>删除数据时，若页中记录建立了哈希索引，删除哈希表中记录</p>
+<p>插入</p>
+<p>更新：</p>
+<ol>
+<li>原地更新，键值没有变化，不需要维护</li>
+<li>更新操作没有更新主键：删除哈希表记录，再次搜索找到记录位置然后插入哈希表</li>
+<li>更新并修改主键值：通过删除和插入维护</li>
+</ol>
+<h5 id="1074-优缺点"><a class="markdownIt-Anchor" href="#1074-优缺点"></a> 10.7.4 优缺点</h5>
+<p>优点</p>
+<ol>
+<li>有较好的查询复杂度</li>
+</ol>
+<p>缺点</p>
+<ol>
+<li>btr_search_latch是热点</li>
+<li>占用缓冲池内存</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/mysql/innodb/10.B+%E6%A0%91%E7%B4%A2%E5%BC%95/" data-id="ckmixaegx000hasvx3pd07o36" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-mysql/innodb/1.innodb历史" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/mysql/innodb/1.innodb%E5%8E%86%E5%8F%B2/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.286Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="模块划分"><a class="markdownIt-Anchor" href="#模块划分"></a> 模块划分</h4>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309135527897.png" alt="image-20210309135527897" /></p>
+<p>File Manager：封装了InnoDB对文件的各类操作，读、写、异步I/O</p>
+<p>Concurrency Manager：主要封装了引擎内部使用的各类mutex和latch</p>
+<p>Common Utility：封装了基本的 数据结构和算法定义，如链表，哈希表</p>
+<p>虚线部分是InnoDB的内核实现部分，是InnoDB存储引擎事务、锁、缓存、日志、存储、索引的实现模块</p>
+<p>上面两层是接口层，实现与上层与存储引擎的内部互动。InnoDB可以不依赖MySQL数据库，作为一个嵌入式数据库，所有还有嵌入式接口。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/mysql/innodb/1.innodb%E5%8E%86%E5%8F%B2/" data-id="ckmixaegy000iasvx673raltb" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-kernal/9.内核同步介绍" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/kernal/9.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E4%BB%8B%E7%BB%8D/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.241Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="内核同步方法"><a class="markdownIt-Anchor" href="#内核同步方法"></a> 内核同步方法</h3>
+<p>单一处理器时，只有中断发送时或内核代码明确请求重新调度、执行另一个任务的时候才能并发访问数据</p>
+<p>linux现在是抢占式内核，调度程序可以再任意时间抢占内核，很多代码都会同步执行</p>
+<h4 id="91-临界区和竞争条件"><a class="markdownIt-Anchor" href="#91-临界区和竞争条件"></a> 9.1 临界区和竞争条件</h4>
+<p>临界区就是访问和操作共享数据的代码段。</p>
+<p>为了避免临界区发送并发访问，必须保证这些代码的原子性。</p>
+<p>如果两个线程同时处于一个临界区，就称它为竞争条件。</p>
+<p>避免并发和防止竞争条件称为同步。</p>
+<h5 id="911-为什么要保护"><a class="markdownIt-Anchor" href="#911-为什么要保护"></a> 9.1.1 为什么要保护</h5>
+<h5 id="912-单个变量"><a class="markdownIt-Anchor" href="#912-单个变量"></a> 9.1.2 单个变量</h5>
+<h4 id="92-加锁"><a class="markdownIt-Anchor" href="#92-加锁"></a> 9.2 加锁</h4>
+<p>例如队列，如果访问队列时正在操作队列，队列会处于不一致的状态</p>
+<p>当共享资源是一个复杂数据结构时，竞争条件往往会破坏数据结构</p>
+<p>linux实现了几种不同的锁机制，主要区别在于：当锁已经被其他线程持有而不可用时的行为表现——一些锁简单的执行忙等待，一些锁会使当前任务睡眠直到锁可用。</p>
+<h5 id="921-造成并发执行的原因"><a class="markdownIt-Anchor" href="#921-造成并发执行的原因"></a> 9.2.1 造成并发执行的原因</h5>
+<p>用户空间需要同步，是因为用户程序会被调度程序抢占和重新调度。</p>
+<p>因为信号处理是异步发送的，单线程的多个进程共享文件，或再一个程序内部处理信号，也可能产生竞争。这种类型的并发操作——并不是真的同时发送，但交叉执行，也可以称作伪并发执行。</p>
+<p>对称多处理器的机器，就是真并发。</p>
+<p>内核也可能产生并发：</p>
+<ol>
+<li>中断——中断几乎可以再任何时候异步发生，也就可能随时打断正在执行的代码</li>
+<li>软中断和taslklt——内核能在任何时候唤醒或调度软中断和tasklet，打断正在执行的代码</li>
+<li>内核抢占——内核具有抢占性，内核任务可能被另一个任务抢占</li>
+<li>睡眠及用户空间的同步：内核执行的进程可能睡眠，会唤醒调度程序，调度另一个新的用户进程执行</li>
+<li>对称多处理——两个或多个处理器同时执行代码</li>
+</ol>
+<p>中断处理程序中能避免并发访问的代码叫中断安全代码interrupt-safe</p>
+<p>对称多处理的机器上能避免并发访问的代码叫SMP安全代码SMP-safe</p>
+<p>内核抢占能避免并发访问的代码叫抢占安全代码preempt-safe</p>
+<h5 id="922-保护些什么"><a class="markdownIt-Anchor" href="#922-保护些什么"></a> 9.2.2 保护些什么</h5>
+<h4 id="93-死锁"><a class="markdownIt-Anchor" href="#93-死锁"></a> 9.3 死锁</h4>
+<p>死锁产生的条件：</p>
+<ol>
+<li>
+<p>一个或多个执行线程和一个或多个资源，每个线程都在等待其中一个资源，但所有资源都被占用</p>
+</li>
+<li>
+<p>所有线程都互相等待，但不会释放已经占用的资源</p>
+</li>
+<li>
+<p>互斥条件：进程要求对所分配的资源进行排它性控制，即在一段时间内某资源仅为一进程所占用。</p>
+</li>
+<li>
+<p>请求和保持条件：当进程因请求资源而阻塞时，对已获得的资源保持不放。</p>
+</li>
+<li>
+<p>不剥夺条件：进程已获得的资源在未使用完之前，不能剥夺，只能在使用完时由自己释放。</p>
+</li>
+<li>
+<p>环路等待条件：在发生死锁时，必然存在一个进程–资源的环形链。</p>
+</li>
+</ol>
+<p>自死锁：如果一个执行线程试图去获取一个自己已经持有的锁，它将不得不等待锁释放，但是忙于等待锁，没机会释放锁</p>
+<p>避免死锁的代码规则：</p>
+<ol>
+<li>按顺序加锁。使用嵌套的锁时必须保证相同的顺序获取锁</li>
+<li>防止发生饥饿，代码的执行是否一定会结束</li>
+<li>不要重复请求同一把锁</li>
+<li>设计力求简答，越复杂的加锁方案越任意造成死锁</li>
+<li><strong>如果两个或多个锁再同一时间被请求，以后其他函数请求他们也必须按照前次加锁的顺序进行</strong></li>
+</ol>
+<h4 id="94-争用和扩展性"><a class="markdownIt-Anchor" href="#94-争用和扩展性"></a> 9.4 争用和扩展性</h4>
+<p>争用：当锁被占用时，有其他线程试图获得该锁。高度争用，多个线程等待获得该锁。</p>
+<p>锁会降低性能，高度争用的锁会称为系统瓶颈。</p>
+<p>扩展性：对系统可扩展程度的度量。</p>
+<p>加锁粒度：描述加锁保护的数据规模</p>
+<p>一般来说，提高可扩展性是好事，会提供大小linux系统的性能，但小型系统锁太细会降低性能。如链表加锁和链表节点加锁</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/kernal/9.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E4%BB%8B%E7%BB%8D/" data-id="ckmixaegt000aasvxfx044jna" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-kernal/8.中断下部" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/kernal/8.%E4%B8%AD%E6%96%AD%E4%B8%8B%E9%83%A8/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.225Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="中断下部"><a class="markdownIt-Anchor" href="#中断下部"></a> 中断下部</h3>
+<p>中断处理程序由于一些限制，只能完成整个上部：</p>
+<ol>
+<li>中断处理程序以异步的方式执行，并且可能打断其他重要代码（包括其他中断），因此要越快越好</li>
+<li>中断处理程序执行时，最好的情况只屏蔽同级以下字段，最坏的情况屏蔽所有中断，所有执行的越快越好</li>
+<li>中断处理程序往往要对硬件操作，通常由很高的时限要求</li>
+<li>中断处理程序不能再进程上下文运行，不允许阻塞，限制了所能做的事情</li>
+</ol>
+<h4 id="81-下半部"><a class="markdownIt-Anchor" href="#81-下半部"></a> 8.1 下半部</h4>
+<p>下半部的任务就是执行中断处理密切相关但中断处理程序本身不执行的工作。</p>
+<p>中断处理程序注定要完成一部分工作：操作硬件对中断到达确认，从硬件拷贝数据。</p>
+<h5 id="811-为什么使用下部"><a class="markdownIt-Anchor" href="#811-为什么使用下部"></a> 8.1.1 为什么使用下部</h5>
+<p>希望尽量减少中断处理程序需要完成的工作量。减少中断程序对中断线的屏蔽，以及其他任务的阻塞。</p>
+<h5 id="812-下半部的环境"><a class="markdownIt-Anchor" href="#812-下半部的环境"></a> 8.1.2 下半部的环境</h5>
+<ol>
+<li>BH机制（已丢弃）</li>
+<li>任务队列</li>
+<li>软中断和tasklet</li>
+</ol>
+<h4 id="82-软中断"><a class="markdownIt-Anchor" href="#82-软中断"></a> 8.2 软中断</h4>
+<h4 id="83-taskelt"><a class="markdownIt-Anchor" href="#83-taskelt"></a> 8.3 taskelt</h4>
+<h4 id="84-工作队列"><a class="markdownIt-Anchor" href="#84-工作队列"></a> 8.4 工作队列</h4>
+<h4 id="85-下半部机制的选择"><a class="markdownIt-Anchor" href="#85-下半部机制的选择"></a> 8.5 下半部机制的选择</h4>
+<h4 id="86-下半部之间加锁"><a class="markdownIt-Anchor" href="#86-下半部之间加锁"></a> 8.6 下半部之间加锁</h4>
+<h4 id="87-禁止下半部"><a class="markdownIt-Anchor" href="#87-禁止下半部"></a> 8.7 禁止下半部</h4>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/kernal/8.%E4%B8%AD%E6%96%AD%E4%B8%8B%E9%83%A8/" data-id="ckmixaegq0007asvxbitl87ij" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-kernal/7.中断和中断处理" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/kernal/7.%E4%B8%AD%E6%96%AD%E5%92%8C%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.205Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="中断和中断处理"><a class="markdownIt-Anchor" href="#中断和中断处理"></a> 中断和中断处理</h3>
+<h4 id="71-中断"><a class="markdownIt-Anchor" href="#71-中断"></a> 7.1 中断</h4>
+<p>中断使得硬件得以发出通知给处理器。，本质是一种特殊的电信号，由硬件发送给处理器。</p>
+<p>处理器接收中断后会处理中断，会像操作系统反映信号的到来，由操作系统处理这些数据</p>
+<p>硬件设备发出中断不必与处理器同步，中断可以随时发生</p>
+<p>中断值通常称为中断请求线（IRQ），每个IRQ关联一个数量值，0是时钟中断，1是键盘中断，但是连再PCI总线上的设备，中断是动态分配的</p>
+<p>异常与中断不同，产生时必须与处理器时钟同步，异常也经常称为同步中断，处理器处理到编程出现的错误，除0，内存缺页等，会产生一个异常，交给内核处理。内核处理异常和中断很相似</p>
+<p>x86通过软中断实现系统调用（陷入内核），引起系统调用处理程序异常。</p>
+<h4 id="72-中断处理程序"><a class="markdownIt-Anchor" href="#72-中断处理程序"></a> 7.2 中断处理程序</h4>
+<p>内核响应特定中断的函数叫做中断处理程序/中断服务例程（ISR）</p>
+<p>一个设备的中断处理程序是设备驱动的一部分，驱动是对设备管理的内核代码</p>
+<p>中断处理程序与其他内核函数的区别在于，中断处理程序是被内核调用来响应中断的，运行于中断上下文（原子上下文），改上下文的代码不可阻塞</p>
+<h4 id="73-上半部和下半部的对比"><a class="markdownIt-Anchor" href="#73-上半部和下半部的对比"></a> 7.3 上半部和下半部的对比</h4>
+<p>由于中断处理程序需要很快，但任务又多，把中断处理程序分为上下部</p>
+<p>上半部：接收到中断，立即执行，只做由严格时限的工作，如对接收到中断应答或复位硬件等，这些是再中断禁止的时候做的</p>
+<p>下半部：指向允许稍后完成的工作，下半部会被开中断执行</p>
+<h4 id="74-注册中断处理程序"><a class="markdownIt-Anchor" href="#74-注册中断处理程序"></a> 7.4 注册中断处理程序</h4>
+<p>中断处理程序是驱动的组成部分，如果设备使用中断，那么响应的驱动就会注册一个中断处理程序</p>
+<p>驱动程序可以通过request_irq()注册一个中断处理程序，并且激活给定的中断线</p>
+<p>第一个参数irq是要分配的中断号，传统pc设备的值可以预知，大部分其他设备通过探测获取，或者编程动态确定</p>
+<p>第二个是中断处理程序的函数指针</p>
+<h5 id="741中断处理程序标准"><a class="markdownIt-Anchor" href="#741中断处理程序标准"></a> 7.4.1中断处理程序标准</h5>
+<p>第三个参数flags可以是0，也可以是一个或多个标志位掩码</p>
+<p>IRQF_DISABLED：处理当前中断，禁止其他一切中断</p>
+<p>IRQF_SAMPLE_RANDOM：表明这个设备的中断对内核熵池有关系，内核熵池负责提供各自从随机事件导出的真正随机数。</p>
+<p>IRQF_TIMER：特别位系统定时器的中断处理准备的</p>
+<p>IRQF_SHARED：可以多个中断处理程序共享中断线。同一个线上的每个程序都必须指定这个标志</p>
+<p>第四个参数name是与中断相关设备的ASCII文本表示</p>
+<p>第五个参数dev用于共享中断线，当释放中断处理程序时，必须指定该值以确定共享中断线上哪个程序被释放</p>
+<p>函数request_irq()是可能会睡眠的，不能再中断上下文或不允许阻塞的代码中使用。注册所，内核会创建新项，会调用kmalloc()分配内除，kmalloc()可能会睡眠</p>
+<h5 id="742-注册中断例子"><a class="markdownIt-Anchor" href="#742-注册中断例子"></a> 7.4.2 注册中断例子</h5>
+<h5 id="743-释放中断处理程序"><a class="markdownIt-Anchor" href="#743-释放中断处理程序"></a> 7.4.3 释放中断处理程序</h5>
+<p>卸载驱动程序时，需要注销相应的中断处理程序，释放中断线，free_irq()</p>
+<h4 id="75-编写中断处理程序"><a class="markdownIt-Anchor" href="#75-编写中断处理程序"></a> 7.5 编写中断处理程序</h4>
+<p>linux的中断处理程序是无须重入的。当一个中断处理程序执行，响应的中断线会被禁止，防止接收到其他中断。其他中断线的中断可以被处理。</p>
+<h5 id="751-共享的中断处理程序"><a class="markdownIt-Anchor" href="#751-共享的中断处理程序"></a> 7.5.1 共享的中断处理程序</h5>
+<p>内核接收到中断，会一次调用中断线上注册的中断处理程序，如果一个中断处理程序知道它不负责这个中断，应该立即退出。因此，硬件需要提供状态寄存器（或类似机制）让中断处理程序检查是否是当前硬件产生的中断。</p>
+<h5 id="752-中断处理程序实例"><a class="markdownIt-Anchor" href="#752-中断处理程序实例"></a> 7.5.2 中断处理程序实例</h5>
+<p>RTC（real-time clock）驱动程序，从系统定时器独立出来的设备，用于设置系统时间，提供报警器和周期性定时器。</p>
+<h4 id="76-中断上下文"><a class="markdownIt-Anchor" href="#76-中断上下文"></a> 7.6 中断上下文</h4>
+<p>进程上下文是一种内核所处的操作模式，此时内核会代表进程指向。可以提供current宏关联当前进程。因为进程是以进程上下文连接到内核的，进程上下文可以睡眠</p>
+<p>中断上下文没有后背进程，不可以睡眠，不能从中断上下文调用某些可以睡眠的函数</p>
+<p>中断处理程序打断了其他代码，所以中断处理程序应该尽可能迅速简洁。尽量把工作放到下半部指向。</p>
+<p>旧版中断处理程序共享中断进程的内核栈，大小为2页</p>
+<p>现在每个中断处理程序有自己的栈，大小1页</p>
+<h4 id="77-中断处理机制的实现"><a class="markdownIt-Anchor" href="#77-中断处理机制的实现"></a> 7.7 中断处理机制的实现</h4>
+<p>硬件产生中断电信号，通过总线发送到中断控制器，如果中断激活，中断控制器把中断发给处理器（大多通过电信号给处理器引进发送特定信号），除非处理器禁止该中断，处理器立即执行中断，关闭中断系统，跳到内存预设点执行代码（中断处理程序入口）。处理器开中断，执行中断程序，禁止中断，执行返回。</p>
+<p>如果返回用户空间，调用schedule()选择线程</p>
+<p>如果返回内核空间，只有再preempt_count()为0时执行schedule()，否则抢占内核不安全</p>
+<p>schedule()返回后，寄存器恢复，内核恢复到中断的点</p>
+<h4 id="78-procinterrupts"><a class="markdownIt-Anchor" href="#78-procinterrupts"></a> 7.8 /proc/interrupts</h4>
+<p>procfs是一个虚拟文件系统，只存在于内核，安装于/proc目录。再procfs读取文件都要调用内核函数，这些函数模拟从真实文件读写。/proc/interrupts就是相关的例子，存放系统中与中断相关的统计信息</p>
+<h4 id="79-中断控制"><a class="markdownIt-Anchor" href="#79-中断控制"></a> 7.9 中断控制</h4>
+<p>linux内核提供了接口用于操作机器上的中断状态。提供能够禁止当前处理器的中断系统，屏蔽某个中断线的能力。</p>
+<p>控制中断系统的原因是需要控制同步。</p>
+<p>禁止中断可以禁止内核抢占</p>
+<p>linux内核代码加锁可以防止其他处理器并发访问共享数据</p>
+<h5 id="791-禁止和激活中断"><a class="markdownIt-Anchor" href="#791-禁止和激活中断"></a> 7.9.1 禁止和激活中断</h5>
+<p>禁止当前处理器的本地断，随后又激活的语句为local_irq_disable()和local_irq_enable()。再发出中断的处理器上，他们将禁止和激活中断的传递。这两个函数不安全，再禁止中断前应该保存中断状态</p>
+<p>local_irq_save(flags) 保存并禁止中断</p>
+<p>local_irq_restore(flags)恢复中断原来的状态</p>
+<p>这两个函数需要再一个函数中调用</p>
+<p>不在使用全局cli()和sti()，关闭或开启所以处理器上的中断</p>
+<p>因为细粒度的锁更快</p>
+<h5 id="792-禁止指定中断线"><a class="markdownIt-Anchor" href="#792-禁止指定中断线"></a> 7.9.2 禁止指定中断线</h5>
+<p>disable_irq(unsigned int irq)  必须等已经开始的处理程序完成才能返回</p>
+<p>disable_irq_nosycn(unsigned int irq)	不必等处理程序完成就跨域返回</p>
+<p>enable_irq(unsigned int irq)  开启一个中断线</p>
+<p>synchronize_irq(unsigned int irq)	等待一个特定的中断处理程序退出</p>
+<p>可以嵌套使用，关闭几次就必须打开几次，否则中断线不能使用</p>
+<h5 id="793-中断系统的状态"><a class="markdownIt-Anchor" href="#793-中断系统的状态"></a> 7.9.3 中断系统的状态</h5>
+<p>irqs_disable()返回中断系统的状态</p>
+<p>in_interrupte()和in_irq()检查内核当前上下文的接口。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/kernal/7.%E4%B8%AD%E6%96%AD%E5%92%8C%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86/" data-id="ckmixaegs0009asvx8vyw2axj" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-kernal/6.内核数据结构" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/kernal/6.%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.195Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="内核数据结构"><a class="markdownIt-Anchor" href="#内核数据结构"></a> 内核数据结构</h3>
+<h4 id="61-链表"><a class="markdownIt-Anchor" href="#61-链表"></a> 6.1 链表</h4>
+<p>linux内核标准链表采用双向环形链表</p>
+<p>linux内核链表与众不同，不是将数据结构塞入链表，而是将链表节点塞入数据结构</p>
+<p>内核的链表操作方法只接收list_head作为参数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>&#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> *<span class="title">prev</span>;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">fox</span>&#123;</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> tail_length;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> weight;</span><br><span class="line">    <span class="keyword">bool</span> is_fantastic;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">list</span>;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用c的container_of()可以获取到fox内的其他变量，因为c语言结构的遍历偏移再编译时就被ABI固定下了</p>
+<p>我们需要给链表一个索引指针（头指针）指向链表</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">LIST_HEAD</span><span class="params">(fox_list)</span></span>; <span class="comment">// 初始化链表例程，已经加了头指针</span></span><br></pre></td></tr></table></figure>
+<h4 id="62-队列"><a class="markdownIt-Anchor" href="#62-队列"></a> 6.2 队列</h4>
+<p>linux的kfifo主要提供两个操作enqueue和dequeue</p>
+<p>kfifo维护了两个偏移量，入口偏移和出口偏移</p>
+<h4 id="63-映射map-idr"><a class="markdownIt-Anchor" href="#63-映射map-idr"></a> 6.3 映射（map  idr）</h4>
+<h4 id="64-二叉树"><a class="markdownIt-Anchor" href="#64-二叉树"></a> 6.4 二叉树</h4>
+<p>linux主要的平衡二叉树数据结构就是红黑树，</p>
+<ol>
+<li>所有叶子节点是黑色的</li>
+<li>节点红色或者黑色</li>
+<li>叶子节点不包含数据</li>
+<li>非叶子节点都有两个节点</li>
+<li>红色节点的父亲和孩子都是黑色</li>
+<li>一个节点到它的叶子节点路径中，如果总是包含同样数目的黑色节点，改路径相比其他路径是最短的（树到任何叶子节点的黑色节点数相同）</li>
+</ol>
+<p>linux实现的红黑叔叫做rbtree</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/kernal/6.%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" data-id="ckmixaegr0008asvxblmg0nra" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-kernal/5.系统调用" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/kernal/5.%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.175Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="系统调用"><a class="markdownIt-Anchor" href="#系统调用"></a> 系统调用</h3>
+<p>用户进程和内核交互的一组接口</p>
+<ol>
+<li>接口提供了应用程序受限的访问硬件设备</li>
+<li>接口提供了创建新进程并与已有进程进行通信的机制</li>
+<li>接口提供了申请操作系统其他资源的能力</li>
+</ol>
+<p>应用程序发出请求，内核满足这些请求，接口主要是为了保证系统稳定可靠</p>
+<h4 id="51-与内核通信"><a class="markdownIt-Anchor" href="#51-与内核通信"></a> 5.1 与内核通信</h4>
+<p>系统调用是在用户空间和硬件设备之间添加了一个中间层，作用有三</p>
+<ol>
+<li>为用户控件提供了一种硬件的抽象接口，应用程序可以屏蔽底层硬件类型</li>
+<li>系统调用保证了系统的稳定和安全，内核作为硬件设备和应用程序的中间人，可以对访问进行裁决，保证系统的安全</li>
+<li>每个进程都可以允许在虚拟系统中，在用户程序和系统其余部分添加一层公共接口，也是出于这种考虑，如果应用程序可以随意访问硬件而内核一无所知的话，无法实现多任务和虚拟内存，也不能实现良好的稳定性和安全行</li>
+</ol>
+<p>linux中，系统调用是用户空间访问内核的唯一手段，除了异常和陷入外，他们是内核的唯一合法入口</p>
+<h4 id="52-api-posix和c库"><a class="markdownIt-Anchor" href="#52-api-posix和c库"></a> 5.2 API、POSIX和C库</h4>
+<p>应用程序通过在用户空间实现的应用编程接口API而不是直接通过系统调用来编程。</p>
+<p>Unix中，最流行的应用编程接口是基于POSIX标准的</p>
+<p>应用程序 -&gt; c库   c 库 -&gt; 内核</p>
+<h4 id="53-系统调用"><a class="markdownIt-Anchor" href="#53-系统调用"></a> 5.3 系统调用</h4>
+<p>访问系统调用，通常通过c库定义的函数进行。通常需要定义零个、一个或几个参数（输入），还有可能产生副作用（系统状态的某种变化）。系统还会返回一个long的返回值表示结果（long是为了64位兼容），通常负数表示错误，0表示成功。</p>
+<h5 id="531-系统调用号"><a class="markdownIt-Anchor" href="#531-系统调用号"></a> 5.3.1 系统调用号</h5>
+<p>每个系统调用没赋予系统调用号，进程执行系统调用时，就用这个号指明哪个系统调用，不会提及系统调用名</p>
+<p>系统调用号分配就不能改变，系统调用删除也不能再利用，否则以前编译好的程序调用出错，sys_nia_syscall()负责无效的系统调用号</p>
+<p>内核记录了已注册过的系统调用列表，存在sys_call_table中</p>
+<h5 id="532-系统调用的性能"><a class="markdownIt-Anchor" href="#532-系统调用的性能"></a> 5.3.2 系统调用的性能</h5>
+<p>linux很短的上下文切换时间，进出内核都被优化，系统调用处理程序和每个系统调用都很简洁</p>
+<h5 id="54-系统调用处理程序"><a class="markdownIt-Anchor" href="#54-系统调用处理程序"></a> 5.4 系统调用处理程序</h5>
+<p>用户空间无法直接执行内核代码，内核代码驻留在受保护的地址空间。</p>
+<p>应用程序通过软中断通知内核自己需要执行系统调用。软中断通过一个异常来促使系统切换到内核态去执行异常处理程序。此时的异常处理程序实际上就是系统调用处理程序。x86上预定义的软中断中断号是128，通过int $0x80指令触发中断，使系统切换到内核态执行128号异常处理程序，就是系统调用处理程序。system_call()</p>
+<h5 id="541-指定恰当的系统调用"><a class="markdownIt-Anchor" href="#541-指定恰当的系统调用"></a> 5.4.1 指定恰当的系统调用</h5>
+<p>系统调用必须同时把系统调用号传给内核，x86系统通过eax寄存器传递给内核，陷入内核前，用户空间把系统调用号放入eax中，系统调用号需要乘4才是系统调用表的内容</p>
+<h5 id="542-参数传递"><a class="markdownIt-Anchor" href="#542-参数传递"></a> 5.4.2 参数传递</h5>
+<p>除了系统调用号，还有一些外部参数输入，陷入时应该把参数从用户空间传递给内核。x86-32系统，ebx、ecx、edx、esi、edi按顺序存储前五个参数，系统返回给用户的参数也用寄存器传递，x86中，存放在eax中</p>
+<h5 id="55-系统调用的实现"><a class="markdownIt-Anchor" href="#55-系统调用的实现"></a> 5.5 系统调用的实现</h5>
+<h5 id="551-实现系统调用"><a class="markdownIt-Anchor" href="#551-实现系统调用"></a> 5.5.1 实现系统调用</h5>
+<p>考虑移植性和健壮性</p>
+<ol>
+<li>每个系统调用都应该有一个明确的用途</li>
+<li>接口应该力求简洁，参数尽可能少</li>
+<li>尽量位未来考虑，设计的越通用越好</li>
+</ol>
+<p>通过机制而不是策略</p>
+<h5 id="552-参数验证"><a class="markdownIt-Anchor" href="#552-参数验证"></a> 5.5.2 参数验证</h5>
+<p>系统调用必须检查参数是否合法有效</p>
+<p>I/O系统调用需要检查文件描述符是否有效</p>
+<p>进程系统调用检查PID是否有效</p>
+<p>最重要的检查是检查用户提供的指针是否有效，再接收到一个指针之前必须</p>
+<ol>
+<li>指针指向的内存区域属于该用户</li>
+<li>指针指向的内存区域在进程的地址空间里</li>
+<li>如果是读、写、指向，对于的内存区域必须也是相应的标志状态，进程不能绕过内存访问限制</li>
+</ol>
+<p>内核提供了两个方法完成检查和内核空间和用户空间的数据拷贝。内核无论何时都不能轻率的接收用户指针</p>
+<ol>
+<li>为了向用户空间写数据，内核提供了copy_to_usser()，三个参数：进程空间的目的地址，内核的源地址和数据长度（字节数）</li>
+<li>为了从用户空间读数据，内核提供了copy_from_user()，同上</li>
+</ol>
+<p>如果拷贝失败，返回没能拷贝完成的字节数，成功返回0，错误返回-EFAULT</p>
+<p>当用户数据页被换到硬盘而不在内存，该方法会阻塞，知道缺页处理程序把数据页加载到内存</p>
+<p>还有一项检查是针对是否有合法权限，老linux只有超级用户可以调用suser()完成检查，现在调用者可以使用capable()函数检查是否有权限对指定资源进行操作，非0就是有权限，0就是无权限。</p>
+<p>默认情况只有超级用户进程拥有所有权限而非超级用户没有任何权利</p>
+<h4 id="56-系统调用上下文"><a class="markdownIt-Anchor" href="#56-系统调用上下文"></a> 5.6 系统调用上下文</h4>
+<p>内核在执行系统调用时处于进程上下文，current指针指向当前任务，引发系统调用的进程</p>
+<p>在进程上下文，内核可以休眠（系统调用阻塞或显示调用schedule()）并且可以被抢占。休眠说明系统调用可以使用内核提供的绝大部分功能，给内核编程带来了极大的便利（中断处理程序不能休眠，所以有很大限制）。抢占表明，像用户空间内的进程一样，当前进程同样可以被抢占，新的进程可以使用相同的系统调用。保证该系统调用是可重入的。</p>
+<p>系统调用结束，控制圈处于system_call()，它负责切换回用户态</p>
+<h5 id="561-绑定一个系统调用的最后步骤"><a class="markdownIt-Anchor" href="#561-绑定一个系统调用的最后步骤"></a> 5.6.1 绑定一个系统调用的最后步骤</h5>
+<p>把系统调用注册为正式系统调用</p>
+<ol>
+<li>在系统调用表最后加一个表项，每种支持该系统调用的硬件体系都得做，系统调用号从0开始</li>
+<li>对于所有支持的体系结构，系统调用号定义与&lt;asm/unistd.h&gt;</li>
+<li>系统调用必须编译进内核映像（不能被编程成模块）只有把他放入kernel/的一个相关文件即可，比如sys.c</li>
+</ol>
+<h5 id="562-从用户空间访问系统调用"><a class="markdownIt-Anchor" href="#562-从用户空间访问系统调用"></a> 5.6.2 从用户空间访问系统调用</h5>
+<p>通常情况，系统调用靠c库支持，用户程序通过包含标志头文件并和c库链接，就可以使用系统调用（或调用库函数，库函数调用系统调用）。不能直接写出系统调用</p>
+<p>linux提供了一组宏，直接对系统调用进行访问。他会设置好寄存器并调用陷入指令，这些宏是syscalln()，n是0-6，代表传入系统调用的参数</p>
+<p>_syscall3(long, open, const char*, filename, int flags, int mode)</p>
+<p>每个宏都有2+2n个参数，前两个是返回的参数类型和系统调用名，后面是顺序排列的参数类型和参数名</p>
+<p>该宏会被扩充成内嵌汇编的c函数，将系统调用号和参数压入寄存器，并出发软中断陷入内核</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/kernal/5.%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" data-id="ckmixaegq0006asvxez8b10fz" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-kernal/4.进程调度" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/kernal/4.%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.154Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="进程调度"><a class="markdownIt-Anchor" href="#进程调度"></a> 进程调度</h3>
+<p>进程调度程序是确保进程有效工作的一个内核子系统，决定哪个进程投入允许，何时运行以及运行时间。</p>
+<h4 id="41-多任务"><a class="markdownIt-Anchor" href="#41-多任务"></a> 4.1 多任务</h4>
+<p>多任务系统分为：非抢占式多任务和抢占式多任务。（linux是抢占式）</p>
+<h4 id="42-linux进程调度"><a class="markdownIt-Anchor" href="#42-linux进程调度"></a> 4.2 linux进程调度</h4>
+<p>O(1)调度器多处理器环境下表现仍很完美，但是没有办法处理交互进程</p>
+<p>翻转楼梯最后期限调度算法（RSDL）-完全公平调度算法（CFS）</p>
+<h4 id="43-策略"><a class="markdownIt-Anchor" href="#43-策略"></a> 4.3 策略</h4>
+<p>策略决定了调度程序何时让什么进程运行</p>
+<h5 id="431-io消耗型和处理器消耗型"><a class="markdownIt-Anchor" href="#431-io消耗型和处理器消耗型"></a> 4.3.1 I/O消耗型和处理器消耗型</h5>
+<p>进程可以被分为I/O消耗型和处理器消耗型。</p>
+<p>I/O消耗型经常处于可运行状态，但通常运行短短一会就会再次阻塞</p>
+<p>处理器消耗型的调度策略往往是降低调度频率，延迟运行时间</p>
+<p>调度策略要满足的需求：进程响应迅速（响应时间短）和最大系统利用率（高吞吐量）</p>
+<p>linux为了保证交互时应用和桌面系统性能，倾向于优先调度I/O消耗型</p>
+<h5 id="432-进程优先级"><a class="markdownIt-Anchor" href="#432-进程优先级"></a> 4.3.2 进程优先级</h5>
+<p>linux采用了两种不同的优先级</p>
+<p>nice值：-20 - 19 默认是0，越大优先级越低  linux系统中nice值代表时间片比例</p>
+<p>实时优先级：默认是0-99变化 越大优先级越高 任何实时进程的优先级都比普通进程高，实时优先级和nice优先级处于不同的范畴</p>
+<h5 id="433-时间片"><a class="markdownIt-Anchor" href="#433-时间片"></a> 4.3.3 时间片</h5>
+<p>时间片表示进程在被抢占前所能持续运行的时间，调度策略必须规定一个默认的时间片</p>
+<p>linux的CFS、调度器系统没有直接分配时间片，而是将处理器的使用比例划分给了进程，使得进程获得处理器时间和系统负载密切相关</p>
+<p>通常抢占完全由进程优先级和是否有时间片决定，CFS调度器抢占时间取决于新的可运行进程消耗量多少处理器使用比，消耗的使用比比当前进程小，就抢占</p>
+<h5 id="434-调度策略和活动"><a class="markdownIt-Anchor" href="#434-调度策略和活动"></a> 4.3.4 调度策略和活动</h5>
+<p>对于文字编辑程序和视频编码程序，通常应给文字编辑程序更高的优先级保证交互性的可用。再linux的CFS调度器中，给两个进程都是50%的处理器使用比，再需要文字编辑程序抢占时，由于文字编辑程序没有消耗掉50%的使用比，消耗的使用比小，所以可以快速抢占</p>
+<h4 id="44-linux调度算法"><a class="markdownIt-Anchor" href="#44-linux调度算法"></a> 4.4 linux调度算法</h4>
+<h5 id="441-调度器类"><a class="markdownIt-Anchor" href="#441-调度器类"></a> 4.4.1 调度器类</h5>
+<p>linux调度器时以模块工作的，不同类型的进程可以针对性的选择调度算法，这种模块化结构成为调度器类，允许多种不同的可动态添加的调度算法并存。每个调度器都有一个优先级，基础调度代码按照优先级遍历调度器类然后执行进程。</p>
+<p>CFS是一个普通进程调度类。</p>
+<h5 id="442-unix的进程调度"><a class="markdownIt-Anchor" href="#442-unix的进程调度"></a> 4.4.2 unix的进程调度</h5>
+<h5 id="443-公平调度"><a class="markdownIt-Anchor" href="#443-公平调度"></a> 4.4.3 公平调度</h5>
+<p>理念：每个进程能获得处理器1/n的处理器时间</p>
+<p>首先CFS要考虑大量切换代理的开销</p>
+<p>CFS的做法是允许每个进程运行一段时间、循环轮转、选择运行最少的进程作为下一个运行进程</p>
+<p>再CFS中，nice值代表进程获得处理器运行比的权重，nice值的比值决定分配的比例</p>
+<p>CFS为每个进程引入了获取的时间片底线，成为最小粒度。默认是1ms（因此不是完全公平）</p>
+<h4 id="45-linux调度的实现"><a class="markdownIt-Anchor" href="#45-linux调度的实现"></a> 4.5 linux调度的实现</h4>
+<p>时间记账</p>
+<p>进程选择</p>
+<p>调度器入口</p>
+<p>睡眠和唤醒</p>
+<h5 id="451-时间记账"><a class="markdownIt-Anchor" href="#451-时间记账"></a> 4.5.1 时间记账</h5>
+<p>多数unix系统根据系统节拍器减少进程占用的时间片</p>
+<ol>
+<li>
+<p>调度器实体结构</p>
+<p>CFS使用调度器实体结构追踪进程运行记账，sche_entity作为一个变量se嵌入到进程描述符task_struct内</p>
+</li>
+<li>
+<p>虚拟实时</p>
+<p>vruntime(位于调度器实体结构)存放进程的虚拟运行时间。CFS使用vruntime变量记录一个程序到底运行了多长时间和还应该运行多长时间</p>
+<p>vruntime可以准确测量给定进程的运行时间，还可以知道谁应该下一个被运行</p>
+</li>
+</ol>
+<h5 id="452-进程选择"><a class="markdownIt-Anchor" href="#452-进程选择"></a> 4.5.2 进程选择</h5>
+<p>CFS选择下一个运行进程时，选择具有最小vruntime的任务</p>
+<p>CFS使用红黑树组织可运行的进程队列，并利用其迅速找到最小vruntime的进程</p>
+<ol>
+<li>
+<p>挑选下一个任务</p>
+<p>一个红黑叔存储了系统中所有可以运行的进程，其中节点的键值便是可运行进程的虚拟运行时间</p>
+</li>
+<li>
+<p>向树中加入进程</p>
+<p>当进程变为可运行状态或通过fork()第一次创建时，更新运行时间和其他统计数据，然后插入数据项</p>
+</li>
+<li>
+<p>从树中删除进程</p>
+<p>删除发生在进程阻塞（变为不可用）或终止（结束运行）时</p>
+</li>
+</ol>
+<h5 id="453-调度器入口"><a class="markdownIt-Anchor" href="#453-调度器入口"></a> 4.5.3 调度器入口</h5>
+<p>进程调度的主要入口函数是schedule()。它是内核其他部分用于调用进程调度器的入口：选择哪个进程可以运行，何时投入运行。Schedule()通常需要和一个具体的调度类关联。从高优先级开始找到一个调度类（有自己的可运行队列），然后知道下一个可运行的进程。</p>
+<h5 id="454-睡眠和唤醒"><a class="markdownIt-Anchor" href="#454-睡眠和唤醒"></a> 4.5.4 睡眠和唤醒</h5>
+<p>进程把自己标记成休眠状态，从可执行红黑树移除，调用schedule()执行下一个进程，唤醒则相反</p>
+<ol>
+<li>
+<p>等待队列</p>
+<p>休眠通过等待队列处理。等待队列是由等待某些事件发生的进程组成的简单链表。</p>
+<p>休眠的步骤</p>
+<p>1）调用宏DEFINE_WAIT()创建一个等待队列的项</p>
+<p>2）调用add_wait_queue()把自己加入队列，需要唤醒时对等待队列执行wake_up()</p>
+<p>3）调用prepare_to_wait()把进程变为TASK_INTERRUPTIBLE或TASK_UNINTERRUPTIBLE</p>
+<p>4）如果进程被设置为TASK_INTERRUPTIBLE，则信号唤醒进程（不是因为事件发生唤醒），检查并处理信号</p>
+<p>5）唤醒时检查条件是否为真，是就退出循环，不是就调用schedule()并一直重复这步操作</p>
+<p>6）满足条件时，设置位TASK_RUNNING并调用finish_wait()把自己移除等待队列</p>
+</li>
+<li>
+<p>唤醒</p>
+<p>唤醒通过wake_up()进行，唤醒指定等待队列的所有进程。调用try_to_wake_up()将进程设为TASK_RUNNING，调用enqueue_task()加入红黑树，如果唤醒的进程优先级高于正在执行的进程，还要设置need_resched标志。通常哪段代码促使了条件完成，就需要执行wake_up()</p>
+</li>
+</ol>
+<h4 id="46-抢占和上下文切换"><a class="markdownIt-Anchor" href="#46-抢占和上下文切换"></a> 4.6 抢占和上下文切换</h4>
+<p>上下文切换：一个可执行进程切换到另一个可执行进程</p>
+<p>调度时,schedule()调用context_switch()进行两项基本工作：</p>
+<ol>
+<li>把虚拟内存从上一个进程映射切换到新进程</li>
+<li>从上一个进程处理器状态切换到新进程处理器状态：保存、恢复栈信息和寄存器信息，任何与体系结构相关的状态信息，都必须以每个进程为对象进行保管</li>
+</ol>
+<p>内核会为每个需要被抢占的线程标志need_resched，包含在每个进程中，因为访问进程描述符内</p>
+<h5 id="461-用户抢占"><a class="markdownIt-Anchor" href="#461-用户抢占"></a> 4.6.1 用户抢占</h5>
+<p>当内核从系统调用或者中断处理程序返回用户空间时，如果标志位被设置，则发送用户抢占，选择更合适的进程执行</p>
+<h5 id="462-内核抢占"><a class="markdownIt-Anchor" href="#462-内核抢占"></a> 4.6.2 内核抢占</h5>
+<p>Linux支持完整的内核抢占（非内核抢占：内核工作时无法中止），只要重新调度是安全的（没有只有锁，锁是非抢占区域的标志，内核支持SMP，只要没有持有锁，正在执行的代码就可以重新导入，可以被抢占），内核可以再任何时间抢占正在执行的任务</p>
+<p>为了支持内核抢占，每个进程的thread_info添加了preempt_count计数器，使用锁就+1，0时可以抢占</p>
+<p>中断返回内核时，检查need_resched和preempt_count，如果有锁，继续执行，没有锁，看是否执行新的调度</p>
+<p>内核抢占发送在：</p>
+<ol>
+<li>中断处理结束返回内核前</li>
+<li>内核代码再一次具有可抢占性时</li>
+<li>内核显示调用schedule()</li>
+<li>内核任务阻塞（也会调用schedule()）</li>
+</ol>
+<h4 id="47-实时调度策略"><a class="markdownIt-Anchor" href="#47-实时调度策略"></a> 4.7 实时调度策略</h4>
+<p>SCHED_FIFO：处于可运行的FIFO进程比SCHED_NORMAL优先得到调度，一旦FIFO进程处于可执行，就一直执行，直到受阻塞或显示放弃处理器，只有更高级的FIFO和RR才能抢占，如果同级将轮流执行，但也不能抢占</p>
+<p>RR：与FIFO大体相同，RR在耗尽分配的时间后就不能继续执行</p>
+<p>这两种都是静态优先级。内核不为实时进程计算动态优先级，保证给定的优先级实时进程总能抢占低优先级进程</p>
+<p>实时优先级从0-MAX_RT_PRIO-1（默认100）,SCHED_NORMAL的nice值共享了这个取值空间，从MAX_RT_PRIO到MAX_RO_PRIO+40，nice值-20-19对于100-139</p>
+<h4 id="48-调度相关的系统调用"><a class="markdownIt-Anchor" href="#48-调度相关的系统调用"></a> 4.8 调度相关的系统调用</h4>
+<h5 id="481-调度策略和优先级相关的系统调用"><a class="markdownIt-Anchor" href="#481-调度策略和优先级相关的系统调用"></a> 4.8.1 调度策略和优先级相关的系统调用</h5>
+<ol>
+<li>sched_setscheduler()/sched_getscheduler() 设置和获取进程的调度策略和实时优先级</li>
+<li>sched_setparam()/sched_getparam()设置和获取进程的实时优先级</li>
+<li>nice()将给定的静态优先级增加一个给定的量，普通进程只能加，只有超进程才能使用负值提高优先级</li>
+</ol>
+<h5 id="482-与处理器绑定有关的系统调用"><a class="markdownIt-Anchor" href="#482-与处理器绑定有关的系统调用"></a> 4.8.2 与处理器绑定有关的系统调用</h5>
+<ol>
+<li>sched_setaffinity()/sched_getaffinity()设置和获取掩码标志，指定某个特定的cpu处理进程</li>
+</ol>
+<h5 id="483-放弃处理器时间"><a class="markdownIt-Anchor" href="#483-放弃处理器时间"></a> 4.8.3 放弃处理器时间</h5>
+<ol>
+<li>sched_yield()让进程显示将处理器时间让给其他等待执行的进程，将进程从活动队列以到过期队列实现。进程被放到优先级队列的最后并进入过期队列，实时进程不会过期，所以只会放到优先级队列的最后</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/kernal/4.%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6/" data-id="ckmixaegp0005asvxgik1dt6j" class="article-share-link">分享</a>
       
       
     </footer>
@@ -205,7 +1046,7 @@
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; pre</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span>
+    <a class="extend prev" rel="prev" href="/page/3/">&amp;laquo; pre</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="page-number current">4</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/5/">next &amp;raquo;</a>
   </nav>
 </section>
         
@@ -246,7 +1087,7 @@
     <h2 class="author">John Doe</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>32</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>45</strong><br>文章</div></a>
       <a href="/categories"><div><strong>0</strong><br>分类</div></a>
       <a href="/tags"><div><strong>0</strong><br>标签</div></a>
     </div>

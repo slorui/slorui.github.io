@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="mini-transaction  5.2 mini-transaction  5.2.1 基本概念 mini-transaction模块，是用来实现InnoDB存储引擎物理逻辑日志的写入，通过mini-transaction保证并发事务操作下数据库异常时页数据的一致性。 mini-transaction仅仅用来保证页的一致性，而事务可能需要保证多个页操作数据的一致性和持久性。或者说，事务的一致">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2021/03/21/5.mini-transaction/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="mini-transaction  5.2 mini-transaction  5.2.1 基本概念 mini-transaction模块，是用来实现InnoDB存储引擎物理逻辑日志的写入，通过mini-transaction保证并发事务操作下数据库异常时页数据的一致性。 mini-transaction仅仅用来保证页的一致性，而事务可能需要保证多个页操作数据的一致性和持久性。或者说，事务的一致">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-21T08:54:35.039Z">
+<meta property="article:modified_time" content="2021-03-11T07:59:26.320Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="https://avatars0.githubusercontent.com/u/20333903?v=3&amp;s=460">
+    <h2 class="author">John Doe</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>45</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>0</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-5.mini-transaction" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/5.mini-transaction/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:54:35.039Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="mini-transaction"><a class="markdownIt-Anchor" href="#mini-transaction"></a> mini-transaction</h3>
+<h4 id="52-mini-transaction"><a class="markdownIt-Anchor" href="#52-mini-transaction"></a> 5.2 mini-transaction</h4>
+<h5 id="521-基本概念"><a class="markdownIt-Anchor" href="#521-基本概念"></a> 5.2.1 基本概念</h5>
+<p>mini-transaction模块，是用来实现InnoDB存储引擎物理逻辑日志的写入，通过mini-transaction保证并发事务操作下数据库异常时页数据的一致性。</p>
+<p>mini-transaction仅仅用来保证页的一致性，而事务可能需要保证多个页操作数据的一致性和持久性。或者说，事务的一致性和持久性需要通过mini-transaction实现</p>
+<p>当用户修改页时，通过类似的mini-transaction形式：</p>
+<ol>
+<li>lock专享的页</li>
+<li>修改页</li>
+<li>生成undo log和redo log</li>
+<li>unlock页</li>
+</ol>
+<p>为了保证页的一致性，需要遵循：</p>
+<ol>
+<li>FIX Rules</li>
+<li>Write-Ahead Log</li>
+<li>Force-log-at-commit</li>
+</ol>
+<h5 id="522-fix-rules"><a class="markdownIt-Anchor" href="#522-fix-rules"></a> 5.2.2 FIX Rules</h5>
+<p>当数据库访问或修改一个页时，需要持有该页的latch，保证并发的数据一致性。将这个latch称为fixing the page。获得latch后，称这个页已经fixed，</p>
+<p>规则如下：</p>
+<ol>
+<li>修改一个页需要获得x-latch</li>
+<li>访问一个页获得x-latch或s-latch</li>
+<li>持有latch到修改或访问完数据</li>
+</ol>
+<p>如果要一次性修改多个页，需要持有多个页的latch，操作完成再释放</p>
+<p>每个页struct的lock变量实现对页latch的操作。一个事务读取该页，变量就+1.当LRU替换时，必须保证为0才能替换。</p>
+<p>InnoDB对FIX Rules进行了调整，若操作的页是B+树的非叶子节点，非页节点通过B+树的索引的latch维护，因此操作这些页不需要持有页的latch。</p>
+<p>因此，再InnoDB判断页是否被fix的标准是lock变量是否为0</p>
+<h5 id="523-write-ahead-log"><a class="markdownIt-Anchor" href="#523-write-ahead-log"></a> 5.2.3 Write-Ahead-Log</h5>
+<p>WAL要求一个页操作再写入到持久存储设备时，首先必须将内存中的日志写入到持久存储</p>
+<ol>
+<li>每个页要有一个LSN</li>
+<li>每次页的修改操作需要维护该LSN</li>
+<li>当一个页刷新到持久存储设备时，要求将所有内存小于该页LSN的日志都持久化</li>
+<li>当日志持久化后，将内存中的页持久化</li>
+<li>页持久化时，需要fiexd保证页的一致性</li>
+</ol>
+<h5 id="524-force-log-at-commit"><a class="markdownIt-Anchor" href="#524-force-log-at-commit"></a> 5.2.4 Force-log-at-commit</h5>
+<p>仅仅靠WAL无法保证事务的持久性，还需要force-log-at-commit</p>
+<p>当事务提交时，所有mini-transaction产生的日志都必须刷新到持久存储设备</p>
+<p>innodb_flush_log _at_trx_commit=0表示关闭</p>
+<h4 id="53-具体实现"><a class="markdownIt-Anchor" href="#53-具体实现"></a> 5.3 具体实现</h4>
+<h5 id="531-数据结构"><a class="markdownIt-Anchor" href="#531-数据结构"></a> 5.3.1 数据结构</h5>
+<p>mtr_struct实现mini-transaction</p>
+<h5 id="532-物理逻辑日志的实现"><a class="markdownIt-Anchor" href="#532-物理逻辑日志的实现"></a> 5.3.2 物理逻辑日志的实现</h5>
+<p>InnoDB的redo log是物理逻辑的，所以需要记录每种重做日志的”逻辑“（每种重做日志的类型）</p>
+<p>恢复时，根据类型对对应的也进行”逻辑“恢复</p>
+<p>重做日志的开始信息由重做日志类型type、表空间ID space、页在表空间的偏移组成offset</p>
+<p>type占1个字节，space和offset都通过压缩的方式存储。body体的根据日志类型不同内容不同</p>
+<p>例如插入记录：记录的时插入记录的前一个记录的位置和插入记录与前一个记录的差异，所以如果一个页corrupt，无法恢复。</p>
+<p>如果一个mini-transaction涉及多个页的变化，会有多个页的redo-log，会在结束时加入一个结束标志表示记录了多个页的日志</p>
+<h5 id="533-mini-transaction的使用"><a class="markdownIt-Anchor" href="#533-mini-transaction的使用"></a> 5.3.3 mini-transaction的使用</h5>
+<ol>
+<li>每个mini-transaction拥有自己的redo log entity</li>
+<li>mini-transaction持有mutex互斥量写入redo log buffer</li>
+<li>redo log buffer进行缓存写，写入操作系统内存，然后写入磁盘</li>
+<li>由于redo log进行fsync时已经释放了mutex，所以可以进行组提交，当一个事务进行fsync时，其他事务可以获得mutex对象，将重做日志写入重做日志缓存，下一次事务提交时，可以将多个事务的重做日志一次性写入重做日志文件</li>
+</ol>
+<p>当一个事务没有对页修改也要使用mini-transaction，访问数据要符合FIX Rules规则，而mini-transaction包含次功能。当提交时，仅仅对页进行unfix操作</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/5.mini-transaction/" data-id="ckmixc6t500065cvxe4jyb6u6" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/21/6.%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/21/4.%E9%87%8D%E5%81%9A%E6%97%A5%E5%BF%97/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Hexo</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="https://avatars0.githubusercontent.com/u/20333903?v=3&amp;s=460">
+    <h2 class="author">John Doe</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>45</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>0</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 John Doe<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="记录  7.2概述 InnoDB是一种面向行的存储引擎，每个页以行记录的方式存储。基于行的好处  记录放在同一页，访问一条记录需要访问的页很少 符合机械磁盘的访问方式 容易理解，数据存取就像二维表访问  通常行和记录是等价的。关系数据库理论中，元组描述记录，字段描述列 物理记录是数据在物理存储中的格式，逻辑记录就像数组，内部放着一条条记录 InnoDB引擎是索引组织表(index organiz">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Hexo">
+<meta property="og:url" content="http://example.com/2021/03/21/7.%E8%AE%B0%E5%BD%95/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="记录  7.2概述 InnoDB是一种面向行的存储引擎，每个页以行记录的方式存储。基于行的好处  记录放在同一页，访问一条记录需要访问的页很少 符合机械磁盘的访问方式 容易理解，数据存取就像二维表访问  通常行和记录是等价的。关系数据库理论中，元组描述记录，字段描述列 物理记录是数据在物理存储中的格式，逻辑记录就像数组，内部放着一条条记录 InnoDB引擎是索引组织表(index organiz">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-21T08:54:35.044Z">
+<meta property="article:modified_time" content="2021-03-13T08:58:44.350Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="https://avatars0.githubusercontent.com/u/20333903?v=3&amp;s=460">
+    <h2 class="author">John Doe</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>45</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>0</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-7.记录" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/7.%E8%AE%B0%E5%BD%95/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:54:35.044Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="记录"><a class="markdownIt-Anchor" href="#记录"></a> 记录</h3>
+<h4 id="72概述"><a class="markdownIt-Anchor" href="#72概述"></a> 7.2概述</h4>
+<p>InnoDB是一种面向行的存储引擎，每个页以行记录的方式存储。基于行的好处</p>
+<ol>
+<li>记录放在同一页，访问一条记录需要访问的页很少</li>
+<li>符合机械磁盘的访问方式</li>
+<li>容易理解，数据存取就像二维表访问</li>
+</ol>
+<p>通常行和记录是等价的。关系数据库理论中，元组描述记录，字段描述列</p>
+<p>物理记录是数据在物理存储中的格式，逻辑记录就像数组，内部放着一条条记录</p>
+<p>InnoDB引擎是索引组织表(index organized table,IOT)，意味着所有用户数据都是B+树存储。叶子节点存放着每行记录，若没有主键，字段创建一个6字节的隐藏列当作主键。</p>
+<p>InnoDB支持事务和MVCC，每行记录还包含了一个回滚指针以及记录事务ID的列（都是隐藏列）。回滚指针用来构造上一个版本，实现MVCC，事务ID判断当前记录其他事务是否可见，实现事务隔离和ＭＶＣＣ</p>
+<h4 id="73-物理记录"><a class="markdownIt-Anchor" href="#73-物理记录"></a> 7.3 物理记录</h4>
+<h5 id="731-物理记录格式"><a class="markdownIt-Anchor" href="#731-物理记录格式"></a> 7.3.1 物理记录格式</h5>
+<p>物理记录由两部分组成：</p>
+<ol>
+<li>extra info</li>
+<li>实际存储行数据</li>
+</ol>
+<p>extra info由col offset list和record header组成。实际存储的第一个列的位置称为original offset，物理记录总指向这个位置，不是物理记录实际开始的位置</p>
+<p>开始部分col offset list是记录中每个列的偏移量，根据列的顺序逆序。每个offset list除了记录列表的长度，还记录了该列是否为null以及是否包含外部存储属性。</p>
+<p>record header的内容帮助innodb读取完整的一行记录，如果需要，并转化为逻辑记录。存放了info_bits信息（记录删除标记，B+树非叶子节点最小记录标记）、记录序号，记录数量、堆中的序号、下一个记录指针等</p>
+<p>InnoDB记录在页中，但是页的记录并不是按索引规则排序，页更像一个堆，，其中记录无限，但有堆中序号，记录之间通过指针逻辑串联。堆序号主要是为了实现锁</p>
+<p>每个页都有两个虚拟的伪记录，所以heap no（堆号）从2开始</p>
+<h5 id="732-大记录格式"><a class="markdownIt-Anchor" href="#732-大记录格式"></a> 7.3.2 大记录格式</h5>
+<p>大记录是值某些记录的列不进在当前页，也在其他页（溢出页）。大记录类型有BLOB和TEXT。InnoDB不是把BLOB和TEXT都放溢出页，而是当记录总字节数大于空页的一半时，才放溢出页。对于溢出的列，在列的偏移列表中增加标记。InnoDB的处理方式，当前页值存储溢出列的127个字节，剩下20个字节存储溢出页信息</p>
+<p>由于存放于off-page的字节数最大标识最大4个字节，所以BLOB最大4GB</p>
+<p>大记录更新时，先把之前的伪删除，然后插入新的记录，回滚时删除新记录，恢复伪删除的数据。</p>
+<h5 id="733-伪记录"><a class="markdownIt-Anchor" href="#733-伪记录"></a> 7.3.3 伪记录</h5>
+<p>索引页有两个伪记录，分别伪Infimun记录和Supremum记录。用户可以把Infimun当作页中最小记录，Supremun当作最大记录。这里个记录起到了边界的作用。还可以优化锁的性能</p>
+<h4 id="74-逻辑记录"><a class="markdownIt-Anchor" href="#74-逻辑记录"></a> 7.4 逻辑记录</h4>
+<p>逻辑记录存放于内存，每个dtuple_struct逻辑记录包含多个dfield_struct字段，每个列的数据，大小，类型、列号等</p>
+<p>大记录存放在big_rec_struct，每个大记录可能由多个big_rec_field_struct列组成</p>
+<h4 id="75-记录比较"><a class="markdownIt-Anchor" href="#75-记录比较"></a> 7.5 记录比较</h4>
+<p>B+树索引只能定位到所在的记录页，不能直接定位到具体的查询记录，找到页，还需通过二叉查找算法进行搜索。</p>
+<p>记录比较分为逻辑记录比较和物理记录比较。通常都是通过逻辑记录和物理记录比较。对于插入，本身不存在插入的物理记录，要先构建逻辑记录。对于update，delete操作，先通过select定位，这时就转化为逻辑记录</p>
+<p>InnoDB使用mtype和prtype分别代表列的类型和列的属性。通过将数据类型转化为mtype和prtype</p>
+<p>通过mtype和prtype就可以进行比较</p>
+<h4 id="76-行记录版本"><a class="markdownIt-Anchor" href="#76-行记录版本"></a> 7.6 行记录版本</h4>
+<p>多版本是指行记录可能一时存在多个版本。记录版本号通过隐藏的事务id列表示，由于事务id自增，所以版本号id也自增</p>
+<p>InnoDB通过回滚指针保存前一个版本的undo日志，通过undo日志可以构造出记录的前一个版本，从而实现统一记录的多版本。当没有事务引用这些记录版本，就可以回收这部分undo日志空间。</p>
+<p>通过数据结构read_view_struct控制事务应该读取记录的哪个版本</p>
+<p>read_view_struct有low_limit_id和up_limit_id保存当前的可见-不可见范围</p>
+<p>在事务之前提交的事务，当前事务应当可见，当前事务之后的事务，当前事务不可见。<strong>之间的事务，能否看见取决于创建事务时，事务是否以及提交。对于为提交的事务，不可见。</strong></p>
+<p>通过判断当前事务是否可以读取记录当前版本号，若不可以则构建前一个行版本。判断某个事务的版本号是否可见，从小事务开始判断。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/7.%E8%AE%B0%E5%BD%95/" data-id="ckmixc6t9000a5cvx8v2368qi" class="article-share-link">分享</a>
+      
+      
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/21/8.%E7%B4%A2%E5%BC%95%E9%A1%B5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          (no title)
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/21/6.%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title"></div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Hexo</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="https://avatars0.githubusercontent.com/u/20333903?v=3&amp;s=460">
+    <h2 class="author">John Doe</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>45</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>0</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>0</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 John Doe<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
