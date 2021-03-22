@@ -3,25 +3,25 @@
 <head>
   <meta charset="utf-8">
   
-  <title>内核同步方法 | Hexo</title>
+  <title>内核同步方法 | Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="内核同步方法  10.1 原子操作 原子操作可以保证指令以原子的方式执行——过程不被打断。 内核通过了两组原子接口——针对整数进行操作和针对单独的位进行操作。 大多体系结构都提供了支持原子操作的简单算数指令，少部分缺少的也为单步执行提供了锁内存总线的指令，保证了其他改变内存的操作不能同时发生  10.1.1 原子整数操作 atomic_t变量代替原始变量  10.1.2 64位原子操作 引入at">
 <meta property="og:type" content="article">
 <meta property="og:title" content="内核同步方法">
 <meta property="og:url" content="http://example.com/2021/03/21/kernal/10.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="Blog">
 <meta property="og:description" content="内核同步方法  10.1 原子操作 原子操作可以保证指令以原子的方式执行——过程不被打断。 内核通过了两组原子接口——针对整数进行操作和针对单独的位进行操作。 大多体系结构都提供了支持原子操作的简单算数指令，少部分缺少的也为单步执行提供了锁内存总线的指令，保证了其他改变内存的操作不能同时发生  10.1.1 原子整数操作 atomic_t变量代替原始变量  10.1.2 64位原子操作 引入at">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200549750.png">
 <meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200649195.png">
 <meta property="article:published_time" content="2021-03-21T08:53:05.136Z">
 <meta property="article:modified_time" content="2021-03-22T03:10:31.362Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:author" content="Slorui">
 <meta property="article:tag" content="kernal">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200549750.png">
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -48,7 +48,7 @@
   <h3 class="widget-title"></h3>
   <div class="widget">
     <img class="avatar" src="/images/20210321171549.jpg">
-    <h2 class="author">John Doe</h2>
+    <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
       <a href="/archives"><div><strong>31</strong><br>文章</div></a>
@@ -266,7 +266,7 @@
     <div class="widget-wrap">
   <h3 class="widget-title"></h3>
   <div class="widget">
-    <h1 class="blog-title">Hexo</h1>
+    <h1 class="blog-title">Blog</h1>
     <h2 class="blog-subtitle"></h2>
     <ul class="blog-link">
      
@@ -295,7 +295,7 @@
   <h3 class="widget-title"></h3>
   <div class="widget">
     <img class="avatar" src="/images/20210321171549.jpg">
-    <h2 class="author">John Doe</h2>
+    <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
       <a href="/archives"><div><strong>31</strong><br>文章</div></a>
@@ -332,7 +332,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy;2020 - 2021 John Doe<br>
+      &copy;2020 - 2021 Slorui<br>
       由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
       主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
       
