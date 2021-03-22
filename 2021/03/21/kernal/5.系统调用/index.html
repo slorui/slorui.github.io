@@ -3,18 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Hexo</title>
+  <title>系统调用 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="系统调用 用户进程和内核交互的一组接口  接口提供了应用程序受限的访问硬件设备 接口提供了创建新进程并与已有进程进行通信的机制 接口提供了申请操作系统其他资源的能力  应用程序发出请求，内核满足这些请求，接口主要是为了保证系统稳定可靠  5.1 与内核通信 系统调用是在用户空间和硬件设备之间添加了一个中间层，作用有三  为用户控件提供了一种硬件的抽象接口，应用程序可以屏蔽底层硬件类型 系统调用保">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hexo">
+<meta property="og:title" content="系统调用">
 <meta property="og:url" content="http://example.com/2021/03/21/kernal/5.%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="系统调用 用户进程和内核交互的一组接口  接口提供了应用程序受限的访问硬件设备 接口提供了创建新进程并与已有进程进行通信的机制 接口提供了申请操作系统其他资源的能力  应用程序发出请求，内核满足这些请求，接口主要是为了保证系统稳定可靠  5.1 与内核通信 系统调用是在用户空间和硬件设备之间添加了一个中间层，作用有三  为用户控件提供了一种硬件的抽象接口，应用程序可以屏蔽底层硬件类型 系统调用保">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-21T08:53:05.175Z">
-<meta property="article:modified_time" content="2021-03-06T09:01:20.106Z">
+<meta property="article:modified_time" content="2021-03-22T03:09:26.047Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="kernal">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
@@ -48,8 +49,8 @@
     <h3 class="description"></h3>
     <div class="count-box">
       <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
+      <a href="/categories"><div><strong>5</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -85,6 +86,27 @@
   </div>
   <div class="article-inner">
     
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      系统调用
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
@@ -175,6 +197,8 @@
       <a data-url="http://example.com/2021/03/21/kernal/5.%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" data-id="ckmixaegq0006asvxez8b10fz" class="article-share-link">分享</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernal/" rel="tag">kernal</a></li></ul>
+
     </footer>
   </div>
   
@@ -185,7 +209,7 @@
       <strong class="article-nav-caption">上一篇</strong>
       <div class="article-nav-title">
         
-          (no title)
+          内核数据结构
         
       </div>
     </a>
@@ -193,7 +217,7 @@
   
     <a href="/2021/03/21/kernal/4.%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title"></div>
+      <div class="article-nav-title">进程调度</div>
     </a>
   
 </nav>
@@ -243,8 +267,8 @@
     <h3 class="description"></h3>
     <div class="count-box">
       <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
+      <a href="/categories"><div><strong>5</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
     </div>
 
 

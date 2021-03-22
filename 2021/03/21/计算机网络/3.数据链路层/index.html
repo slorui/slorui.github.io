@@ -3,69 +3,70 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Hexo</title>
+  <title>数据链路层 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="数据链路层  概述 链路：从一个节点到相邻节点的一段物理线路，中间没有其他交换节点 数据链路：把实现通信协议的硬件和软件加到链路上就构成了数据链路  封装成帧 将数据链路层上层交付的协议数据单元添加帧头和帧尾使之成为帧  帧头和帧尾的作用之一就是帧定界，用于区分一个个帧的范围，例如ppp的开头和结尾标志，MAC帧没有， 物理层会给MAC增加8个字节前导码，前七个字节是前同步码，还有一个是帧开始定">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hexo">
+<meta property="og:title" content="数据链路层">
 <meta property="og:url" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="数据链路层  概述 链路：从一个节点到相邻节点的一段物理线路，中间没有其他交换节点 数据链路：把实现通信协议的硬件和软件加到链路上就构成了数据链路  封装成帧 将数据链路层上层交付的协议数据单元添加帧头和帧尾使之成为帧  帧头和帧尾的作用之一就是帧定界，用于区分一个个帧的范围，例如ppp的开头和结尾标志，MAC帧没有， 物理层会给MAC增加8个字节前导码，前七个字节是前同步码，还有一个是帧开始定">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305151925734.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305153457051.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305153939667.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305154114567.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305154318157.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305154725880.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305154758893.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305154841260.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305154932465.png">
-<meta property="og:image" content="g:%5C%E5%AD%A6%E4%B9%A0%5C%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%5Cimage-20210305155039449.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305155230269.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305155247052.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160038108.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160151099.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160236069.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160343783.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160427761.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160512449.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160538902.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160837356.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305151925734.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305153457051.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305153939667.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305154114567.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305154318157.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305154725880.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305154758893.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305154841260.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305154932465.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305155039449.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305155230269.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305155247052.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305160038108.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305160151099.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305160236069.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305160343783.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305160427761.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305160512449.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305160538902.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305160837356.png">
 <meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160942724.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161012872.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161140096.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161227434.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161302601.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161404087.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161451664.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161604424.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161750068.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161933910.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305162050074.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305162148528.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305162406139.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305162511460.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305162705150.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305162830630.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163052514.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163108756.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163213345.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163234884.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163309932.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163327093.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163339885.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163406495.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163446017.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163459916.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163512718.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163710896.png">
-<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163721422.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305161012872.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305161140096.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305161227434.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305161302601.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305161404087.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305161451664.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305161604424.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305161750068.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305161933910.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305162050074.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305162148528.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305162406139.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305162511460.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305162705150.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305162830630.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163052514.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163108756.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163213345.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163234884.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163309932.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163327093.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163339885.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163406495.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163446017.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163459916.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163512718.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163710896.png">
+<meta property="og:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305163721422.png">
 <meta property="article:published_time" content="2021-03-21T08:53:05.539Z">
-<meta property="article:modified_time" content="2021-03-07T05:27:14.774Z">
+<meta property="article:modified_time" content="2021-03-22T03:20:30.083Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="计算机网络">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305151925734.png">
+<meta name="twitter:image" content="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/....%5Cimages%5Cimage-20210305151925734.png">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -98,8 +99,8 @@
     <h3 class="description"></h3>
     <div class="count-box">
       <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
+      <a href="/categories"><div><strong>5</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -136,6 +137,27 @@
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      数据链路层
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="数据链路层"><a class="markdownIt-Anchor" href="#数据链路层"></a> 数据链路层</h3>
@@ -144,7 +166,7 @@
 <p>数据链路：把实现通信协议的硬件和软件加到链路上就构成了数据链路</p>
 <h4 id="封装成帧"><a class="markdownIt-Anchor" href="#封装成帧"></a> 封装成帧</h4>
 <p>将数据链路层上层交付的协议数据单元添加帧头和帧尾使之成为帧</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305151925734.png" alt="image-20210305151925734" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305151925734.png" alt="image-20210305151925734" /></p>
 <p>帧头和帧尾的作用之一就是帧定界，用于区分一个个帧的范围，例如ppp的开头和结尾标志，MAC帧没有，</p>
 <p>物理层会给MAC增加8个字节前导码，前七个字节是前同步码，还有一个是帧开始定界符，MAC还有96比特的帧间间隔 不需要结束标志</p>
 <p>链路层会对数据定义帧定界符进行转义</p>
@@ -159,14 +181,14 @@
 <p>有线链路误码率较低，所以不要求数据链路层向上提供可靠传输服务</p>
 <p>无线链路误码率较高，要求数据链路层必须向上提高可靠传输服务</p>
 <p>传出差错：比特差错、分组丢失、分组失序、分组重复（分组意味着差错不局限于数据链路层）</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305153457051.png" alt="image-20210305153457051" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305153457051.png" alt="image-20210305153457051" /></p>
 <h5 id="停止等待协议sw"><a class="markdownIt-Anchor" href="#停止等待协议sw"></a> 停止等待协议SW</h5>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305153939667.png" alt="image-20210305153939667" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305153939667.png" alt="image-20210305153939667" /></p>
 <p>当往返时延RTT远大于帧发送时延时，信道利用率极低</p>
 <h5 id="回退n帧协议gbngo-back-n"><a class="markdownIt-Anchor" href="#回退n帧协议gbngo-back-n"></a> 回退N帧协议GBN（Go-back-N）</h5>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305154114567.png" alt="image-20210305154114567" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305154114567.png" alt="image-20210305154114567" /></p>
 <h5 id="选择重传协议sr"><a class="markdownIt-Anchor" href="#选择重传协议sr"></a> 选择重传协议SR</h5>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305154318157.png" alt="image-20210305154318157" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305154318157.png" alt="image-20210305154318157" /></p>
 <h4 id="点对点协议ppppoint-to-point-protocol"><a class="markdownIt-Anchor" href="#点对点协议ppppoint-to-point-protocol"></a> 点对点协议PPP（Point-to-Point Protocol）</h4>
 <p>ppp协议为点对点的数据链路层各协议数据包提供了一个标准</p>
 <ol>
@@ -174,78 +196,78 @@
 <li>链路控制协议LCP（用于建立、配置以及测试数据链路的连接）</li>
 <li>一套网络控制协议NCPs（其中每一个协议支持不同的网络层协议）</li>
 </ol>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305154725880.png" alt="image-20210305154725880" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305154725880.png" alt="image-20210305154725880" /></p>
 <p>帧格式：</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305154758893.png" alt="image-20210305154758893" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305154758893.png" alt="image-20210305154758893" /></p>
 <p>透明传输：</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305154841260.png" alt="image-20210305154841260" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305154841260.png" alt="image-20210305154841260" /></p>
 <p>差错检测：使用CRC检验</p>
 <p>提供不可靠服务</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305154932465.png" alt="image-20210305154932465" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305154932465.png" alt="image-20210305154932465" /></p>
 <p>工作状态：</p>
-<p><img src="G:%5C%E5%AD%A6%E4%B9%A0%5C%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%5Cimage-20210305155039449.png" alt="image-20210305155039449" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305155039449.png" alt="image-20210305155039449" /></p>
 <h4 id="媒体介入控制mac"><a class="markdownIt-Anchor" href="#媒体介入控制mac"></a> 媒体介入控制MAC</h4>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305155230269.png" alt="image-20210305155230269" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305155247052.png" alt="image-20210305155247052" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305155230269.png" alt="image-20210305155230269" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305155247052.png" alt="image-20210305155247052" /></p>
 <p>静态划分信道：频分复用FDM、时分复用TDM、波分复用WDM、码分复用CDM</p>
 <h5 id="随机接入"><a class="markdownIt-Anchor" href="#随机接入"></a> 随机接入</h5>
 <p>CSMA—CD（载波监听多址接入-碰撞检测   Carrier Sense Multiple Access-Collision Detection）</p>
 <p>CS：每个站点发送帧前要先监听总线是否有其他站点发送帧，总线空闲96比特才能发送</p>
 <p>MA：多个站点连接再一条总线</p>
 <p>CD：站点边发送边检测碰撞，碰撞后立即停止发送，退避随机事件后发送</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160038108.png" alt="image-20210305160038108" /></p>
-<p>争用期：<img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160151099.png" alt="image-20210305160151099" /></p>
-<p>最小帧长：<img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160236069.png" alt="image-20210305160236069" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305160038108.png" alt="image-20210305160038108" /></p>
+<p>争用期：<img src="....%5Cimages%5Cimage-20210305160151099.png" alt="image-20210305160151099" /></p>
+<p>最小帧长：<img src="....%5Cimages%5Cimage-20210305160236069.png" alt="image-20210305160236069" /></p>
 <p>最大帧长：</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160343783.png" alt="image-20210305160343783" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305160343783.png" alt="image-20210305160343783" /></p>
 <p>截断二进制指数退避算法：</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160427761.png" alt="image-20210305160427761" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305160427761.png" alt="image-20210305160427761" /></p>
 <p>帧发送流程</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160512449.png" alt="image-20210305160512449" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305160512449.png" alt="image-20210305160512449" /></p>
 <p>帧接收流程</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160538902.png" alt="image-20210305160538902" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305160538902.png" alt="image-20210305160538902" /></p>
 <p>CSMA-CA</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160837356.png" alt="image-20210305160837356" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305160837356.png" alt="image-20210305160837356" /></p>
 <p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305160942724.png" alt="image-20210305160942724" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161012872.png" alt="image-20210305161012872" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161140096.png" alt="image-20210305161140096" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305161012872.png" alt="image-20210305161012872" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305161140096.png" alt="image-20210305161140096" /></p>
 <p>退避算法：</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161227434.png" alt="image-20210305161227434" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161302601.png" alt="image-20210305161302601" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161404087.png" alt="image-20210305161404087" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305161227434.png" alt="image-20210305161227434" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305161302601.png" alt="image-20210305161302601" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305161404087.png" alt="image-20210305161404087" /></p>
 <h4 id="maciparp"><a class="markdownIt-Anchor" href="#maciparp"></a> MAC/IP/ARP</h4>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161451664.png" alt="image-20210305161451664" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305161451664.png" alt="image-20210305161451664" /></p>
 <h5 id="mac"><a class="markdownIt-Anchor" href="#mac"></a> MAC</h5>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161604424.png" alt="image-20210305161604424" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161750068.png" alt="image-20210305161750068" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305161933910.png" alt="image-20210305161933910" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305161604424.png" alt="image-20210305161604424" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305161750068.png" alt="image-20210305161750068" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305161933910.png" alt="image-20210305161933910" /></p>
 <h5 id="ip"><a class="markdownIt-Anchor" href="#ip"></a> IP</h5>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305162050074.png" alt="image-20210305162050074" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305162148528.png" alt="image-20210305162148528" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305162050074.png" alt="image-20210305162050074" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305162148528.png" alt="image-20210305162148528" /></p>
 <h5 id="arp地址解析协议"><a class="markdownIt-Anchor" href="#arp地址解析协议"></a> ARP（地址解析协议）</h5>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305162406139.png" alt="image-20210305162406139" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305162406139.png" alt="image-20210305162406139" /></p>
 <h4 id="集线器和交换机"><a class="markdownIt-Anchor" href="#集线器和交换机"></a> 集线器和交换机</h4>
 <p>集线器：</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305162511460.png" alt="image-20210305162511460" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305162511460.png" alt="image-20210305162511460" /></p>
 <p>交换机：</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305162705150.png" alt="image-20210305162705150" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305162830630.png" alt="image-20210305162830630" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305162705150.png" alt="image-20210305162705150" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305162830630.png" alt="image-20210305162830630" /></p>
 <p>交换机自学习和转发帧：</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163052514.png" alt="image-20210305163052514" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163108756.png" alt="image-20210305163108756" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163052514.png" alt="image-20210305163052514" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163108756.png" alt="image-20210305163108756" /></p>
 <p>以太网交换机生成树协议STP</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163213345.png" alt="image-20210305163213345" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163234884.png" alt="image-20210305163234884" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163213345.png" alt="image-20210305163213345" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163234884.png" alt="image-20210305163234884" /></p>
 <h4 id="虚拟局域网vlan"><a class="markdownIt-Anchor" href="#虚拟局域网vlan"></a> 虚拟局域网VLAN</h4>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163309932.png" alt="image-20210305163309932" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163327093.png" alt="image-20210305163327093" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163339885.png" alt="image-20210305163339885" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163406495.png" alt="image-20210305163406495" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163446017.png" alt="image-20210305163446017" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163459916.png" alt="image-20210305163459916" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163512718.png" alt="image-20210305163512718" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163710896.png" alt="image-20210305163710896" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210305163721422.png" alt="image-20210305163721422" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163309932.png" alt="image-20210305163309932" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163327093.png" alt="image-20210305163327093" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163339885.png" alt="image-20210305163339885" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163406495.png" alt="image-20210305163406495" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163446017.png" alt="image-20210305163446017" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163459916.png" alt="image-20210305163459916" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163512718.png" alt="image-20210305163512718" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163710896.png" alt="image-20210305163710896" /></p>
+<p><img src="....%5Cimages%5Cimage-20210305163721422.png" alt="image-20210305163721422" /></p>
 
       
     </div>
@@ -253,6 +275,8 @@
       <a data-url="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" data-id="ckmixaegv000dasvx8yq1hfni" class="article-share-link">分享</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a></li></ul>
+
     </footer>
   </div>
   
@@ -263,7 +287,7 @@
       <strong class="article-nav-caption">上一篇</strong>
       <div class="article-nav-title">
         
-          (no title)
+          网络层
         
       </div>
     </a>
@@ -271,7 +295,7 @@
   
     <a href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2.%E7%89%A9%E7%90%86%E5%B1%82/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title"></div>
+      <div class="article-nav-title">物理层</div>
     </a>
   
 </nav>
@@ -321,8 +345,8 @@
     <h3 class="description"></h3>
     <div class="count-box">
       <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
+      <a href="/categories"><div><strong>5</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
     </div>
 
 

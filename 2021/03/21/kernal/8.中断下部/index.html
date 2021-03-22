@@ -3,18 +3,19 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Hexo</title>
+  <title>中断下部 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="中断下部 中断处理程序由于一些限制，只能完成整个上部：  中断处理程序以异步的方式执行，并且可能打断其他重要代码（包括其他中断），因此要越快越好 中断处理程序执行时，最好的情况只屏蔽同级以下字段，最坏的情况屏蔽所有中断，所有执行的越快越好 中断处理程序往往要对硬件操作，通常由很高的时限要求 中断处理程序不能再进程上下文运行，不允许阻塞，限制了所能做的事情   8.1 下半部 下半部的任务就是执行">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hexo">
+<meta property="og:title" content="中断下部">
 <meta property="og:url" content="http://example.com/2021/03/21/kernal/8.%E4%B8%AD%E6%96%AD%E4%B8%8B%E9%83%A8/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="中断下部 中断处理程序由于一些限制，只能完成整个上部：  中断处理程序以异步的方式执行，并且可能打断其他重要代码（包括其他中断），因此要越快越好 中断处理程序执行时，最好的情况只屏蔽同级以下字段，最坏的情况屏蔽所有中断，所有执行的越快越好 中断处理程序往往要对硬件操作，通常由很高的时限要求 中断处理程序不能再进程上下文运行，不允许阻塞，限制了所能做的事情   8.1 下半部 下半部的任务就是执行">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2021-03-21T08:53:05.225Z">
-<meta property="article:modified_time" content="2021-03-09T09:04:04.234Z">
+<meta property="article:modified_time" content="2021-03-22T03:10:09.343Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="kernal">
 <meta name="twitter:card" content="summary">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
@@ -48,8 +49,8 @@
     <h3 class="description"></h3>
     <div class="count-box">
       <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
+      <a href="/categories"><div><strong>5</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -86,6 +87,27 @@
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      中断下部
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="中断下部"><a class="markdownIt-Anchor" href="#中断下部"></a> 中断下部</h3>
@@ -120,6 +142,8 @@
       <a data-url="http://example.com/2021/03/21/kernal/8.%E4%B8%AD%E6%96%AD%E4%B8%8B%E9%83%A8/" data-id="ckmixaegq0007asvxbitl87ij" class="article-share-link">分享</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernal/" rel="tag">kernal</a></li></ul>
+
     </footer>
   </div>
   
@@ -130,7 +154,7 @@
       <strong class="article-nav-caption">上一篇</strong>
       <div class="article-nav-title">
         
-          (no title)
+          内核同步介绍
         
       </div>
     </a>
@@ -138,7 +162,7 @@
   
     <a href="/2021/03/21/kernal/7.%E4%B8%AD%E6%96%AD%E5%92%8C%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title"></div>
+      <div class="article-nav-title">中断和中断处理</div>
     </a>
   
 </nav>
@@ -188,8 +212,8 @@
     <h3 class="description"></h3>
     <div class="count-box">
       <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
+      <a href="/categories"><div><strong>5</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
     </div>
 
 

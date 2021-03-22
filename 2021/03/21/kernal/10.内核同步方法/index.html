@@ -3,11 +3,11 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Hexo</title>
+  <title>内核同步方法 | Hexo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="内核同步方法  10.1 原子操作 原子操作可以保证指令以原子的方式执行——过程不被打断。 内核通过了两组原子接口——针对整数进行操作和针对单独的位进行操作。 大多体系结构都提供了支持原子操作的简单算数指令，少部分缺少的也为单步执行提供了锁内存总线的指令，保证了其他改变内存的操作不能同时发生  10.1.1 原子整数操作 atomic_t变量代替原始变量  10.1.2 64位原子操作 引入at">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hexo">
+<meta property="og:title" content="内核同步方法">
 <meta property="og:url" content="http://example.com/2021/03/21/kernal/10.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="内核同步方法  10.1 原子操作 原子操作可以保证指令以原子的方式执行——过程不被打断。 内核通过了两组原子接口——针对整数进行操作和针对单独的位进行操作。 大多体系结构都提供了支持原子操作的简单算数指令，少部分缺少的也为单步执行提供了锁内存总线的指令，保证了其他改变内存的操作不能同时发生  10.1.1 原子整数操作 atomic_t变量代替原始变量  10.1.2 64位原子操作 引入at">
@@ -15,8 +15,9 @@
 <meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200549750.png">
 <meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200649195.png">
 <meta property="article:published_time" content="2021-03-21T08:53:05.136Z">
-<meta property="article:modified_time" content="2021-03-10T03:34:56.122Z">
+<meta property="article:modified_time" content="2021-03-22T03:10:31.362Z">
 <meta property="article:author" content="John Doe">
+<meta property="article:tag" content="kernal">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200549750.png">
   
@@ -51,8 +52,8 @@
     <h3 class="description"></h3>
     <div class="count-box">
       <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
+      <a href="/categories"><div><strong>5</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -88,6 +89,27 @@
   </div>
   <div class="article-inner">
     
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      内核同步方法
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
     
     <div class="article-entry" itemprop="articleBody">
       
@@ -207,6 +229,8 @@
       <a data-url="http://example.com/2021/03/21/kernal/10.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/" data-id="ckmixaego0003asvxf6oy5sz7" class="article-share-link">分享</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernal/" rel="tag">kernal</a></li></ul>
+
     </footer>
   </div>
   
@@ -217,7 +241,7 @@
       <strong class="article-nav-caption">上一篇</strong>
       <div class="article-nav-title">
         
-          (no title)
+          进程调度
         
       </div>
     </a>
@@ -275,8 +299,8 @@
     <h3 class="description"></h3>
     <div class="count-box">
       <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
+      <a href="/categories"><div><strong>5</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>7</strong><br>标签</div></a>
     </div>
 
 
