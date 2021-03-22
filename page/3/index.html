@@ -44,8 +44,8 @@
     <h3 class="description"></h3>
     <div class="count-box">
       <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>1</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>1</strong><br>标签</div></a>
+      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -108,7 +108,7 @@
     <div class="article-entry" itemprop="articleBody">
       
         <h4 id="模块划分"><a class="markdownIt-Anchor" href="#模块划分"></a> 模块划分</h4>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309135527897.png" alt="image-20210309135527897" /></p>
+<p><img src="......%5Cimages%5Cimage-20210309135527897.png" alt="image-20210309135527897" /></p>
 <p>File Manager：封装了InnoDB对文件的各类操作，读、写、异步I/O</p>
 <p>Concurrency Manager：主要封装了引擎内部使用的各类mutex和latch</p>
 <p>Common Utility：封装了基本的 数据结构和算法定义，如链表，哈希表</p>
@@ -873,13 +873,34 @@
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/java/%E8%AF%AD%E6%B3%95%E7%B3%96/">语法糖</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="语法糖syntax-sugar"><a class="markdownIt-Anchor" href="#语法糖syntax-sugar"></a> 语法糖（Syntax sugar)</h3>
 <p>语法糖使编程语言更容易表达或阅读</p>
 <h4 id="for-vs-for-each"><a class="markdownIt-Anchor" href="#for-vs-for-each"></a> for vs for-each</h4>
 <p>collection实现了iterable接口，内部有iterator，通过调用iterator进行遍历</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316100157702.png" alt="image-20210316100157702" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316100157702.png" alt="image-20210316100157702" /></p>
 <p>for和for-each性能相近</p>
 <p>for-each从jdk5开始引入，语法简洁，避免越界</p>
 <p>缺点：</p>
@@ -889,7 +910,7 @@
 <li>for-each只能正向</li>
 <li>for-each不能同时遍历两个集合</li>
 </ol>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316100440995.png" alt="image-20210316100440995" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316100440995.png" alt="image-20210316100440995" /></p>
 <h4 id="枚举"><a class="markdownIt-Anchor" href="#枚举"></a> 枚举</h4>
 <p>java5推出枚举类</p>
 <p>enum关键字声明了当前类是enum的子类（不需要extend）</p>
@@ -915,7 +936,7 @@ ordinal（）返回枚举索引</p>
 <p>尽量少使用通配符，否则可能多个类有相同的属性</p>
 <h4 id="装箱和拆箱"><a class="markdownIt-Anchor" href="#装箱和拆箱"></a> 装箱和拆箱</h4>
 <p>从java5引入，简化基本类型和对象的转化，编译器帮忙转化</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316102529586.png" alt="image-20210316102529586" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316102529586.png" alt="image-20210316102529586" /></p>
 <p>基本类型和包装类运算，会拆箱运算</p>
 <p>下面我们进行一个归类：<br />
 Integer派别：Integer、Short、Byte、Character、Long这几个类的valueOf方法的实现是类似的。 都再某个范围返回固定生成的对象，大于时才产生新的对象。<br />
@@ -923,18 +944,18 @@ Double派别：Double、Float的valueOf方法的实现是类似的。每次都�
 <p>equals传入基本类型，会装箱成对应的包装类传入，然后拆箱比较</p>
 <h4 id="多异常并列"><a class="markdownIt-Anchor" href="#多异常并列"></a> 多异常并列</h4>
 <p>jdk7引入，多个异常不能有直接或间接继承关系</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316103426152.png" alt="image-20210316103426152" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316103426152.png" alt="image-20210316103426152" /></p>
 <h4 id="整数类型二进制赋值"><a class="markdownIt-Anchor" href="#整数类型二进制赋值"></a> 整数类型二进制赋值</h4>
 <p>java7新语法，整数用二进制赋值，避免二进制计算（byte/short/int/long)</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316103635903.png" alt="image-20210316103635903" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316103635903.png" alt="image-20210316103635903" /></p>
 <p>0b或0B开头是二进制</p>
 <h4 id="数字中的下划线"><a class="markdownIt-Anchor" href="#数字中的下划线"></a> 数字中的下划线</h4>
 <p>java7新语法，</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316103812398.png" alt="image-20210316103812398" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316103812398.png" alt="image-20210316103812398" /></p>
 <h4 id="接口的默认方法"><a class="markdownIt-Anchor" href="#接口的默认方法"></a> 接口的默认方法</h4>
 <p>java最初接口方法没有实现，公开的</p>
 <p>java8接口可以有默认方法和静态方法，为lambda表达式提供支持</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316104031479.png" alt="image-20210316104031479" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316104031479.png" alt="image-20210316104031479" /></p>
 <p>接口的默认方法：</p>
 <ol>
 <li>dufault作为关键字，其他和普通函数一样</li>
@@ -944,7 +965,7 @@ Double派别：Double、Float的valueOf方法的实现是类似的。每次都�
 <li>当父类和父接口有同样（同名同参数）默认方法，子类继承父类默认方法，兼容7以前的代码</li>
 <li>子类继承的两个接口至少有一个是默认方法，必须重写，不然报错</li>
 </ol>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316104718763.png" alt="image-20210316104718763" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316104718763.png" alt="image-20210316104718763" /></p>
 <p>这样写才能调用父接口的默认方法</p>
 <p>java8接口的静态方法属于接口，不属于子类、子接口，不能继承，只能直接调用接口</p>
 <p>java9接口的私有方法</p>
@@ -971,14 +992,14 @@ Double派别：Double、Float的valueOf方法的实现是类似的。每次都�
 <h4 id="try-with-resouce"><a class="markdownIt-Anchor" href="#try-with-resouce"></a> try-with-resouce</h4>
 <p>jdk7提供，java如果打开外部资源文件，使用后需要正确关闭</p>
 <p>原理：资源对象必须实现AutoCloseable接口，既实现了close（）方法</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316105631184.png" alt="image-20210316105631184" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316105631184.png" alt="image-20210316105631184" /></p>
 <p>jdk7必须再try内部定义，否则需要一个临时变量，jdk9可以直接使用外部变量</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316105753414.png" alt="image-20210316105753414" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316105753414.png" alt="image-20210316105753414" /></p>
 <p>编译器默认改造</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316105951432.png" alt="image-20210316105951432" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316105951432.png" alt="image-20210316105951432" /></p>
 <h4 id="resourcebundle文件加载"><a class="markdownIt-Anchor" href="#resourcebundle文件加载"></a> ResourceBundle文件加载</h4>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316110117804.png" alt="image-20210316110117804" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316110331232.png" alt="image-20210316110331232" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316110117804.png" alt="image-20210316110117804" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316110331232.png" alt="image-20210316110331232" /></p>
 <h4 id="var"><a class="markdownIt-Anchor" href="#var"></a> var</h4>
 <p>java以前是强类型语言，定义时就确定了类型，不能改类型</p>
 <p>java10推出了var，局部变量推断</p>
@@ -987,7 +1008,7 @@ Double派别：Double、Float的valueOf方法的实现是类似的。每次都�
 <li>对其了变量名</li>
 <li>容易阅读</li>
 </ol>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316110608972.png" alt="image-20210316110608972" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316110608972.png" alt="image-20210316110608972" /></p>
 <p>本质上还是强类型语言，编译器进行推断后写入字节码文件，推断后不能更改</p>
 <p>限制：</p>
 <ol>
@@ -1002,9 +1023,9 @@ Double派别：Double、Float的valueOf方法的实现是类似的。每次都�
 <p>支持的类型：byte、short、char、int、String（7.0支持）、enum（5.0支持）</p>
 <p>不支持的类型：long、float、double（switch字节码函数只支持int类型）</p>
 <p>jdk12提出多分支合并</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316111157037.png" alt="image-20210316111157037" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316111157037.png" alt="image-20210316111157037" /></p>
 <p>jdk12提出表达式赋值</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316111235088.png" alt="image-20210316111235088" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316111235088.png" alt="image-20210316111235088" /></p>
 
       
     </div>
@@ -1012,6 +1033,8 @@ Double派别：Double、Float的valueOf方法的实现是类似的。每次都�
       <a data-url="http://example.com/2021/03/21/java/%E8%AF%AD%E6%B3%95%E7%B3%96/" data-id="ckmixaegn0002asvx4g6o92rh" class="article-share-link">分享</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" rel="tag">语法糖</a></li></ul>
+
     </footer>
   </div>
   
@@ -1034,6 +1057,27 @@ Double派别：Double、Float的valueOf方法的实现是类似的。每次都�
   <div class="article-inner">
     
     
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/java/%E6%B3%9B%E5%9E%8B/">泛型</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
     <div class="article-entry" itemprop="articleBody">
       
         <h3 id="泛型generic-programming"><a class="markdownIt-Anchor" href="#泛型generic-programming"></a> 泛型（Generic Programming）</h3>
@@ -1045,48 +1089,48 @@ Double派别：Double、Float的valueOf方法的实现是类似的。每次都�
 <li>再类名后面用<T>代表引入类型，E代表单个元素，KV代表键值，T代表自定义泛型变量</li>
 <li>引入类型可以修饰成员变量，局部变量，参数，返回值</li>
 </ol>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316140856766.png" alt="image-20210316140856766" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316140856766.png" alt="image-20210316140856766" /></p>
 <p>泛型方法（不是泛型类时）：前面<T>代表引入类型，后面的Interval<T>代表返回值</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316141200024.png" alt="image-20210316141200024" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316141200024.png" alt="image-20210316141200024" /></p>
 <h5 id="泛型类型限定"><a class="markdownIt-Anchor" href="#泛型类型限定"></a> 泛型类型限定</h5>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316141608240.png" alt="image-20210316141608240" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316141608240.png" alt="image-20210316141608240" /></p>
 <p>表示T必须是Comparable的子类，extends是固定的，可以用&amp;链接</p>
 <p>&lt;T extends Comparable &amp; Serializable&gt;</p>
 <p>extends限定可以有多个接口，只能有一个类，类必须在第一个</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316141828092.png" alt="image-20210316141828092" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316141828092.png" alt="image-20210316141828092" /></p>
 <p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316142041442.png" alt="image-20210316142041442" /></p>
 <p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316142116147.png" alt="image-20210316142116147" /></p>
 <h5 id="泛型通配符"><a class="markdownIt-Anchor" href="#泛型通配符"></a> 泛型通配符</h5>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316142234694.png" alt="image-20210316142234694" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316142446279.png" alt="image-20210316142446279" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316142501158.png" alt="image-20210316142501158" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316142708272.png" alt="image-20210316142708272" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316142234694.png" alt="image-20210316142234694" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316142446279.png" alt="image-20210316142446279" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316142501158.png" alt="image-20210316142501158" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316142708272.png" alt="image-20210316142708272" /></p>
 <p>泛型PECS（Product，Extends，Consumer，Super）原则</p>
 <ol>
 <li>要从泛型类读取类型T的数据，并且不能写入，可以用？ extends （泛型是生产者）</li>
 <li>要向泛型类写入类型T的数据，并且不能读取，可以用？super（泛型是消费者）</li>
 </ol>
 <p>无限定通配符&lt;?&gt;</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316143308697.png" alt="image-20210316143308697" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316143308697.png" alt="image-20210316143308697" /></p>
 <h4 id="泛型的本质"><a class="markdownIt-Anchor" href="#泛型的本质"></a> 泛型的本质</h4>
 <p>泛型是1.5引入的，因为java向后兼容，所以jvm里没有泛型对象，而是采取类型擦除，只有普通的方法和类</p>
 <p>类型擦除：擦除泛型变量，替换为原始类型，无限定为Object</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316143620689.png" alt="image-20210316143620689" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316143648952.png" alt="image-20210316143648952" />.</p>
+<p><img src="....%5Cimages%5Cimage-20210316143620689.png" alt="image-20210316143620689" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316143648952.png" alt="image-20210316143648952" />.</p>
 <p>擦除泛型变量后，为了保证类的安全，需要进行类型转化。</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316143817605.png" alt="image-20210316143817605" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316143753199.png" alt="image-20210316143753199" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316144003567.png" alt="image-20210316144003567" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316143817605.png" alt="image-20210316143817605" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316143753199.png" alt="image-20210316143753199" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316144003567.png" alt="image-20210316144003567" /></p>
 <p>自动桥使得本质上也是调用子类方法，使得多态方法被真确调用</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316144129777.png" alt="image-20210316144129777" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316144129777.png" alt="image-20210316144129777" /></p>
 <h4 id="协变和逆变"><a class="markdownIt-Anchor" href="#协变和逆变"></a> 协变和逆变</h4>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316150705142.png" alt="image-20210316150705142" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316150826775.png" alt="image-20210316150826775" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316150927768.png" alt="image-20210316150927768" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316150705142.png" alt="image-20210316150705142" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316150826775.png" alt="image-20210316150826775" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316150927768.png" alt="image-20210316150927768" /></p>
 <p>java数组是协变的</p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316152823007.png" alt="image-20210316152823007" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316152920655.png" alt="image-20210316152920655" /></p>
-<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316153223323.png" alt="image-20210316153223323" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316152823007.png" alt="image-20210316152823007" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316152920655.png" alt="image-20210316152920655" /></p>
+<p><img src="....%5Cimages%5Cimage-20210316153223323.png" alt="image-20210316153223323" /></p>
 
       
     </div>
@@ -1094,6 +1138,8 @@ Double派别：Double、Float的valueOf方法的实现是类似的。每次都�
       <a data-url="http://example.com/2021/03/21/java/%E6%B3%9B%E5%9E%8B/" data-id="ckmixaegp0004asvx0s2sdygt" class="article-share-link">分享</a>
       
       
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B3%9B%E5%9E%8B/" rel="tag">泛型</a></li></ul>
+
     </footer>
   </div>
   
@@ -1148,8 +1194,8 @@ Double派别：Double、Float的valueOf方法的实现是类似的。每次都�
     <h3 class="description"></h3>
     <div class="count-box">
       <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>1</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>1</strong><br>标签</div></a>
+      <a href="/categories"><div><strong>2</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>4</strong><br>标签</div></a>
     </div>
 
 
