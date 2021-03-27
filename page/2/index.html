@@ -43,9 +43,9 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>5</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>9</strong><br>标签</div></a>
+      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>7</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -70,6 +70,926 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-计算机网络/5.传输层" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/5.%E4%BC%A0%E8%BE%93%E5%B1%82/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.575Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/5.%E4%BC%A0%E8%BE%93%E5%B1%82/">运输层</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="运输层"><a class="markdownIt-Anchor" href="#运输层"></a> 运输层</h3>
+<h4 id="运输层概述"><a class="markdownIt-Anchor" href="#运输层概述"></a> 运输层概述</h4>
+<p><img src="/images/image-20210307150528010.png" alt="image-20210307150528010" /></p>
+<p><img src="/images/image-20210307150603680.png" alt="image-20210307150603680" /></p>
+<p><img src="/images/image-20210307150703034.png" alt="image-20210307150703034" /></p>
+<p><img src="/images/image-20210307150745571.png" alt="image-20210307150745571" /></p>
+<p><img src="/images/image-20210307150826265.png" alt="image-20210307150826265" /></p>
+<p><img src="/images/image-20210307151335900.png" alt="image-20210307151335900" /></p>
+<p><img src="/images/image-20210307151056806.png" alt="image-20210307151056806" /></p>
+<p><img src="/images/image-20210307151136763.png" alt="image-20210307151136763" /></p>
+<p><img src="/images/image-20210307151215375.png" alt="image-20210307151215375" /></p>
+<p><img src="/images/image-20210307151258779.png" alt="image-20210307151258779" /></p>
+<p><img src="/images/image-20210307151317182.png" alt="image-20210307151317182" /></p>
+<h4 id="tcp"><a class="markdownIt-Anchor" href="#tcp"></a> TCP</h4>
+<h5 id="tcp流量控制"><a class="markdownIt-Anchor" href="#tcp流量控制"></a> TCP流量控制</h5>
+<p><img src="/images/image-20210307151546430.png" alt="image-20210307151546430" /></p>
+<h5 id="tcp拥塞控制"><a class="markdownIt-Anchor" href="#tcp拥塞控制"></a> TCP拥塞控制</h5>
+<p><img src="/images/image-20210307151641574.png" alt="image-20210307151641574" /></p>
+<p>四种控制算法：</p>
+<p><img src="/images/image-20210307151710250.png" alt="image-20210307151710250" /></p>
+<p><img src="/images/image-20210307151839718.png" alt="image-20210307151839718" /></p>
+<p><img src="/images/image-20210307151913672.png" alt="image-20210307151913672" /></p>
+<p><img src="/images/image-20210307152000298.png" alt="image-20210307152000298" /></p>
+<p>快恢复算法：</p>
+<p><img src="/images/image-20210307152027924.png" alt="image-20210307152027924" /></p>
+<h5 id="tcp超时重传选择"><a class="markdownIt-Anchor" href="#tcp超时重传选择"></a> TCP超时重传选择</h5>
+<p><img src="/images/image-20210307152409832.png" alt="image-20210307152409832" /></p>
+<h5 id="tcp可靠传输的实现"><a class="markdownIt-Anchor" href="#tcp可靠传输的实现"></a> TCP可靠传输的实现</h5>
+<p><img src="/images/image-20210307152831255.png" alt="image-20210307152831255" /></p>
+<h5 id="tcp连接"><a class="markdownIt-Anchor" href="#tcp连接"></a> TCP连接</h5>
+<p><img src="/images/image-20210307152930649.png" alt="image-20210307152930649" /></p>
+<p><img src="/images/image-20210307152940084.png" alt="image-20210307152940084" /></p>
+<p><img src="/images/image-20210307153328035.png" alt="image-20210307153328035" /></p>
+<p>SYN：同步标志位，1表示是TCP请求报文段，不能带数据，消耗一个序号</p>
+<p>ACK：确认位</p>
+<p>seq：序号为，x和y分别是客户端和服务器自己选择的开始序号</p>
+<p>ack：确认号字段，对哪个序号的确认</p>
+<p>第三次握手是普通的确认，所以可以携带数据 不携带数据不消化seq</p>
+<p><img src="/images/image-20210307154533461.png" alt="image-20210307154533461" /></p>
+<p><img src="/images/image-20210307154615194.png" alt="image-20210307154615194" /></p>
+<p><img src="/images/image-20210307154712082.png" alt="image-20210307154712082" /></p>
+<h5 id="tcp报文首部"><a class="markdownIt-Anchor" href="#tcp报文首部"></a> TCP报文首部</h5>
+<p><img src="/images/image-20210307154803011.png" alt="image-20210307154803011" /></p>
+<p>序号：32比特，0-2^32 -1，最大后从0开始，指示本TCP报文段数据载荷的第一个自己的序号</p>
+<p>确认号：32比特，0-2^32 -1，最大后从0开始，指出期望收到下一个TCP报文段的序号，也是对之前数据的确认</p>
+<p>确认标志位ACK：ACK为1时，确认号才有效，0时无效</p>
+<p>数据偏移：TCP报文段数据载荷部分距TCP报文段起始的距离，就是TCP报文首部的长度，最小20字节，最大60字节，要用值*4</p>
+<p>保留字段：以后使用，目前置0</p>
+<p>窗口：16比特，发送本报文段的一方的接收窗口的大小</p>
+<p>校验和：16比特，检测误码，要在TCP报文首部加12字节委首部</p>
+<p>同步标志位SYN：TCP建立时同步序号</p>
+<p>中止表示为FIN：释放TCP连接</p>
+<p>复位标志位RST：复位TCP连接，RST=1表示出现异常，需要释放连接再重新建立连接，RST=1还可以拒绝非法报文或拒绝TCP连接</p>
+<p>推送标志位PSH：接受方接收到PSH=1，会尽快交付应用进程，不必等到接收缓存满再交付</p>
+<p>紧急标志位URG和紧急指针实现紧急操作：URG=1，紧急字段有效，紧急字段指明紧急数据的长度</p>
+<p><img src="/images/image-20210307155805787.png" alt="image-20210307155805787" /></p>
+<p>选项部分：增加TCP功能</p>
+<p><img src="/images/image-20210307155849596.png" alt="image-20210307155849596" /></p>
+<p>填充：保证TCP是4的整数倍</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/5.%E4%BC%A0%E8%BE%93%E5%B1%82/" data-id="ckmk7003u001b4kvxdr9gfa7u" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-计算机网络/4.网络层" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/4.%E7%BD%91%E7%BB%9C%E5%B1%82/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.549Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/4.%E7%BD%91%E7%BB%9C%E5%B1%82/">网络层</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="网络层"><a class="markdownIt-Anchor" href="#网络层"></a> 网络层</h3>
+<h4 id="网络层概述"><a class="markdownIt-Anchor" href="#网络层概述"></a> 网络层概述</h4>
+<p>实现网络互联，进而实现数据包在网络之间传输</p>
+<p>解决的问题：</p>
+<ol>
+<li>
+<p>网络层向上层提供的服务（TPC/IP是无连接的不可靠的数据报服务）</p>
+</li>
+<li>
+<p>网络层寻址</p>
+</li>
+<li>
+<p>路由寻址</p>
+</li>
+</ol>
+<p>因特网是用户最多的互联网，使用TCP/IP协议，网际层还包括ARP、ICMP、IGMP等</p>
+<h4 id="网络层的两种服务"><a class="markdownIt-Anchor" href="#网络层的两种服务"></a> 网络层的两种服务</h4>
+<p>面向连接的虚电路服务：</p>
+<p><img src="/images/image-20210307133302112.png" alt="image-20210307133302112" /></p>
+<p>无连接的数据报服务：</p>
+<p><img src="/images/image-20210307133339352.png" alt="image-20210307133339352" /></p>
+<p><img src="/images/image-20210307133405517.png" alt="image-20210307133405517" /></p>
+<h4 id="ipv4"><a class="markdownIt-Anchor" href="#ipv4"></a> IPv4</h4>
+<p>IPv4是给因特网上的每个主机/路由器的每个接口分配一个唯一的32比特标识符</p>
+<p><img src="/images/image-20210307133527173.png" alt="image-20210307133527173" /></p>
+<h5 id="分类编制的ipv4地址"><a class="markdownIt-Anchor" href="#分类编制的ipv4地址"></a> 分类编制的IPv4地址</h5>
+<p><img src="/images/image-20210307133658139.png" alt="image-20210307133658139" /></p>
+<p>A类网络：</p>
+<p><img src="/images/image-20210307133822957.png" alt="image-20210307133822957" /></p>
+<p>B类网络：</p>
+<p><img src="/images/image-20210307133919174.png" alt="image-20210307133919174" /></p>
+<p>C类网络：</p>
+<p><img src="/images/image-20210307134011780.png" alt="image-20210307134011780" /></p>
+<h5 id="划分子网的ipv4"><a class="markdownIt-Anchor" href="#划分子网的ipv4"></a> 划分子网的IPv4</h5>
+<p><img src="/images/image-20210307134245242.png" alt="image-20210307134245242" /></p>
+<p><img src="/images/image-20210307134421038.png" alt="image-20210307134421038" /></p>
+<h5 id="无分类编制的ipv4"><a class="markdownIt-Anchor" href="#无分类编制的ipv4"></a> 无分类编制的IPv4</h5>
+<p><img src="/images/image-20210307134543146.png" alt="image-20210307134543146" /></p>
+<p>路由聚合：</p>
+<p><img src="/images/image-20210307134849423.png" alt="image-20210307134849423" /></p>
+<h5 id="ipv4地址的应用规划"><a class="markdownIt-Anchor" href="#ipv4地址的应用规划"></a> IPv4地址的应用规划</h5>
+<p><img src="/images/image-20210307135627577.png" alt="image-20210307135627577" /></p>
+<h5 id="ipv4发送和转发"><a class="markdownIt-Anchor" href="#ipv4发送和转发"></a> IPv4发送和转发</h5>
+<ol>
+<li>
+<p>主机发送IP数据报</p>
+<p>1）源主机如何知道目的主机是否与自己同一个网络：比较目的主机/源主机与子网掩码相与的结果</p>
+<p>2）主机如何知道路由器的存在：默认网关</p>
+</li>
+<li>
+<p>路由器转发IP数据报</p>
+<p>1）检查IP数据报首部是否出错，出错就丢弃该IP数据报并发送ICMP差错报告报文通告源主机</p>
+<p>2）根据目的地址IP在路由表查找匹配的端口条目，找到就转发，找不到丢弃IP数据报并通过源主机</p>
+<p>3）路由器隔离广播域</p>
+</li>
+</ol>
+<h5 id="ipv4数据报首部格式"><a class="markdownIt-Anchor" href="#ipv4数据报首部格式"></a> IPv4数据报首部格式</h5>
+<p><img src="/images/image-20210307143242835.png" alt="image-20210307143242835" /></p>
+<p>版本：表示IP协议版本号，通信双方必须一致，广泛使用的版本号是4（IPv4)</p>
+<p>首部长度：数据报首部长度，最小是十进制的5，表示首部只有20字节固定部分，最大取十进制15，表示包含20字节固定部分和40字节可变部分</p>
+<p>可选字段：从1-40不等，支持排错，测量及安全措施，增加了功能也增加了开销，很少使用</p>
+<p>填充字段，保证数据报是4字节的整数倍</p>
+<p>区分服务：用来获得更换的服务，一般不使用</p>
+<p>总长度：表示ip数据报的总长度，首部+数据载荷，最大值是10进制的65535</p>
+<p>生存时间：最初以秒为单位，最大生存周期255秒，转发数据报时，减去在路由器上花费的时间，不为0就转发，现在为跳数，每个路由器减1，不为0就转发</p>
+<p>协议：指明IPv4的数据部分是何种数据协议单元</p>
+<p><img src="/images/image-20210307144427393.png" alt="image-20210307144427393" /></p>
+<p>首部检验和：用来检测首部在传输过程种是否出错，比CRC简单，成为因特网检验和，因为IP不提供可靠服务，IPv6不再检验</p>
+<p>源IP地址和目的IP地址</p>
+<p>标识、标志、片偏移：当数据报大于数据链路层协议的帧的数据载荷的最大长度MTU（以太网1500字节），就需要分片</p>
+<p><img src="/images/image-20210307144000626.png" alt="image-20210307144000626" /></p>
+<p><img src="/images/image-20210307143846304.png" alt="image-20210307143846304" /></p>
+<p><img src="/images/image-20210307144206846.png" alt="image-20210307144206846" /></p>
+<p>片偏移必须为整数</p>
+<h4 id="路由"><a class="markdownIt-Anchor" href="#路由"></a> 路由</h4>
+<h5 id="静态路由配置及可能的问题"><a class="markdownIt-Anchor" href="#静态路由配置及可能的问题"></a> 静态路由配置及可能的问题</h5>
+<ol>
+<li>配置错误可能出现路由环路</li>
+</ol>
+<p><img src="/images/image-20210307140819790.png" alt="image-20210307140819790" /></p>
+<ol start="2">
+<li>聚合了不存在的网络可能导致路由环路</li>
+</ol>
+<h5 id="路由选择协议"><a class="markdownIt-Anchor" href="#路由选择协议"></a> 路由选择协议</h5>
+<p><img src="/images/image-20210307141053970.png" alt="image-20210307141053970" /></p>
+<p><img src="/images/image-20210307141104242.png" alt="image-20210307141104242" /></p>
+<p><img src="/images/image-20210307141126055.png" alt="image-20210307141126055" /></p>
+<p><img src="/images/image-20210307141158373.png" alt="image-20210307141158373" /></p>
+<p><img src="/images/image-20210307143029067.png" alt="image-20210307143029067" /></p>
+<p><img src="/images/image-20210307141314375.png" alt="image-20210307141314375" /></p>
+<h5 id="路由信息协议rip"><a class="markdownIt-Anchor" href="#路由信息协议rip"></a> 路由信息协议RIP</h5>
+<p><img src="/images/image-20210307141419109.png" alt="image-20210307141419109" /></p>
+<p><img src="/images/image-20210307141524495.png" alt="image-20210307141524495" /></p>
+<p>基本工作过程</p>
+<p><img src="/images/image-20210307141546317.png" alt="image-20210307141546317" /></p>
+<p><img src="/images/image-20210307141727392.png" alt="image-20210307141727392" /></p>
+<p><img src="/images/image-20210307141845381.png" alt="image-20210307141845381" /></p>
+<h5 id="开放最短路径优先协议ospf"><a class="markdownIt-Anchor" href="#开放最短路径优先协议ospf"></a> 开放最短路径优先协议OSPF</h5>
+<p><img src="/images/image-20210307141938309.png" alt="image-20210307141938309" /></p>
+<p><img src="/images/image-20210307142035173.png" alt="image-20210307142035173" /></p>
+<p><img src="/images/image-20210307142130750.png" alt="image-20210307142130750" /></p>
+<p><img src="/images/image-20210307142201656.png" alt="image-20210307142201656" /></p>
+<p><img src="/images/image-20210307142221261.png" alt="image-20210307142221261" /></p>
+<p><img src="/images/image-20210307142300955.png" alt="image-20210307142300955" /></p>
+<p><img src="/images/image-20210307142340434.png" alt="image-20210307142340434" /></p>
+<p><img src="/images/image-20210307142507238.png" alt="image-20210307142507238" /></p>
+<h5 id="边界网关协议bgp"><a class="markdownIt-Anchor" href="#边界网关协议bgp"></a> 边界网关协议BGP</h5>
+<p><img src="/images/image-20210307142605776.png" alt="image-20210307142605776" /></p>
+<p><img src="/images/image-20210307142713356.png" alt="image-20210307142713356" /></p>
+<p><img src="/images/image-20210307142749670.png" alt="image-20210307142749670" /></p>
+<p><img src="/images/image-20210307142811611.png" alt="image-20210307142811611" /></p>
+<p><img src="/images/image-20210307142906020.png" alt="image-20210307142906020" /></p>
+<h4 id="网际控制报文协议icmp"><a class="markdownIt-Anchor" href="#网际控制报文协议icmp"></a> 网际控制报文协议ICMP</h4>
+<p><img src="/images/image-20210307145309092.png" alt="image-20210307145309092" /></p>
+<p><img src="/images/image-20210307145329640.png" alt="image-20210307145329640" /></p>
+<p><img src="/images/image-20210307145353768.png" alt="image-20210307145353768" /></p>
+<p>ICMP应用举例</p>
+<p><img src="/images/image-20210307145427843.png" alt="image-20210307145427843" /></p>
+<p><img src="/images/image-20210307145448884.png" alt="image-20210307145448884" /></p>
+<h4 id="虚拟专用网络vpn"><a class="markdownIt-Anchor" href="#虚拟专用网络vpn"></a> 虚拟专用网络VPN</h4>
+<p><img src="/images/image-20210307145630670.png" alt="image-20210307145630670" /></p>
+<p><img src="/images/image-20210307145715815.png" alt="image-20210307145715815" /></p>
+<p>因特网路由器对所有目的地址是私有地址的IP数据报不转发</p>
+<p><img src="/images/image-20210307145834722.png" alt="image-20210307145834722" /></p>
+<p><img src="/images/image-20210307145857575.png" alt="image-20210307145857575" /></p>
+<h4 id="物理地址转换nat"><a class="markdownIt-Anchor" href="#物理地址转换nat"></a> 物理地址转换NAT</h4>
+<p><img src="/images/image-20210307145923249.png" alt="image-20210307145923249" /></p>
+<p><img src="/images/image-20210307150130184.png" alt="image-20210307150130184" /></p>
+<p><img src="/images/image-20210307150144638.png" alt="image-20210307150144638" /></p>
+<p><img src="/images/image-20210307150152773.png" alt="image-20210307150152773" /></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/4.%E7%BD%91%E7%BB%9C%E5%B1%82/" data-id="ckmk7003t00184kvx3oktf4bc" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-计算机网络/3.数据链路层" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.539Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/">数据链路层</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="数据链路层"><a class="markdownIt-Anchor" href="#数据链路层"></a> 数据链路层</h3>
+<h4 id="概述"><a class="markdownIt-Anchor" href="#概述"></a> 概述</h4>
+<p>链路：从一个节点到相邻节点的一段物理线路，中间没有其他交换节点</p>
+<p>数据链路：把实现通信协议的硬件和软件加到链路上就构成了数据链路</p>
+<h4 id="封装成帧"><a class="markdownIt-Anchor" href="#封装成帧"></a> 封装成帧</h4>
+<p>将数据链路层上层交付的协议数据单元添加帧头和帧尾使之成为帧</p>
+<p><img src="/images/image-20210305151925734.png" alt="image-20210305151925734" /></p>
+<p>帧头和帧尾的作用之一就是帧定界，用于区分一个个帧的范围，例如ppp的开头和结尾标志，MAC帧没有，</p>
+<p>物理层会给MAC增加8个字节前导码，前七个字节是前同步码，还有一个是帧开始定界符，MAC还有96比特的帧间间隔 不需要结束标志</p>
+<p>链路层会对数据定义帧定界符进行转义</p>
+<p>每个数据链路层协议都规定了帧数据单元的长度上限，最大传输单元（MTU）</p>
+<h4 id="差错检测"><a class="markdownIt-Anchor" href="#差错检测"></a> 差错检测</h4>
+<p>传输错误比特占传输比特总数的比率称为误码率BER</p>
+<p>MAC帧和ppp的帧检验序列FCS用于检测是否误码</p>
+<p>校验方式：奇偶校验、循环冗余校验CRC</p>
+<h4 id="可靠传输"><a class="markdownIt-Anchor" href="#可靠传输"></a> 可靠传输</h4>
+<p>不可靠传输服务：仅仅丢弃误码的帧，什么也不做</p>
+<p>可靠传输服务：发送端发什么，接收端收什么</p>
+<p>有线链路误码率较低，所以不要求数据链路层向上提供可靠传输服务</p>
+<p>无线链路误码率较高，要求数据链路层必须向上提高可靠传输服务</p>
+<p>传出差错：比特差错、分组丢失、分组失序、分组重复（分组意味着差错不局限于数据链路层）</p>
+<p><img src="/images/image-20210305153457051.png" alt="image-20210305153457051" /></p>
+<h5 id="停止等待协议sw"><a class="markdownIt-Anchor" href="#停止等待协议sw"></a> 停止等待协议SW</h5>
+<p><img src="/images/image-20210305153939667.png" alt="image-20210305153939667" /></p>
+<p>当往返时延RTT远大于帧发送时延时，信道利用率极低</p>
+<h5 id="回退n帧协议gbngo-back-n"><a class="markdownIt-Anchor" href="#回退n帧协议gbngo-back-n"></a> 回退N帧协议GBN（Go-back-N）</h5>
+<p><img src="/images/image-20210305154114567.png" alt="image-20210305154114567" /></p>
+<h5 id="选择重传协议sr"><a class="markdownIt-Anchor" href="#选择重传协议sr"></a> 选择重传协议SR</h5>
+<p><img src="/images/image-20210305154318157.png" alt="image-20210305154318157" /></p>
+<h4 id="点对点协议ppppoint-to-point-protocol"><a class="markdownIt-Anchor" href="#点对点协议ppppoint-to-point-protocol"></a> 点对点协议PPP（Point-to-Point Protocol）</h4>
+<p>ppp协议为点对点的数据链路层各协议数据包提供了一个标准</p>
+<ol>
+<li>对各协议数据报的封装方法（封装成帧）</li>
+<li>链路控制协议LCP（用于建立、配置以及测试数据链路的连接）</li>
+<li>一套网络控制协议NCPs（其中每一个协议支持不同的网络层协议）</li>
+</ol>
+<p><img src="/images/image-20210305154725880.png" alt="image-20210305154725880" /></p>
+<p>帧格式：</p>
+<p><img src="/images/image-20210305154758893.png" alt="image-20210305154758893" /></p>
+<p>透明传输：</p>
+<p><img src="/images/image-20210305154841260.png" alt="image-20210305154841260" /></p>
+<p>差错检测：使用CRC检验</p>
+<p>提供不可靠服务</p>
+<p><img src="/images/image-20210305154932465.png" alt="image-20210305154932465" /></p>
+<p>工作状态：</p>
+<p><img src="/images/image-20210305155039449.png" alt="image-20210305155039449" /></p>
+<h4 id="媒体介入控制mac"><a class="markdownIt-Anchor" href="#媒体介入控制mac"></a> 媒体介入控制MAC</h4>
+<p><img src="/images/image-20210305155230269.png" alt="image-20210305155230269" /></p>
+<p><img src="/images/image-20210305155247052.png" alt="image-20210305155247052" /></p>
+<p>静态划分信道：频分复用FDM、时分复用TDM、波分复用WDM、码分复用CDM</p>
+<h5 id="随机接入"><a class="markdownIt-Anchor" href="#随机接入"></a> 随机接入</h5>
+<p>CSMA—CD（载波监听多址接入-碰撞检测   Carrier Sense Multiple Access-Collision Detection）</p>
+<p>CS：每个站点发送帧前要先监听总线是否有其他站点发送帧，总线空闲96比特才能发送</p>
+<p>MA：多个站点连接再一条总线</p>
+<p>CD：站点边发送边检测碰撞，碰撞后立即停止发送，退避随机事件后发送</p>
+<p><img src="/images/image-20210305160038108.png" alt="image-20210305160038108" /></p>
+<p>争用期：<img src="/images/image-20210305160151099.png" alt="image-20210305160151099" /></p>
+<p>最小帧长：<img src="/images/image-20210305160236069.png" alt="image-20210305160236069" /></p>
+<p>最大帧长：</p>
+<p><img src="/images/image-20210305160343783.png" alt="image-20210305160343783" /></p>
+<p>截断二进制指数退避算法：</p>
+<p><img src="/images/image-20210305160427761.png" alt="image-20210305160427761" /></p>
+<p>帧发送流程</p>
+<p><img src="/images/image-20210305160512449.png" alt="image-20210305160512449" /></p>
+<p>帧接收流程</p>
+<p><img src="/images/image-20210305160538902.png" alt="image-20210305160538902" /></p>
+<p>CSMA-CA</p>
+<p><img src="/images/image-20210305160837356.png" alt="image-20210305160837356" /></p>
+<p><img src="/images/image-20210305160942724.png" alt="image-20210305160942724" /></p>
+<p><img src="/images/image-20210305161012872.png" alt="image-20210305161012872" /></p>
+<p><img src="/images/image-20210305161140096.png" alt="image-20210305161140096" /></p>
+<p>退避算法：</p>
+<p><img src="/images/image-20210305161227434.png" alt="image-20210305161227434" /></p>
+<p><img src="/images/image-20210305161302601.png" alt="image-20210305161302601" /></p>
+<p><img src="/images/image-20210305161404087.png" alt="image-20210305161404087" /></p>
+<h4 id="maciparp"><a class="markdownIt-Anchor" href="#maciparp"></a> MAC/IP/ARP</h4>
+<p><img src="/images/image-20210305161451664.png" alt="image-20210305161451664" /></p>
+<h5 id="mac"><a class="markdownIt-Anchor" href="#mac"></a> MAC</h5>
+<p><img src="/images/image-20210305161604424.png" alt="image-20210305161604424" /></p>
+<p><img src="/images/image-20210305161750068.png" alt="image-20210305161750068" /></p>
+<p><img src="/images/image-20210305161933910.png" alt="image-20210305161933910" /></p>
+<h5 id="ip"><a class="markdownIt-Anchor" href="#ip"></a> IP</h5>
+<p><img src="/images/image-20210305162050074.png" alt="image-20210305162050074" /></p>
+<p><img src="/images/image-20210305162148528.png" alt="image-20210305162148528" /></p>
+<h5 id="arp地址解析协议"><a class="markdownIt-Anchor" href="#arp地址解析协议"></a> ARP（地址解析协议）</h5>
+<p><img src="/images/image-20210305162406139.png" alt="image-20210305162406139" /></p>
+<h4 id="集线器和交换机"><a class="markdownIt-Anchor" href="#集线器和交换机"></a> 集线器和交换机</h4>
+<p>集线器：</p>
+<p><img src="/images/image-20210305162511460.png" alt="image-20210305162511460" /></p>
+<p>交换机：</p>
+<p><img src="/images/image-20210305162705150.png" alt="image-20210305162705150" /></p>
+<p><img src="/images/image-20210305162830630.png" alt="image-20210305162830630" /></p>
+<p>交换机自学习和转发帧：</p>
+<p><img src="/images/image-20210305163052514.png" alt="image-20210305163052514" /></p>
+<p><img src="/images/image-20210305163108756.png" alt="image-20210305163108756" /></p>
+<p>以太网交换机生成树协议STP</p>
+<p><img src="/images/image-20210305163213345.png" alt="image-20210305163213345" /></p>
+<p><img src="/images/image-20210305163234884.png" alt="image-20210305163234884" /></p>
+<h4 id="虚拟局域网vlan"><a class="markdownIt-Anchor" href="#虚拟局域网vlan"></a> 虚拟局域网VLAN</h4>
+<p><img src="/images/image-20210305163309932.png" alt="image-20210305163309932" /></p>
+<p><img src="/images/image-20210305163327093.png" alt="image-20210305163327093" /></p>
+<p><img src="/images/image-20210305163339885.png" alt="image-20210305163339885" /></p>
+<p><img src="/images/image-20210305163406495.png" alt="image-20210305163406495" /></p>
+<p><img src="/images/image-20210305163446017.png" alt="image-20210305163446017" /></p>
+<p><img src="/images/image-20210305163459916.png" alt="image-20210305163459916" /></p>
+<p><img src="/images/image-20210305163512718.png" alt="image-20210305163512718" /></p>
+<p><img src="/images/image-20210305163710896.png" alt="image-20210305163710896" /></p>
+<p><img src="/images/image-20210305163721422.png" alt="image-20210305163721422" /></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/3.%E6%95%B0%E6%8D%AE%E9%93%BE%E8%B7%AF%E5%B1%82/" data-id="ckmk7003s00144kvx9bp54zki" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-计算机网络/2.物理层" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2.%E7%89%A9%E7%90%86%E5%B1%82/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.521Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2.%E7%89%A9%E7%90%86%E5%B1%82/">物理层</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id=""><a class="markdownIt-Anchor" href="#"></a> </h3>
+<h3 id="物理层"><a class="markdownIt-Anchor" href="#物理层"></a> 物理层</h3>
+<h4 id="传输媒体"><a class="markdownIt-Anchor" href="#传输媒体"></a> 传输媒体</h4>
+<p>导引型传输媒体：双绞线、同轴电缆、光纤</p>
+<p>非导引型传输媒体：微波通信(2-40GHZ)、无线电波、红外线、可见光</p>
+<h4 id="协议任务"><a class="markdownIt-Anchor" href="#协议任务"></a> 协议任务</h4>
+<p><img src="/images/image-20210305143849954.png" alt="image-20210305143849954" /></p>
+<p>物理层考虑的是怎样才能再连接计算机的传输媒体上传输数据比特流</p>
+<h4 id="传输方式"><a class="markdownIt-Anchor" href="#传输方式"></a> 传输方式</h4>
+<p>串行传输：数据一个比特一个比特的发   远距离传输采用串行传输</p>
+<p>并行传输：多个比特同时发送，需要n条传输线路、计算机内部总线等采用并行传输</p>
+<p>同步传输：发送方和接收方的时钟频率同步保证不会出现误差累积</p>
+<p>​	1.外同步：收发双发加一条单独的时钟信号先</p>
+<p>​	2.内同步：发送方将时钟同步信号编码到发送的数据中，如曼彻斯特编码</p>
+<p>异步传输：以字节为单位独立传输，接受发从每个字节起始处对字节内比特实现同步，所以每个字节前后要加上起始位和结束位，异步是指字节之间异步</p>
+<p><img src="/images/image-20210305144617911.png" alt="image-20210305144617911" /></p>
+<p>单向通信：</p>
+<p>双向交替通信：</p>
+<p>双向同步通信：</p>
+<h4 id="编码与调制"><a class="markdownIt-Anchor" href="#编码与调制"></a> 编码与调制</h4>
+<p>编码：把数字/模拟信号变为数字信号</p>
+<p>调制：把数字/模拟信号变为模拟信号</p>
+<p>码元：代表不同离散数值的基本波形</p>
+<p>信道：一般是传输媒体中的传递通道</p>
+<p>计算机一般采用将数字基带信号编码调制再发送</p>
+<p><img src="/images/image-20210305144944031.png" alt="image-20210305144944031" /></p>
+<p>常见编码：</p>
+<p><img src="/images/image-20210305145223370.png" alt="image-20210305145223370" /></p>
+<p>基本调制：</p>
+<p><img src="/images/image-20210305145258592.png" alt="image-20210305145258592" /></p>
+<p>混合调制：使一个码元包含多个比特信息</p>
+<h4 id="信道极限容量"><a class="markdownIt-Anchor" href="#信道极限容量"></a> 信道极限容量</h4>
+<p>传输失真：<img src="/images/image-20210305145421893.png" alt="image-20210305145421893" /></p>
+<p>乃式准则：为了避免码间干扰，传输速度是有上限的</p>
+<p><img src="/images/image-20210305145602936.png" alt="image-20210305145602936" /></p>
+<p>香农公式：带宽受限且有高斯白噪声干扰的信道的极限信息速传输速率</p>
+<p><img src="/images/image-20210305145656909.png" alt="image-20210305145656909" /></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2.%E7%89%A9%E7%90%86%E5%B1%82/" data-id="ckmk7003r00124kvx3nqk9mn2" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-计算机网络/1.计算机网络综述" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/1.%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%BB%BC%E8%BF%B0/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.492Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/1.%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%BB%BC%E8%BF%B0/">计算机网络综述</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="计算机网络综述"><a class="markdownIt-Anchor" href="#计算机网络综述"></a> 计算机网络综述</h3>
+<h4 id="三种交换方式"><a class="markdownIt-Anchor" href="#三种交换方式"></a> 三种交换方式</h4>
+<ol>
+<li>
+<p>电路交换</p>
+<p>1）建立连接（分配通信资源）</p>
+<p>2）通话（占用通信资源）</p>
+<p>2）释放连接（归还通信资源）</p>
+</li>
+<li>
+<p>报文交换</p>
+<p>将整个报文交给下一个节点交换机</p>
+</li>
+<li>
+<p>分组交换</p>
+<p>将报文变成一个个分组 加上分组头部</p>
+</li>
+</ol>
+<h4 id="计算机网络分类"><a class="markdownIt-Anchor" href="#计算机网络分类"></a> 计算机网络分类</h4>
+<p>交换技术：电路交换网络、报文交换网络、分组交换网络</p>
+<p>使用者：专用网、公用网</p>
+<p>传输介质：有线网络、无线网络</p>
+<p>覆盖范围：广域网WAN、城域网MAN、局域网LAN、个域网PAN</p>
+<p>拓扑结构：总线型网络、星型网络、环形网络、网状型网络</p>
+<h4 id="计算机性能指标"><a class="markdownIt-Anchor" href="#计算机性能指标"></a> 计算机性能指标</h4>
+<p>速率：计算机再数字信道传送比特的速率、比特率</p>
+<p>带宽：再模拟信号中，表示信号的频率范围；再计算机网络中，表示网络的通信线路能传输数据的能力，单位时间内从网络某一点到另一点通过的”最高数据率“</p>
+<p>吞吐量：单位时间内通过某个网络的数据量</p>
+<p>时延：发生时延、传播时延、处理时延</p>
+<p>时延带宽积：以比特为单位的链路长度，再一个链路内的比特量</p>
+<p>往返时间：RTT（Round-Trip-Time）交互一次的时间</p>
+<p>利用率：信道利用率表示信道的百分之几的时间被利用；网络利用率表示全网的信道利用率的加权平均</p>
+<p>丢包率：一段时间内，传输丢失的分组与总分组量的比率，包括误码、网络拥塞</p>
+<h4 id="计算机网络体系结构"><a class="markdownIt-Anchor" href="#计算机网络体系结构"></a> 计算机网络体系结构</h4>
+<p><img src="/images/image-20210305143317816.png" alt="image-20210305143317816" /></p>
+<p><img src="/images/image-20210305143338951.png" alt="image-20210305143338951" /></p>
+<p><img src="/images/image-20210305143548968.png" alt="image-20210305143548968" /></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/1.%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C%E7%BB%BC%E8%BF%B0/" data-id="ckmk7003q000x4kvx2fm02dcz" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-mysql/innodb/9.锁" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/mysql/innodb/9.%E9%94%81/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.466Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/mysql/innodb/9.%E9%94%81/">锁</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/innodb/">innodb</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="锁"><a class="markdownIt-Anchor" href="#锁"></a> 锁</h3>
+<p>InnoDB通过next-ket+可重复读解决了幻读的问题</p>
+<p>InnoDB锁很高效，DML不总是产生锁对象</p>
+<p>锁对象通过位图实现，内存开销小，不存在锁升级问题</p>
+<h4 id="92-锁和事务"><a class="markdownIt-Anchor" href="#92-锁和事务"></a> 9.2 锁和事务</h4>
+<h5 id="921-隔离性"><a class="markdownIt-Anchor" href="#921-隔离性"></a> 9.2.1 隔离性</h5>
+<p>隔离性是ACID的I，锁就是实现事务的隔离性和一致性</p>
+<p>隔离性要求：事务各自运行时，运行不受到其他事务的影响，提交前也看不到其他事务的结果。</p>
+<p>要求用一种简单的算法或开销小的算法实现加锁技术，不能比串行化还慢</p>
+<p>锁是一个串行机制，保证同一时刻只能被一个事务访问</p>
+<p>MyISAM是表锁，并发没问题，并发写效率较差，如果是底部插入，有并发写入操作</p>
+<p>SQLserver开始是页锁，后来支持悲观乐观并发，但是会锁升级到表锁，</p>
+<h5 id="922-事务隔离级别"><a class="markdownIt-Anchor" href="#922-事务隔离级别"></a> 9.2.2 事务隔离级别</h5>
+<p>脏写：两个事务先后修改了同一值，先事务进行了回滚，后事务的值没了</p>
+<p>脏读：读取到了未提交的数据</p>
+<p>不可重复读：两次读取的数据不同（不保证产生新的行）</p>
+<h5 id="923-幻读"><a class="markdownIt-Anchor" href="#923-幻读"></a> 9.2.3 幻读</h5>
+<p>幻读指统一事务下，连续两次同样的sql导致结果不同，第二次sql可能返回之前不存在的行</p>
+<p>谓词锁：锁定的不是单个记录，而是一个条件</p>
+<p>key-range locking算法是谓词锁的改进，锁定的是范围</p>
+<p>根据范围分为next-key locking和previous-key locking</p>
+<p>（-∞,W]，(W,Y],(Y,Z],(Z,+∞)<br />
+范围被锁定时，阻止其他事务向这个范围内插入记录</p>
+<h4 id="93-锁的类型和算法"><a class="markdownIt-Anchor" href="#93-锁的类型和算法"></a> 9.3 锁的类型和算法</h4>
+<p>共享锁（S lock），允许事务读一行数据</p>
+<p>排他锁（X lock），允许事务删除或更新一行数据</p>
+<p>InnoDB支持多粒度锁定，允许事务在行记录或表记录同时加锁，为了多粒度锁，InnoDB支持了意向锁</p>
+<p>意向锁把锁定对象分为多个层次，意味着事务希望在更细粒度上加锁</p>
+<p>将上锁对象当初一棵树，要对下层节点上锁，需要先对上层对象加锁，要加x-lock，先对上层加意向锁IX，若某一部分导致等待，都需要等待粗粒度锁完成</p>
+<p>InnoDB意向锁即表级别的锁，目的是为了在一个事务中揭示下一行被将被请求的锁类型</p>
+<p>意向共享锁（IS）事务想获得一张表某几行的共享锁</p>
+<p>意向排他锁（IX）事务想获得一张表某几行的排他锁</p>
+<p><strong>意向锁的兼容性是相对表锁来的</strong></p>
+<p>InnoDB是行级锁，因此意向锁不会阻塞全表扫描外的请求。</p>
+<p>InnoDB支持的三种行锁</p>
+<ol>
+<li>record lock：记录锁</li>
+<li>gap lock：间隙锁，锁定一个范围，不包含记录本身</li>
+<li>next-key lock，邻键锁，间隙锁+记录锁，锁定范围+本身</li>
+</ol>
+<h4 id="94-锁内部实现"><a class="markdownIt-Anchor" href="#94-锁内部实现"></a> 9.4 锁内部实现</h4>
+<p>页中还存有位图信息，由于位图大小可变，没有显示定义大小</p>
+<p>记录是否有锁，通过位图的bit位判断</p>
+<p>InnoDB支持表锁：意向锁和自增锁</p>
+<p>事务信息中包含每个页的锁信息，然后多个页的锁信息链接起来</p>
+<p>这种查询方式看起来不高效，但是节省了大量开销，若对每一个锁进行管理，开销会非常巨大。</p>
+<p>锁查询的两种方式：</p>
+<ol>
+<li>根据事务：事务会维护一个内存对象，包含事务锁信息链表和指向正在等待的锁信息</li>
+<li>根据记录：根据记录所在的页进行哈希查询，通过位图进行判断</li>
+</ol>
+<h5 id="942-锁的并发控制"><a class="markdownIt-Anchor" href="#942-锁的并发控制"></a> 9.4.2 锁的并发控制</h5>
+<h4 id="95-显示锁和隐式锁"><a class="markdownIt-Anchor" href="#95-显示锁和隐式锁"></a> 9.5 显示锁和隐式锁</h4>
+<p>分为explicit显示锁和implicit隐式锁</p>
+<p>显示锁分为间隙显示锁（仅锁住范围）和非间隙显示锁（锁记录和记录之前的范围），可以是读锁页可以是写锁</p>
+<p>隐式锁总时写锁</p>
+<p>显示锁直接加锁，隐式锁是指索引记录逻辑上有写锁，内存不包含这个锁信息，没有任何内存开销，可以位于聚簇索引，也可以位于辅助索引。</p>
+<p>聚簇索引插入一条记录，未提交时，就包含一个隐式锁。</p>
+<p>对辅助索引进行update，产生隐式锁。并不是每次都产生隐式锁，若加锁需要等待，产生显示锁，因为后面需要被唤醒</p>
+<p>由于隐式锁存在，加锁前需要把隐式锁转化成显示锁，并加信息插入全局哈希表中</p>
+<h5 id="952-聚簇索引隐式锁"><a class="markdownIt-Anchor" href="#952-聚簇索引隐式锁"></a> 9.5.2 聚簇索引隐式锁</h5>
+<p>每个索引记录都有一个事务id隐藏列，判断事务id读取是否为活跃事务，活跃事务有隐式锁。</p>
+<h5 id="953-辅助索引记录的隐式锁"><a class="markdownIt-Anchor" href="#953-辅助索引记录的隐式锁"></a> 9.5.3 辅助索引记录的隐式锁</h5>
+<p>每个辅助索引页通过page header保存一个最大事务id，当索引中任何记录被更新，更新这个最大id</p>
+<ol>
+<li>根据辅助索引页的最大事务id判断</li>
+<li>根据聚簇索引记录进行判断</li>
+</ol>
+<p>当最大事务id小于活跃事务id，不包含隐式锁，之前已经提交的事务修改了该记录。若等于：</p>
+<ol>
+<li>存在活跃事务修改了辅助索引记录，导致最大事务id更新</li>
+<li>存在事务（可能活跃（未提交），也可能完成了提交），修改了页中其他辅助索引记录，导致最大事务id更新</li>
+</ol>
+<p><strong>隐式锁就是会自己判断是否阻塞</strong></p>
+<h4 id="96-加锁操作"><a class="markdownIt-Anchor" href="#96-加锁操作"></a> 9.6 加锁操作</h4>
+<h5 id="961-加锁流程"><a class="markdownIt-Anchor" href="#961-加锁流程"></a> 9.6.1 加锁流程</h5>
+<p>产生的锁对象加入到表队列的locks链表中，遍历次链表可以得出表上所有锁信息</p>
+<p>对行记录加锁需要注意：</p>
+<ol>
+<li>是否为隐私锁，隐式锁并且没有冲突，不需要产生锁对象，否则产生对象并加入等待队列</li>
+<li>锁对象是否可以重用，前提是同一个事务锁同一页记录，而且模式相同，或锁同一记录，第二次锁强度弱</li>
+</ol>
+<p>InnoDB锁是根据事务和页进行管理和组织的</p>
+<p>哈希表只能找到记录所在页的锁对象，然后通过位图查找</p>
+<h5 id="962-加锁过程"><a class="markdownIt-Anchor" href="#962-加锁过程"></a> 9.6.2 加锁过程</h5>
+<ol>
+<li>通过主键加锁的语句，仅对聚簇索引记录加锁</li>
+<li>通过辅助索引加锁的语句，首先对辅助索引记录加锁，再对聚簇索引记录加锁</li>
+<li>通过辅助索引记录加锁的语句，可能还需要对下一条记录加锁（避免幻读），若为唯一约束，则不需要，否则可能会再第二次读取时读到新插入的数据</li>
+</ol>
+<h4 id="97-行锁的维护"><a class="markdownIt-Anchor" href="#97-行锁的维护"></a> 9.7 行锁的维护</h4>
+<p>锁对象映射到哈希桶中</p>
+<h5 id="971-插入"><a class="markdownIt-Anchor" href="#971-插入"></a> 9.7.1 插入</h5>
+<ol>
+<li>对表加IX锁</li>
+<li>根据查询模式定位记录位置</li>
+<li>判断记录是否有锁，有就等待是否，没有就插入</li>
+<li>若有辅助索引，还需根据2，3进行锁判断，插入后需要更新最大事务id</li>
+</ol>
+<p>插入记录需要定位下一条记录，这是next-key lock邻键锁算法要求，要获取下一个记录的锁，如果有锁 说明当前区域被锁定，不能插入。插入后还需要更新锁定范围</p>
+<h5 id="972-更新"><a class="markdownIt-Anchor" href="#972-更新"></a> 9.7.2 更新</h5>
+<p>更新（删除）前，先尝试加x（隐式）锁，若存在其他锁，事务被阻塞，等待锁释放</p>
+<ol>
+<li>聚簇索引加锁成功，转化为显示锁</li>
+<li>辅助索引加锁成功，更新最大事务id</li>
+</ol>
+<p>若不能原地更新，需要把锁信息移到infinum记录上</p>
+<h5 id="973-purge"><a class="markdownIt-Anchor" href="#973-purge"></a> 9.7.3 purge</h5>
+<p>对标记删除的记录真正删除后，需要更新下一个记录的锁定范围。考虑时注意</p>
+<h5 id="974-一致性锁定读"><a class="markdownIt-Anchor" href="#974-一致性锁定读"></a> 9.7.4 一致性锁定读</h5>
+<p>默认情况，InnoDB使用一致性非锁定读。某些情况需要使用一致性锁定读保证数据的一致性，可以用lokc in share mode和for update加锁。</p>
+<h5 id="975-页的分裂"><a class="markdownIt-Anchor" href="#975-页的分裂"></a> 9.7.5 页的分裂</h5>
+<p>当插入导致分裂时</p>
+<ol>
+<li>确定分裂点记录</li>
+<li>分裂点到supernum锁移到到新页，修改bitmap</li>
+<li>调用函数将原superme移到新的superme（原gap锁后移）</li>
+<li>将新页的第一条记录锁信息移到前页的superme（原gap锁前移）</li>
+</ol>
+<h5 id="976-页的合并"><a class="markdownIt-Anchor" href="#976-页的合并"></a> 9.7.6 页的合并</h5>
+<ol>
+<li>记录左页的最后一条记录</li>
+<li>右页记录移到左页，更新锁信息</li>
+<li>左页superme移到保存的左页最后一条记录</li>
+<li>右页superme移到左页superme</li>
+</ol>
+<h4 id="98-自增锁"><a class="markdownIt-Anchor" href="#98-自增锁"></a> 9.8 自增锁</h4>
+<p>自增锁插入后即释放，不会等事务提交才释放</p>
+<p>自增长值并不持久化，而是每次启动时查询最大获得</p>
+<p>自增锁和表的读写锁不互容</p>
+<h4 id="99-死锁"><a class="markdownIt-Anchor" href="#99-死锁"></a> 9.9 死锁</h4>
+<h5 id="991-死锁的概念"><a class="markdownIt-Anchor" href="#991-死锁的概念"></a> 9.9.1 死锁的概念</h5>
+<p>两个或两个以上事务争夺资源的过程中互相等待的现象。</p>
+<p>解决死锁的基本办法是超时回滚。</p>
+<p>除了超时机制，数据库一般还采用等待图的方式进行死锁检查，保存了两种信息：</p>
+<ol>
+<li>锁的信息链表</li>
+<li>事务等待链表</li>
+</ol>
+<p>若链表构造的图出现回路，就代表产生了死锁。采用深度优先搜索算法，每次加锁需要等待时，就调用判断是否会产生死锁，有就回滚事务</p>
+<h5 id="992-死锁概率"><a class="markdownIt-Anchor" href="#992-死锁概率"></a> 9.9.2 死锁概率</h5>
+<p>死锁概率=(n^2 * r^4)/4R   n是事务量，R是记录量</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/mysql/innodb/9.%E9%94%81/" data-id="ckmk7004h003l4kvxh2iaf5sp" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-mysql/innodb/8.索引页" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/mysql/innodb/8.%E7%B4%A2%E5%BC%95%E9%A1%B5/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.464Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/mysql/innodb/8.%E7%B4%A2%E5%BC%95%E9%A1%B5/">索引页</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/innodb/">innodb</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="索引页"><a class="markdownIt-Anchor" href="#索引页"></a> 索引页</h3>
+<p>InnoDB是索引组织表，聚簇索引的叶子节点存放着完整的记录，辅助索引页中存放着指向叶子节点的书签</p>
+<h4 id="82-页"><a class="markdownIt-Anchor" href="#82-页"></a> 8.2 页</h4>
+<p>InnoDB定义了两种页，索引页和日志页</p>
+<p>由于是索引组织表，索引即数据，索引页就是数据页</p>
+<h4 id="83-存储结构"><a class="markdownIt-Anchor" href="#83-存储结构"></a> 8.3 存储结构</h4>
+<h5 id="831-page-header"><a class="markdownIt-Anchor" href="#831-page-header"></a> 8.3.1 Page Header</h5>
+<p>page header保存页的信息，占56个字节，每个页都有两个伪记录。当删除页中记录时，page_free指向最近删除的空间，通过记录record header中的next header串联得到一个空闲链表</p>
+<p>当记录申请空间时，检查page_free的空间是否够用，不够用直接去page_heap_top申请，不会遍历链表，之前的空间不会被重用。当页空间不足时，会进行页重新组织，根据主键记录排序，整理碎片空间</p>
+<p>页记录是根据主键顺序排列的，顺序是逻辑上的，不是物理的（开销很大）。因此页是一个存储记录的堆，其中记录无序。</p>
+<p>在传统B+树，分裂操作向左进行。InnoDB根据值判断插入放心，顺序升序插入、顺序降序插入、无序随机插入导致不同的分裂策略。</p>
+<p>为了更好的顺序性存储，叶子和非叶子节点存放在不同的段对象中。</p>
+<h5 id="832-page-directory"><a class="markdownIt-Anchor" href="#832-page-directory"></a> 8.3.2 page directory</h5>
+<p>当进行记录查询，需要page directory。B+树只能查询到页，然后根据page directory（位于页的尾部）定位。</p>
+<p>page directory由槽组成（slot），每个槽两个字节，按主键顺序逆序。</p>
+<p>为了提高存储和插入效率，槽采用稀疏方式，每个槽对应了一个记录，每个槽总时包含4-8条记录。槽保证在一定范围内，当超过范围，槽会分裂产生新的槽，当低于数量，会平衡槽中记录数，可能导致删除和合并槽</p>
+<h4 id="84-page-cursor"><a class="markdownIt-Anchor" href="#84-page-cursor"></a> 8.4 Page Cursor</h4>
+<h5 id="841-定位记录"><a class="markdownIt-Anchor" href="#841-定位记录"></a> 8.4.1 定位记录</h5>
+<p>page cursor是一个指向记录所在位置的游标，用来定位记录，通过查询模式向前或向后扫描记录</p>
+<p>由于page directory是稀疏机构，因此首先通过二叉查找定位记录所在槽，然后通过二叉查找的扫描记录。</p>
+<h5 id="842-插入记录"><a class="markdownIt-Anchor" href="#842-插入记录"></a> 8.4.2 插入记录</h5>
+<p>插入的记录可以是物理记录，也可是逻辑记录。通常是逻辑记录，转化成物流记录。cursor指向插入记录之前的记录</p>
+<p>插入记录会对页进行修改，会产生redo log。插入的redo log就是cursor定位的记录偏移量+插入的记录。为了性能，进行记录压缩。策略是找到cursor记录和当前记录的第一个不同字节，不需要对前面重复的内容记录。</p>
+<p>记录插入通常将逻辑记录插入页，记录插入完成后，需要对page directory维护，看看槽是否需要平衡</p>
+<h5 id="843-删除记录"><a class="markdownIt-Anchor" href="#843-删除记录"></a> 8.4.3 删除记录</h5>
+<p>将记录标记为删除，然后将记录的空间放到page_header的page_free前端。需要对page directory维护</p>
+<p>删除的redo log，额外的记录删除记录在页中的偏移量</p>
+<h5 id="844-并发控制"><a class="markdownIt-Anchor" href="#844-并发控制"></a> 8.4.4 并发控制</h5>
+<p>对于索引页的并发控制是在上层的调用中进行的，索引页不加锁</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/mysql/innodb/8.%E7%B4%A2%E5%BC%95%E9%A1%B5/" data-id="ckmk7004g003j4kvxaj30gof7" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-mysql/innodb/7.记录" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -376,986 +1296,6 @@
 
 
   
-    <article id="post-mysql/innodb/4.重做日志" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/mysql/innodb/4.%E9%87%8D%E5%81%9A%E6%97%A5%E5%BF%97/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.395Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/mysql/innodb/4.%E9%87%8D%E5%81%9A%E6%97%A5%E5%BF%97/">重做日志</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/innodb/">innodb</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="重做日志"><a class="markdownIt-Anchor" href="#重做日志"></a> 重做日志</h3>
-<h4 id="42-相关概述"><a class="markdownIt-Anchor" href="#42-相关概述"></a> 4.2 相关概述</h4>
-<h5 id="421-简介"><a class="markdownIt-Anchor" href="#421-简介"></a> 4.2.1 简介</h5>
-<p>redo log用来实现事务的持久性，ACID的D。由两部分组成，一是内存中的重做日志换成(redo log buffer)，易丢失，二是重做日志文件(redo log file)，持久</p>
-<p>InnoDB是事务存储引擎，通过force log at commit实现日志持久化。当事务提交时，先将事务日志写入重做日志文件持久化，完成后再commit。</p>
-<p>InnoDB日志由两部分组成，redo log和undo log。redo log保证事务的持久性。undo log帮助事务回滚以及MVCC功能。redo log是顺序写的，数据库允许时不需要对redo log进行读操作。undo log随机读/写。</p>
-<p>为了确保每次日志都写入重做日志文件，每次将重做日志缓存写入重做日志文件后，InnoDB需要调用一个fsync操作（同步内存到磁盘）。使用fsync效率取决于磁盘性能。磁盘性能决定了事务的提交性能。</p>
-<p>InnoDB允许用户设置不强制fsync，日志定时从内存写入磁盘。可以提高数据库性能。可能会丢失最后一段时间事务</p>
-<p>innodb_flush_log_at_trx_commit控制策略。1强制提交，0定时提交。master thread（现在可能是其他线程）每秒进行一次redo log的fsync操作。设置未0，不符合事务的D(Durablity)特性。后续版本设为2，将redo log写入操作系统缓存，数据库宕机，操作系统不宕机，不会丢失事务。</p>
-<p>MySQL还有一个二进制日志文件（bin-log），用来进行point-in-time（PIT）恢复以及主从复制。表明与redo log很像，其实本质不同。</p>
-<p>redo log是InnoDB存储引擎产生，bin log是MySQL数据库上层产生，不仅仅针对InnoDB引擎。</p>
-<p>两种日志内容形式不同。bin log是逻辑日志，记录对应的SQL语句（三种形式）。redo log是物理日志，记录对每个页的修改。</p>
-<p>两种日志写入磁盘时间不同。bin log在事务完成后一次写入，redo log在事务进行中不断写日，表现为日志并不是随事务提交而顺序写入。</p>
-<p>bin log  t1-t4-t3-t2… 一个事务一个日志（一个日志多个log event)</p>
-<p>redo log t1-t2-t1-<em>t2… 一个事务多个日志，多个事务并发写入（随机写），</em> *表示提交</p>
-<h5 id="422-物理逻辑日志"><a class="markdownIt-Anchor" href="#422-物理逻辑日志"></a> 4.2.2 物理逻辑日志</h5>
-<p>redo log类型：</p>
-<ol>
-<li>物理日志：保存一个页中发生改变的字节，保存页中发生变化的字节，数据结构包括页位置，偏移，长度，旧值，新值。该日志幂等（执行多次仍一样）。产生的日志量比较大。</li>
-<li>逻辑日志：记录对表的操作&lt;insert op,table name, record value&gt;，日志尺寸小，undo 操作需要对日志操作逆操作。恢复时无法保证数据一致性。插入时宕机，若还有其他索引，回滚会很困难。</li>
-<li>物理逻辑日志：结合了物理日志和逻辑日志。对页是物理的，对页内操作是逻辑的。</li>
-</ol>
-<h5 id="423-lsn"><a class="markdownIt-Anchor" href="#423-lsn"></a> 4.2.3 LSN</h5>
-<p>LSN是log sequence number缩写，代表日志序列号。占用8个字节</p>
-<p>LSN单调递增，代表每个redo log的编号。初始值由LOG_START_LSN定义</p>
-<p>LSN在多个对象中，含义各不相同。</p>
-<p>在redo log中，表示事务写入redo log的字节量。因为redo log先写缓存，索引存在缓存的LSN和日志的LSN两部分</p>
-<p>在每个页中，记录在页的头部，有个FIL_PAGE_LSN，记录页的LSN，表示该页罪和刷新时LSN大小。redo log记录的是页的日志，页的LSN判断页是否需要进行恢复。</p>
-<p>检测到也通过LSN保存，表示页已经刷新到磁盘的LSN位置，重启时只需要从监测点开始恢复，检测到LSN和redo log LSN相同，不需要恢复。</p>
-<h5 id="424-检查点"><a class="markdownIt-Anchor" href="#424-检查点"></a> 4.2.4 检查点</h5>
-<p>InnoDB为了实现事务持久性，使用了write ahead log(WAL)策略，当事务提交时，先写入redo log，实际数据页刷到磁盘由检测到负责。</p>
-<p>虽然日志已经写入到磁盘，但是buffer pool的页还没有刷到磁盘。</p>
-<p>检测点就是将缓冲池的页刷新到磁盘。</p>
-<p>检测点的作用就是缩短数据库宕机时到数据库恢复的时间。</p>
-<p>InnoDB存在两种检测点：</p>
-<ol>
-<li>sharp checkpoint：将脏页全部刷到磁盘，加速宕机恢复，但是刷页时不能进行DML操作</li>
-<li>fuzzy checkpoint：脏页慢慢刷到磁盘，提高了系统可用性。但是得将页按第一次修改的LSN排序</li>
-</ol>
-<h5 id="425-归档日志"><a class="markdownIt-Anchor" href="#425-归档日志"></a> 4.2.5 归档日志</h5>
-<p>InnoDB中，redo log文件大小固定，如果3个redo log，大小1G，一共就3G。循环使用。</p>
-<p>为了保存之前的redo log，设计了归档日志。</p>
-<h5 id="426-恢复"><a class="markdownIt-Anchor" href="#426-恢复"></a> 4.2.6 恢复</h5>
-<p>InnoDB启动时，不管是否正常改变，都试图恢复。redo log是物理日志，恢复较快。</p>
-<p>InnoDB对恢复进行了优化，顺序读取和并行应用redo log。</p>
-<h4 id="43-物理存储结构"><a class="markdownIt-Anchor" href="#43-物理存储结构"></a> 4.3 物理存储结构</h4>
-<h5 id="431-redo-log物理结构"><a class="markdownIt-Anchor" href="#431-redo-log物理结构"></a> 4.3.1 redo log物理结构</h5>
-<p>InnoDB的redo log由以下几个部分组成</p>
-<ol>
-<li>重做日志缓存(redo log buffer)：由innodb_log_buffer_size控制，默认1MB</li>
-<li>重做日志组(redo log group)：多个组的内容一致，保证可用性，但是只能由一个组，不能启用镜像</li>
-<li>每个重做日志组包含多个重做日志文件(redo log file)：可能由多个同样大小的文件组成，默认前缀ib_logfile，参数innodb_log_group_home_dir指定日志路径。innodb_log_files_in_group指定组文件数量。innodb_log_file_size指定每个redo log大小。默认5MB。总redo log大小必须小于4GB（不能等于）</li>
-<li>归档重做日志文件(archive redo log)：对重做日志组1进行归档。innodb_log_archive开启归档，默认关闭，默认路径和日志路径相同，前缀ib_arch_log_</li>
-</ol>
-<h5 id="432-redo-log-块"><a class="markdownIt-Anchor" href="#432-redo-log-块"></a> 4.3.2 redo log 块</h5>
-<p>redo log块以512字节存储，意味着redo log buffer，redo log file和archive 都是以块的方式保存的。</p>
-<p>因为redo log块大小和扇区大小一致，可以保证写入的原子性，不需要doublewrite</p>
-<p>redo log块除了日志本身，还有日志快头（12字节）和日志快尾（8字节）。</p>
-<p>log block header包含：</p>
-<p>LOG_BLOCK_HDR_NO：log buffer类似数组，这个值就是索引，4个字节，最高位判断是不是flush bit，所以最大2GB</p>
-<p>LOG_BLOCK_HDR_DATA_LEN：2个字节，日志快占用的大小，写满时未0x200，表示512个字节</p>
-<p>LOG_BLOCK_FIRST_REC_GROUP：2个字节，当前块第一个日志的所在偏移量</p>
-<p>LOG_BLOCK_CHECK_POINT_NO：4个字节，日志块最后被写入时log_sys-&gt;next_checkpoint_no的低4个字节</p>
-<p>log block tailer：只包含LOG_BLOCK_HDR_NO和头部一样</p>
-<h5 id="433-重做日志组和文件"><a class="markdownIt-Anchor" href="#433-重做日志组和文件"></a> 4.3.3 重做日志组和文件</h5>
-<p>log buffer刷盘规则：</p>
-<ol>
-<li>事务提交时</li>
-<li>写入检查点值时</li>
-<li>log buffer超过以使用空间的阈值时</li>
-</ol>
-<p>log block是通过appen追加的，一个写满写下一个，循环使用(round-robin)</p>
-<p>虽然是在文件最后append，但不都是顺序写。redo log file还有2KB其他信息。保存了4个512字节大小的块</p>
-<p>log file header  512字节：</p>
-<p>​	log_group_id 4个字节：重做日志组号</p>
-<p>​	log_file_start_lsn 8个字节：表示每个重做日志文件的第一个日志的LSN</p>
-<p>checkpoint1  512字节：实际占用296字节</p>
-<p>​	log_checkpoint_lsn：两个checkpoint块交替写更新checkpoint的值</p>
-<p>​	log_checkpoint_offset：多个redo log file视为一个大数组，这是对应的LSN所在的offset</p>
-<p>​	log_checkpoint_array：记录的是(fileno,offset)对，共32对(32*(4+4))=256字节，表示每个重做日志组的归档文件号，最多32个日志组。</p>
-<p>空	512K</p>
-<p>checkpoint2 512K字节</p>
-<p>这些信息只在每个组的第一个文件保存，后面的文件也占有这些空间，但不存内容。</p>
-<p>因为这些信息，除了log block写入，还更新这些信息。这些信息对于redo log恢复至关重要。</p>
-<h4 id="44-数据结构"><a class="markdownIt-Anchor" href="#44-数据结构"></a> 4.4 数据结构</h4>
-<h5 id="441-log_group_struct"><a class="markdownIt-Anchor" href="#441-log_group_struct"></a> 4.4.1 log_group_struct</h5>
-<h5 id="442-log_struct"><a class="markdownIt-Anchor" href="#442-log_struct"></a> 4.4.2 log_struct</h5>
-<p>表示重做日志缓存，由log_init()初始化，控制着重做日志缓存的写入，重做日志文件写入，归档重做日志的写入，在线备份等。</p>
-<p>遍历buf_free表示当前重做日志缓存写入的开始位置，当大于max_buf_free时，强制进行一次重做日志文件写入。初始化时，max_buf_free设为redo log buffer的一半。</p>
-<p>系统又一个控制全局的log_struct对象log_sys，实现对重做日志的操作。并发控制由数据结构log_sys中的mutex保护。保护所有的重做日志。所有重做日志的I/O是异步的，可以提前释放mutex，写入都是先写入缓存，再进行fsync，进行fsync时解法mutex保护。</p>
-<h4 id="45-组提交"><a class="markdownIt-Anchor" href="#45-组提交"></a> 4.5 组提交</h4>
-<p>一个事务提交一次需要进行一次fsync，为了提高性能，允许一组事务进行提交，组提交。</p>
-<p>当重做日志缓冲刷新到磁盘时，先拷贝最后一个日志块，允许之后的事务写到该块，实现组提交。</p>
-<p>组提交时重做日志的写入是缓存写（经过操作系统内核的page cache），没有使用O_DIRECT（之间磁盘IO）</p>
-<h4 id="46-恢复"><a class="markdownIt-Anchor" href="#46-恢复"></a> 4.6 恢复</h4>
-<h5 id="461-数据结构"><a class="markdownIt-Anchor" href="#461-数据结构"></a> 4.6.1 数据结构</h5>
-<p>recv_sys_struct用来管理重做日志恢复。</p>
-<p>其中add_hash是一个哈希表，每个bucket存放着recv_addr_t数据结构。根据(space,page_no)哈希，相同的放入一个bucket。recv_addr_t存放对应(space,page_no)页的重做日志recv_t，一个页可能由多个重做日志，通过链表将recv_t相连。每个recv_t记录了重做日志的类型，长度，开始LSN，结束LSN，已经重做日志body。body由recv_data_t定义（16KB），对大于该长度的重做日志，需要使用next指针进行链接</p>
-<p>由于每个重做日志大小不同，采用动态内存分配奇数。</p>
-<h5 id="462-重做日志恢复"><a class="markdownIt-Anchor" href="#462-重做日志恢复"></a> 4.6.2 重做日志恢复</h5>
-<p>InnoDB启动时，不管是否正常关闭，都尝试恢复。</p>
-<p>InnoDB表空间第一个页记录了数据库关闭时最后刷新页的LSN，若未正常关闭，该值和redo log的checkpoint值不同，就需要恢复</p>
-<p>恢复数据时，通过小批量读取重做日志文件的log block到log_sys的buf中（64KB= 128*512k)，然后根据对应的(space,offset)插入recv_sys哈希表（addr_hash)，然后进行恢复。若保存的页过多，会强制进行恢复。</p>
-<ol>
-<li>分析重做日志</li>
-<li>重做日志加入hash表</li>
-<li>将hash表重做日志应用到页上：判断页的LSN，当大于待恢复重做日志的LSN，表示页已经写入磁盘或恢复过</li>
-</ol>
-<p>异步恢复：扫描一个页相邻的32个页，如果待恢复而且不在内存，就记录。然后异步读取页进行恢复。这样可以并行恢复页</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/mysql/innodb/4.%E9%87%8D%E5%81%9A%E6%97%A5%E5%BF%97/" data-id="ckmk7004300234kvxgt9216mq" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-mysql/innodb/3.同步机制" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/mysql/innodb/3.%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.374Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/mysql/innodb/3.%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6/">同步机制</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/innodb/">innodb</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="同步机制"><a class="markdownIt-Anchor" href="#同步机制"></a> 同步机制</h3>
-<p>InnoDB存储引擎同步机制由sync模块实现，主要实现mutex（互斥量）以及rw-lock（读写锁）。没有使用操作系统自带的，而是自己进行了封装，并提供spin（自旋）和wait array（等待队列）设计提高性能</p>
-<h4 id="31-相关文件"><a class="markdownIt-Anchor" href="#31-相关文件"></a> 3.1 相关文件</h4>
-<h4 id="32-基础知识"><a class="markdownIt-Anchor" href="#32-基础知识"></a> 3.2 基础知识</h4>
-<p>mutex对象是用来进行Mutual Exclusion（互斥）操作，目的是再多线程并发访问时保证共享数据的正确性。</p>
-<p>linux可以提供以下数据结构进行互斥</p>
-<ol>
-<li>spin lock</li>
-<li>semephore</li>
-<li>monitor</li>
-<li>sequencer</li>
-</ol>
-<h5 id="321-memory-model"><a class="markdownIt-Anchor" href="#321-memory-model"></a> 3.2.1 memory model</h5>
-<p>内存模型决定了cpu怎么访问内存，以及并发情况下多cpu对内存的影响</p>
-<p>不同内存模型的差异是在于硬件以怎么样的顺序对内存数据进行load和store</p>
-<p>最简单的内存模型是（sequential memory model）顺序内存模型。所有的读写操作都是按照程序允许顺序执行的。而且要求cpu或者I/O设备读写数据操作是原子性的。开始后不能被其他内存操作中断</p>
-<p>还有total storememory model和partial store memory model</p>
-<h5 id="322-mutual-exclution"><a class="markdownIt-Anchor" href="#322-mutual-exclution"></a> 3.2.2 mutual exclution</h5>
-<p>两个或多个cpu同时访问临界区时会产生竞争条件。为了消除这种问题，需要互斥。</p>
-<h5 id="323-atomic-read-modify-write-operation"><a class="markdownIt-Anchor" href="#323-atomic-read-modify-write-operation"></a> 3.2.3 Atomic Read-Modify-Write Operation</h5>
-<p>为了一次只有一个cpu访问临界区，硬件都提供了基于原子操作的read-modify-write。</p>
-<p>目前cpu都支持test-and-set（TAS），从内存读取一个字节或一个word（4个字节），然后和0比较，无条件的将其再内存的值置为1.这是给原子操作，这是其他cpu或I/O设备不能访问总线。提供TAS，操作系统可以构造更高级别的同步操作，自旋锁，信号量等</p>
-<p>最基本的TAS指令就是swap-atomic操作。将寄存器的值和内存的值交互，提供swap-atomic可以构造TAS操作。将寄存器值置为1，执行atomic-swap，和寄存器中的值比较</p>
-<h5 id="324-spin-lock"><a class="markdownIt-Anchor" href="#324-spin-lock"></a> 3.2.4 spin lock</h5>
-<p>spin-lock依赖互斥的代码应该比较少，快速释放spin-lock。</p>
-<p>spin-lock执行通过先加锁后节点实现，然而乱序可能带来问题，所有要加内存屏障。</p>
-<h5 id="325-死锁"><a class="markdownIt-Anchor" href="#325-死锁"></a> 3.2.5 死锁</h5>
-<h4 id="33-innodb同步机制"><a class="markdownIt-Anchor" href="#33-innodb同步机制"></a> 3.3 InnoDB同步机制</h4>
-<p>InnoDB同步机制：mutex，完全互斥，rw-lock，读锁允许并发读，写锁完全互斥</p>
-<h5 id="331-mutex"><a class="markdownIt-Anchor" href="#331-mutex"></a> 3.3.1 mutex</h5>
-<p>mutex_struct是InnoDB互斥数据结构。mutex采用TAS命令，与spin-lock不同之处</p>
-<ol>
-<li>当返回1时，先自旋（不用反复执行TAS，因为自旋判断值是从L1 cache或L2 cache获取，不用读内存）</li>
-<li>自旋一段时间不能获得mutex，放入wait_array等待唤醒（不将进程放到等待队列，因为切换上下文需要开销）</li>
-</ol>
-<p>InnoDB实现自旋的目的</p>
-<ol>
-<li>减少内存访问</li>
-<li>减少上下文切换</li>
-</ol>
-<p>使用mutex保护，临界区一般是1-20us，最长时间发生在索引节点的二叉查找。所以默认自旋20us</p>
-<p>线程不能获得mutex时，先从wait_array分配一个cell，然后将mutex-&gt;waiter设置为1.然后再进行TAS判断。防止分配完cell时mutex线程释放资源并唤醒等待线程，由于未置1而不被唤醒，产生永远等待</p>
-<p>InnoDB没有使用内存屏障解决乱序问题，而是后台一个线程定期调用换上检测是否由无限等待的mutex，有就唤醒</p>
-<h4 id="332-rw-lock"><a class="markdownIt-Anchor" href="#332-rw-lock"></a> # 3.3.2 rw-lock</h4>
-<p>为了提高并发，允许临界资源共享读取，</p>
-<p>rw-lock使用FIFO的调度策略</p>
-<p>写锁可以递归使用，读锁数据结构没有定义持有的线程id，所以无法递归</p>
-<p>同mutex，不能获得锁时先自旋，然后放入wait_array队列</p>
-<h5 id="333-wait-array"><a class="markdownIt-Anchor" href="#333-wait-array"></a> 3.3.3 wait array</h5>
-<p>InnoDB引擎有一个全局wait array对象sync_primary_wait_array用来对等待latch线程唤醒，默认创建100个cell的等待队列，当队列1000个cell分配完，InnoDB会发生宕机。申请到cell后，等待线程会休眠，等待被唤醒</p>
-<h5 id="334-死锁检测"><a class="markdownIt-Anchor" href="#334-死锁检测"></a> 3.3.4 死锁检测</h5>
-<p>InnoDB实现latch同时，开启UNIV_SYNC_DEBUG模式，支持对latch加锁进行AB-BA死锁检测。InnoDB定义了每个latch的优先级，每个线程根据这个顺序加锁就不会产生AB-BA死锁</p>
-<p>sync_thread_struct存储每个线程持有的latch信息，内部包含了sync_level_struct，表示每个线程持有的每个latch的level信息</p>
-<p>死锁仅发生在等待的场景下，当进程放入symc_primary_wait_array的cell中时调用死锁检测函数检测死锁（使用深度优先遍历算法）</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/mysql/innodb/3.%E5%90%8C%E6%AD%A5%E6%9C%BA%E5%88%B6/" data-id="ckmk7004100204kvx49whc7p0" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-mysql/innodb/2.基本数据结构和算法" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/mysql/innodb/2.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.366Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/mysql/innodb/2.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/">基本数据结构和算法</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/innodb/">innodb</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="基本数据结构和算法"><a class="markdownIt-Anchor" href="#基本数据结构和算法"></a> 基本数据结构和算法</h3>
-<h4 id="21-相关文件"><a class="markdownIt-Anchor" href="#21-相关文件"></a> 2.1 相关文件</h4>
-<h4 id="22-内存管理系统"><a class="markdownIt-Anchor" href="#22-内存管理系统"></a> 2.2 内存管理系统</h4>
-<p>这里的内存管理不是管理缓冲池中的页，儿是管理InnoDB引擎运行时动态生成的数据结构对象。</p>
-<h5 id="221-内存管理"><a class="markdownIt-Anchor" href="#221-内存管理"></a> 2.2.1 内存管理</h5>
-<p>InnoDB引擎不直接使用malloc和free管理内存</p>
-<p>InnoDB引擎使用内存堆的方式来进行内存对象管理，可以一次性分配大块内存，不需要按需分配。Innodb还可以从缓冲池分配内存建立堆内存（16KB），更快的请求内存页，称为缓冲池分配，使用malloc分配内存的方法称为动态分配。</p>
-<p>InnoDB存储引擎的内存管理层次结构</p>
-<p><img src="/images/image-20210309140549311.png" alt="image-20210309140549311" /></p>
-<p>最顶层是内存堆，存放各自用途的内存堆对象</p>
-<p>下面是内存池和缓冲池。</p>
-<p>通过mem_area_alloc可以从内存池建立一个内存堆或为内存堆增加一个内存块</p>
-<p>通过buf_frame_alloc可以从缓冲池分配一整页大小的内存空间。</p>
-<p>最下面是系统内存。</p>
-<p>从操作系统分配叫动态分配，从缓冲池分配叫缓冲池分配。</p>
-<p>内存堆相对于一个栈，通过不断增加内存块对象来增长空间，，只能先释放栈顶的内存块或一次性全部释放。从这个栈中可以分配更小的内存卡，也就是内存栈的功能。</p>
-<p>InnoDB引擎使用数据结构mem_block_t表示内存堆中每次从操作系统或缓冲池分配的内存块。</p>
-<p>本质上看，内存堆就是一系列相连接内存块。内存块头部包含mem_block_info_t存储内存块元数据信息。</p>
-<p>内存堆使用第一个内存块的base字段将堆中的所有内存块根据进堆顺序链接起来。</p>
-<p>Innodb定义了三种内存堆类型</p>
-<ol>
-<li>MEM_HEAP_DYNAMIC堆的内存调用通用内存池接口申请（阈值是8KB）</li>
-<li>MEM_HEAP_BUFFER堆是内存是从缓冲池申请（阈值是缓存页框-200，默认是16KB）</li>
-<li>MEM_HEAP_BTR_SEARCH是MEM_HEAP_BUFFER的子类型，仅在自适应哈希索引中使用</li>
-</ol>
-<p>分配内存块空间大小的三种方式：</p>
-<ol>
-<li>指定初始内存指针和大小，该方法无须进行内存分配</li>
-<li>指定初始块大小</li>
-<li>不指定初值指针和大小</li>
-</ol>
-<p>如果是第三者，系统分配默认大小为MEM_BLOCK_START_SIZE(64B)的内存块建堆，需要更多空间时，额外的内存块连接到链表，以后每次分配的大小是前一次的两倍，知道到达设置的阈值，之后每次分配阈值大小的内存块。</p>
-<p>但调用者请求分配内存大于阈值不受限制。</p>
-<h5 id="222-通用内存池"><a class="markdownIt-Anchor" href="#222-通用内存池"></a> 2.2.2 通用内存池</h5>
-<p>InnoDB启动后，会实例一个mem_comm_pool对象，称为通用内存池，在InnoDB启动进行内存管理初始化时调用mem_pool_create创建。通用内存池服务于内存堆，进行小块内存分配，通常分配一些InnoDB引擎内存数据对象。</p>
-<p>内存池通过free_list[64]和mem_area_struct组成内部伙伴系统解决内存碎片问题。</p>
-<p>把内存池分组为64个内存区链表（就是不同链表的大小都不同）。内存块区的最小大小为mem_area_struct（内存区的结构体）对其后的两倍。</p>
-<p>需要64B对象，就去free_list[6]找，找不到去free_list[7]找128然后分裂给6</p>
-<h4 id="23-哈希表"><a class="markdownIt-Anchor" href="#23-哈希表"></a> 2.3 哈希表</h4>
-<h5 id="231-哈希算法"><a class="markdownIt-Anchor" href="#231-哈希算法"></a> 2.3.1 哈希算法</h5>
-<h5 id="232-数据结构"><a class="markdownIt-Anchor" href="#232-数据结构"></a> 2.3.2 数据结构</h5>
-<p>hash_table_struct是InnoDB定义的哈希表结构，数组的存储类型是void*，因为要存储各种类型数据</p>
-<p>哈希表的槽数设置位素数，可以使用函数ut_find_prime返回一个大于n的素数。</p>
-<p>缓冲池的哈希表由数据结构buf_pool_struct的互斥量控制并发</p>
-<p>自适应哈希索引使用的哈希表由全部的读/写锁btr_search_latch控制并发</p>
-<p>InnoDB哈希表使用链地址法解决哈希冲突。但是哈希表不存链的定义</p>
-<p>可以提供存储的对象自己保存的哈希链或自己创建哈希链</p>
-<p>如哈希表存缓冲池的页，此时哈希链存在buf_block_t中</p>
-<p>有些数据结构没有链的信息，例如自适应哈希索引，存的对象是记录，仅仅是个二进制串，对于这种对象，链的内存通过数据结构hash_table_struct的heap变量申请</p>
-<p>InnoDB存储引擎，支持对各种类型对象进行查询</p>
-<h4 id="24-双链表"><a class="markdownIt-Anchor" href="#24-双链表"></a> 2.4 双链表</h4>
-<p>用于链接多个同类型的数据结构</p>
-<p>如内存池中的内存块通过双链表管理</p>
-<p>InnoDB中分为两种：组值内存对象的内存双链表和组值磁盘文件中数据的磁盘双链表</p>
-<h5 id="241-内存双链表"><a class="markdownIt-Anchor" href="#241-内存双链表"></a> 2.4.1 内存双链表</h5>
-<p>内存双链表是通常意义的双链表，用在InnoDB各个模块。缓冲池模块，事务处理模块，锁模块和文件系统模块等。</p>
-<p>头尾指针节点LIST_BASE_NODE_T包含count（链表内节点数量）和头节点、尾节点</p>
-<p>链表节点UT_LIST_NODE_T，每个被链接的对象必须是结构体而且包含链表节点对象。</p>
-<h5 id="242-磁盘双链表"><a class="markdownIt-Anchor" href="#242-磁盘双链表"></a> 2.4.2 磁盘双链表</h5>
-<p>磁盘双链表主要用在表空间管理模块、事务处理模块和B树模块，用于建立保存再磁盘中的数据结构的关系。由于磁盘数据库设备无法像内存通过指针随机访问，需要先把对于的磁盘块读到内存，再通过块内偏移找到所需数据</p>
-<p>磁盘双链表和内存双链表的结构类似</p>
-<p>基节点存放节点个数和头尾节点</p>
-<p>链表节点除了前后指针，还包含fil_faddr_t，存放数据再磁盘的位置，类似内存指针。</p>
-<p>FIL_ADDR_PAGE是页号的字节偏移，4个字节</p>
-<p>FIL_ADDR_BYTE是页内地址偏移，站两个字节</p>
-<h4 id="25-其他数据结构"><a class="markdownIt-Anchor" href="#25-其他数据结构"></a> 2.5 其他数据结构</h4>
-<h5 id="251-动态数组"><a class="markdownIt-Anchor" href="#251-动态数组"></a> 2.5.1 动态数组</h5>
-<p>InnoDB动态数组定义位dyn_array_t，主要用于mtr(小事务)模块，保存mtr中的锁和修改日志</p>
-<p>动态数组基于块的方式扩展存储空间，每次申请DYN_ARRAY_DATA_SIZE(512B)的数组空间</p>
-<p>初始化不动态分配数组空间，只初始化第一个块，不够用时分配新的内存块</p>
-<h5 id="252-排序"><a class="markdownIt-Anchor" href="#252-排序"></a> 2.5.2 排序</h5>
-<p>InnoDB通用的排序默认是基于合并算法进行排序，最坏复杂度log(n)。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/mysql/innodb/2.%E5%9F%BA%E6%9C%AC%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84%E5%92%8C%E7%AE%97%E6%B3%95/" data-id="ckmk7003z001u4kvx0vthh48g" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-mysql/innodb/13.事务处理" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/mysql/innodb/13.%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.357Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/mysql/innodb/13.%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/">事务处理</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/innodb/">innodb</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="事务处理"><a class="markdownIt-Anchor" href="#事务处理"></a> 事务处理</h3>
-<h4 id="132-事务"><a class="markdownIt-Anchor" href="#132-事务"></a> 13.2 事务</h4>
-<h5 id="1321-概述"><a class="markdownIt-Anchor" href="#1321-概述"></a> 13.2.1 概述</h5>
-<p>actomicity：原子性，一起成功或一起失败。事务是不可分割的工作单位。</p>
-<p>consistency：一致性：事务将数据库从一种一致状态变为另一种一致状态，事务开始前和结束后数据库的完整性约束没有被破坏</p>
-<p>isolation：隔离性，事务之间不可见。当前数据库系统都提供了一种粒度锁策略，只锁实体对象的子集</p>
-<p>durable：持久性，事务一旦提交，结果就是永久性的。</p>
-<h5 id="1322-分类"><a class="markdownIt-Anchor" href="#1322-分类"></a> 13.2.2 分类</h5>
-<ol>
-<li>扁平事务</li>
-<li>带有保持点的扁平事务</li>
-<li>链事务</li>
-<li>嵌套事务</li>
-<li>分布式事务</li>
-</ol>
-<h5 id="1323-隔离级别"><a class="markdownIt-Anchor" href="#1323-隔离级别"></a> 13.2.3 隔离级别</h5>
-<ol>
-<li>read uncommitted：读未提交。产生脏读</li>
-<li>read committed：读提交，产生不可重复读</li>
-<li>repeatable read：可重复读，产生幻读</li>
-<li>serializable：序列化。</li>
-</ol>
-<p>InnoDB通过repeatable read和Next-Key Lock（间隙锁）避免了幻读</p>
-<h4 id="133-事务系统结构"><a class="markdownIt-Anchor" href="#133-事务系统结构"></a> 13.3 事务系统结构</h4>
-<h5 id="1331-事务系统段"><a class="markdownIt-Anchor" href="#1331-事务系统段"></a> 13.3.1 事务系统段</h5>
-<p>InnoDB有专门的物理位置保存事务的相关信息，称为事务系统段，包含：</p>
-<ol>
-<li>事务相关信息</li>
-<li>回滚段segment header信息</li>
-<li>MySQL bin log日志文件位置</li>
-<li>doublewrite段信息</li>
-</ol>
-<h4 id="134-doubewrite段"><a class="markdownIt-Anchor" href="#134-doubewrite段"></a> 13.4 doubewrite段</h4>
-<p>InnoDB为了避免partial write问题，使用doublewrite刷新策略，页刷新到磁盘时，批量的刷新到达doublewrite，然后再刷新到对应的位置。</p>
-<p>doublewrite段的segment header保存在事务系统段TRX_SYS_DOUBLEWRITE_FSEG之后。doublewrite是顺序写入的，段的分配是分配碎片页，所以doublewrite开始时，先申请32个碎片页，然后申请2MB空间。</p>
-<p>doublewrite内存也有2MB空间。进行写入时，先把页复制到doublewrite buffer，double write buffer就行一个2MB的数组，每个元素大小16K，变量first_free表示下一个可以写入的位置，first_free等于128B表示写满</p>
-<h4 id="135-undo-日志"><a class="markdownIt-Anchor" href="#135-undo-日志"></a> 13.5 undo 日志</h4>
-<h5 id="1351-简介"><a class="markdownIt-Anchor" href="#1351-简介"></a> 13.5.1 简介</h5>
-<p>undo日志有两个作用，一个是实现事务的原子性，事务通过undo log回滚。另一个是用来实现一致性非锁定读。</p>
-<p>一致性非锁定读指InnoDB通过MVCC读取数据库的数据。如果读的数据正在更新，不会等待写锁释放，会去读一个快照数据</p>
-<p>也有undo log是用来回滚事务的，本来就存在，所以快照本身没有开销</p>
-<h5 id="1352-结构"><a class="markdownIt-Anchor" href="#1352-结构"></a> 13.5.2 结构</h5>
-<p>undo有点特别。其存放是通过两个对象完成的：回滚段和undo段，这里个段的segment header都保存在自己的段内</p>
-<p>回滚段保存undo 段segment herder所在页的位置，可以保存1024个undo段信息。</p>
-<p>事务系统段一共可以保存156个回滚段，理论最高并发256*1024个事务，mysql仅仅用了1个回滚段，所以只有1024个事务（InnoDB1.1开始支持128个回滚段）</p>
-<h5 id="1353-回滚段"><a class="markdownIt-Anchor" href="#1353-回滚段"></a> 13.5.3 回滚段</h5>
-<p>回滚段有一个链表，按事务提交顺序逆序存放undo日志，当进行purge时，先读取尾端undo日志，判断是否可以回收该空间</p>
-<h5 id="1354-undo段"><a class="markdownIt-Anchor" href="#1354-undo段"></a> 13.5.4 undo段</h5>
-<p>undo段才真正存储undo日志。每个回滚段保存了1024个undo段，undo段内存储undo页</p>
-<ol>
-<li>undo log page header：18个字节</li>
-<li>undo log segment haeder（仅仅在undo段的第一个undo页中），30个字节</li>
-<li>undo 日志</li>
-</ol>
-<p>一个undo段有多个undo页，第一个undo页多了segment header，其他每个页有页header和日志</p>
-<p>创建undo日志的任何对象时，要先写redo log。恢复时要根据redo恢复undo，然后判断事务回滚还是提交</p>
-<p>InnoDB引擎允许一个页存放多个不同事务的undo日志，提交事务时，把undo放入链表，判断页的可用空间是否大于3/4，就可重用。</p>
-<p>由于undo log的history链表是以页链接的，而undo页放着不同事务的日志，所以purge需要是涉及磁盘离散读取，比较慢</p>
-<p>若undo段中undo页数量大于1，则不可重用</p>
-<h4 id="136-undo-记录"><a class="markdownIt-Anchor" href="#136-undo-记录"></a> 13.6 undo 记录</h4>
-<h4 id="1361-存储结构"><a class="markdownIt-Anchor" href="#1361-存储结构"></a> 13.6.1 存储结构</h4>
-<p>undo日志以逻辑的方式进行存储，意味着回滚只能将数据库逻辑的恢复到原来的样子。数据被逻辑的恢复，但数据结构和页本身可能不太相同。不能将一个页回滚到事务开始的样子，因为有页的并发修改</p>
-<p>每个undo log有两部分组成：</p>
-<ol>
-<li>undo log header：保存每个日志通用信息</li>
-<li>undo log record：分为insert undo log和update undo log，除了insert其他DML都是update</li>
-</ol>
-<p>事务发生DML操作时，分配一个undo log header。insert和update不能放在同一个undo 段，若每个事务都有insert和update，最多就是1024/2=512个事务</p>
-<p>insert undo log插入后其他事务看不到，所以事务提交后就能删除</p>
-<p>update undo log需要purge线程清理</p>
-<p>根据产生的undo log就可把数据恢复到之前的版本，若之前的版本记录undo log未清理，可构建新的版本。（MVCC非锁定读的实现过程）</p>
-<h5 id="1362-insert-undo-log-record"><a class="markdownIt-Anchor" href="#1362-insert-undo-log-record"></a> 13.6.2 insert undo log record</h5>
-<p>insert undo log包含了日志类型，事务的id，事务第几个操作产生的undo log，操作的表，主键信息等</p>
-<p>insert操作不一定会产生insert undo log，可能产生update undo log，例如删除一个主键1的记录然后再插入主键1的记录，当插入记录完全相同，就变成了update undo log</p>
-<h5 id="1363-update-undo-log-record"><a class="markdownIt-Anchor" href="#1363-update-undo-log-record"></a> 13.6.3 update undo log record</h5>
-<p>改undo要提高mvcc操作，事务结束不能立即删除，放入回滚段的history链表头部，等待purge线程处理</p>
-<p>除了事务信息，主要存储以下三部分信息：</p>
-<ol>
-<li>记录的主键值列表</li>
-<li>发生更新的列</li>
-<li>索引列：若更新了索引列，方便再purge时删掉对应的辅助索引</li>
-</ol>
-<p>主键值链表固定存在，后面的两部分信息取决于是否产生这些修改</p>
-<p>当一个undo页放不下时，会把之前的删掉，然后再undo段创建新的页然后写入，同时改页不可重用</p>
-<h4 id="137-purge"><a class="markdownIt-Anchor" href="#137-purge"></a> 13.7 purge</h4>
-<h5 id="1371-清理操作"><a class="markdownIt-Anchor" href="#1371-清理操作"></a> 13.7.1 清理操作</h5>
-<p>purge的2个清理操作：</p>
-<ol>
-<li>清理记录。删除已经标记delete mark的记录或其他相关辅助索引记录</li>
-<li>清理undo log。若undo 页中所有undo记录都被删除，清理undo 段</li>
-</ol>
-<p>只有没有任何事务通过undo日志进行MVCC，才可用清理undo log</p>
-<p>innodb会按照事务提交顺序把undo log放到回滚段的history链表（提交顺序逆序）</p>
-<p>由于提交导致的事务无序，所有purge要进行大量随机读，purge 再master thread线程完成。忙碌时，秒10秒回收20个undo页。</p>
-<h5 id="1372-实现原理"><a class="markdownIt-Anchor" href="#1372-实现原理"></a> 13.7.2 实现原理</h5>
-<p>InnoDB中，有一个全局对象保存当前purge的位置与信息。</p>
-<p>purge对象持有表的写锁，而drop table需要持有读锁，这就保证了purge时不会删除表</p>
-<p>purge对象的latch保证删除的正确性，开始purge时，要先持有写锁，然后看那个undo log可被清理。当MVCC时，需要持有读锁。保证了读的时候不会被删除</p>
-<p>可以pruge undo时，处理主键或辅助索引，同时删除对应的undo。如果undo清空，，删除history链表。</p>
-<p>当清理到20个页或清空完毕，退出。</p>
-<h4 id="138-rollback"><a class="markdownIt-Anchor" href="#138-rollback"></a> 13.8 rollback</h4>
-<h4 id="1381-回滚指针"><a class="markdownIt-Anchor" href="#1381-回滚指针"></a> 13.8.1 回滚指针</h4>
-<p>InnoDB存储引擎包含roll_ptr（回滚指针）7个字节的隐藏列。指向当前记录的undo log。</p>
-<p>因为innodb最多128个undo段（最高位是undo log 的类型），每个页偏移4个字节，页内偏移2个字节，七个字节刚刚好</p>
-<h5 id="1382-回滚操作"><a class="markdownIt-Anchor" href="#1382-回滚操作"></a> 13.8.2 回滚操作</h5>
-<p>用户态回滚：将事务进行的所有操作都撤销</p>
-<p>内核态回滚：存储引擎内部发起的回滚，仅回滚事务最近的一个sql（发生违反约束等，事务未结束，此时之前的数据仍存在，需要用户显示回滚）或回滚整个事务（死锁、事务超时）</p>
-<p>回滚时：</p>
-<ol>
-<li>取得undo log</li>
-<li>根据undo log回滚</li>
-</ol>
-<h4 id="139-commit"><a class="markdownIt-Anchor" href="#139-commit"></a> 13.9 commit</h4>
-<p>回滚操作也需要进行事务提交，释放事务持有的资源：undo段，锁，read view等。为了满足持久性，必须刷新redo log，确保写入外存。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/mysql/innodb/13.%E4%BA%8B%E5%8A%A1%E5%A4%84%E7%90%86/" data-id="ckmk70040001x4kvx63ad729f" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-mysql/innodb/12.缓冲池" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/mysql/innodb/12.%E7%BC%93%E5%86%B2%E6%B1%A0/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.338Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/mysql/innodb/12.%E7%BC%93%E5%86%B2%E6%B1%A0/">缓冲池</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/innodb/">innodb</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="缓冲池"><a class="markdownIt-Anchor" href="#缓冲池"></a> 缓冲池</h3>
-<p>磁盘数据库一般通过缓冲池弥补cpu和磁盘速度的差距</p>
-<h4 id="122-概述"><a class="markdownIt-Anchor" href="#122-概述"></a> 12.2 概述</h4>
-<h5 id="1221-缓冲池"><a class="markdownIt-Anchor" href="#1221-缓冲池"></a> 12.2.1 缓冲池</h5>
-<p>页从缓冲池刷新会磁盘不是再每次更新后，而是以一定的频率，通过checkpoint机制刷回磁盘</p>
-<p>缓冲池中缓存的数据页类型又：索引页，数据页，undo页，插入缓存，自适应哈希索引，锁信息。</p>
-<p>前四个会持久化，自适应哈希和锁信息不会持久化，生命周期再存储引擎运行过程中</p>
-<p>每个事务锁信息再trx_struct对象的lock_heap变量分配，当空间大于8KB，就从缓冲池分配，这种情况可能出现大事务</p>
-<h5 id="1222-lru-free和flush链表"><a class="markdownIt-Anchor" href="#1222-lru-free和flush链表"></a> 12.2.2 LRU、Free和Flush链表</h5>
-<p>缓冲池是一块很大的内存区（16KB的倍数）。</p>
-<p>缓冲池有一个free链表，保存至未使用的内存页空间，当free链表页被使用完毕。当再申请空间时，需要LRU算法淘汰使用的页</p>
-<p>数据库的缓冲池都是通过LRU算法管理的。InnoDB对LRU进行了优化，LRU加入了midpoint位置，读取的新页放到midpoint位置，位于3/8处，这样可以避免大量数据扫描时把常用页刷出链表</p>
-<p>自适应哈希和锁信息的页申请空间后并不放入LRU链表</p>
-<p>缓冲池中的页不仅需要被读取，还需要修改，修改的页肯定发生在LRU链表中，当LRU链表页被修改后，被称为脏页。数据库通过checkpoint机制刷回磁盘。flush链表的页就是脏页。脏页既存在于flush，也存在于LRU。</p>
-<p>缓冲池mutex已经拆分位缓冲池mutex，flush链表mutex，哈希表re-latch，buf_block_t的mutex</p>
-<h4 id="123-缓冲池的管理"><a class="markdownIt-Anchor" href="#123-缓冲池的管理"></a> 12.3 缓冲池的管理</h4>
-<h5 id="1231-lru算法"><a class="markdownIt-Anchor" href="#1231-lru算法"></a> 12.3.1 LRU算法</h5>
-<h5 id="1232-lru链表维护"><a class="markdownIt-Anchor" href="#1232-lru链表维护"></a> 12.3.2 LRU链表维护</h5>
-<h5 id="1233-页的分配"><a class="markdownIt-Anchor" href="#1233-页的分配"></a> 12.3.3 页的分配</h5>
-<p>当free_list被分配完毕，需要从LRU链表尾部替换。条件：</p>
-<ol>
-<li>页不是脏的</li>
-<li>页没有其他线程使用</li>
-</ol>
-<p>如果页是脏的，需要先刷新到磁盘。页如果被其他线程使用，页不能立即替换出去</p>
-<p>找到可替换页后，需要对页进行free操作，从缓冲池的哈希表删除页，若有自适应哈希，还删除自适应哈希</p>
-<h4 id="124-页的读取"><a class="markdownIt-Anchor" href="#124-页的读取"></a> 12.4 页的读取</h4>
-<h5 id="1241-物理读取"><a class="markdownIt-Anchor" href="#1241-物理读取"></a> 12.4.1 物理读取</h5>
-<p>InnoDB启动时，缓冲池时空的，所有页都在free链表，数据库读写都再缓冲池完成，这时主要是从外村读取页到缓冲池</p>
-<h5 id="1242-随机预读"><a class="markdownIt-Anchor" href="#1242-随机预读"></a> 12.4.2 随机预读</h5>
-<p>随机预读指判断某个区域的页是否大多已经被访问，并且是否位热点页，若满足条件，则认位该区域的页都可能被访问，提前进行读取。预读根据某区域内的space和offset顺序读取，可以提高性能。</p>
-<p>预取区域根据每32个页进行管理。预读要求32个页的大部分被访问过，默认阈值是9，而且活跃</p>
-<h5 id="1243-线性预读"><a class="markdownIt-Anchor" href="#1243-线性预读"></a> 12.4.3 线性预读</h5>
-<p>线性预读判断页的访问是否是顺序的，InnoDB就会出发线性预读，连续读取之后的页</p>
-<p>读取一个页，若页是某个区域的边界，本区域的部分页被顺序访问，出发线性预读，顺序读取32个页</p>
-<h5 id="1244-逻辑读取"><a class="markdownIt-Anchor" href="#1244-逻辑读取"></a> 12.4.4 逻辑读取</h5>
-<p>逻辑读取是从缓冲池访问指定的页。若页已经再缓冲池，通过缓冲池的哈希表进行搜索。页需要加锁访问，然而对非叶子节点的访问是通过所有本身的latch保护的，不需要对页加锁</p>
-<h4 id="125-页的刷新"><a class="markdownIt-Anchor" href="#125-页的刷新"></a> 12.5 页的刷新</h4>
-<h5 id="1251-检查点"><a class="markdownIt-Anchor" href="#1251-检查点"></a> 12.5.1 检查点</h5>
-<p>检查点技术解决了以下问题：</p>
-<ol>
-<li>缩短数据库恢复时间</li>
-<li>缓冲池不够时，脏页刷回磁盘</li>
-<li>redo log不可用，刷新脏页</li>
-</ol>
-<p>InnoDB存在两种检查点：</p>
-<ol>
-<li>Sharp Checkpoint：数据库关闭时所有脏页刷会磁盘</li>
-<li>Fuzzy Checkpoint：部分脏页刷回磁盘</li>
-</ol>
-<p>Fuzzy Checkpoint发生的情况：</p>
-<ol>
-<li>
-<p>Master Thread Checkpoint，每秒和每十秒（异步，不会阻塞用户线程）</p>
-</li>
-<li>
-<p>Asycn/Sync Flush Checkpoint，redo log不可用，强制刷新，此时脏页从flush_list选取</p>
-<p>当checkpoint&lt;0.75*redo log size（最大） 不刷藏</p>
-<p>当0.75<em>redo log size &lt; checkpoint&lt;0.9</em>redo log size 触发Async刷新，从flush list刷足够的脏页回磁盘满足&lt;0.75</p>
-</li>
-</ol>
-<h5 id="1252-部分写"><a class="markdownIt-Anchor" href="#1252-部分写"></a> 12.5.2 部分写</h5>
-<p>页的刷新会遇到部分写，对一个页只写入了一部分内容，如写入4KB（操作系统只保证512B写入原子）</p>
-<p>为了避免部分写，实现了doublewrite，页刷新到磁盘时首先写入doublewrite，然后写入磁盘。发生部分写时，通过doublewrite中的页恢复。doublewrite存在于内存表空间，大小位2MB，一次最多进行128页刷新</p>
-<h5 id="1253-刷新的实现"><a class="markdownIt-Anchor" href="#1253-刷新的实现"></a> 12.5.3 刷新的实现</h5>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/mysql/innodb/12.%E7%BC%93%E5%86%B2%E6%B1%A0/" data-id="ckmk7003y001q4kvxbzi2h8i4" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-mysql/innodb/11.insert buffer" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/mysql/innodb/11.insert%20buffer/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.324Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/mysql/innodb/11.insert%20buffer/">insert buffer</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/innodb/">innodb</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="insert-buffer"><a class="markdownIt-Anchor" href="#insert-buffer"></a> insert buffer</h3>
-<h4 id="112-基本概念"><a class="markdownIt-Anchor" href="#112-基本概念"></a> 11.2 基本概念</h4>
-<p>Insert buffer是InnoDB存储引擎独有的，可以大幅提高数据库非唯一约束的辅助索引的插入性能</p>
-<p>随机插入会收到辅助索引的影响，因此大批量导入数据时，一半不建议先建立辅助索引，当导入完成后再建立辅助索引</p>
-<p>Insert buffer：插入时首先判断插入的辅助索引叶子是否再缓冲池中，若再直接插入，否则插入的记录放在insert buffer中，根据一些算法将记录通过后台线程慢慢的merge到辅助索引页。好处是：</p>
-<ol>
-<li>减少磁盘离散读取</li>
-<li>将多次插入合并为一次操作</li>
-</ol>
-<p>insert buffer只能缓存非唯一约束索引，唯一索引需要判断插入记录是否唯一，还需要读取辅助索引页。</p>
-<h4 id="113-架构实现"><a class="markdownIt-Anchor" href="#113-架构实现"></a> 11.3 架构实现</h4>
-<h5 id="1131-存储结构"><a class="markdownIt-Anchor" href="#1131-存储结构"></a> 11.3.1 存储结构</h5>
-<p>Insert Buffer也是一棵B+树。键值为待插入辅助索引页的page_no。Insert Buffer默认最多占缓冲池的一半。</p>
-<p>Insert Buffer会把插入的辅助索引记录缓存起来，但是必须保证缓存的记录不会引起页的分裂。当缓存记录过多，会主动读取辅助索引页，将记录合并回页，然后进行悲观插入操作。InnoDB 存在也该Insert Buffer bitmap页，用来追踪每个辅助索引页的剩余空间，当小于某阈值（512B）就必须主动合并。</p>
-<p>以为一个Insert Buffer bitmap只能追踪一个辅助索引页2KB的空间，所以Insert Buffer 最多缓存2KB。</p>
-<p>B+树索引由两个段，root页保存了非叶子节点段和页节点段的段头信息</p>
-<p>insert buffer只有一个数据段，存放所有非叶子节点和页节点。</p>
-<h5 id="1132-逻辑控制"><a class="markdownIt-Anchor" href="#1132-逻辑控制"></a> 11.3.2 逻辑控制</h5>
-<p>insert buffer的合并分为主动和被动。</p>
-<p>主动是指master thread定期随机将记录合并到辅助索引页。每秒有处理能力就合并五个，每十秒必定处理五个</p>
-<p>被动是指用户主动发起辅助索引页的读取操作，回被动的将记录合并到辅助索引页。由于辅助索引页已经读取到缓冲池，后续插入不会记录到insert buffer</p>
-<h4 id="114-相关数据结构"><a class="markdownIt-Anchor" href="#114-相关数据结构"></a> 11.4 相关数据结构</h4>
-<h4 id="115-死锁"><a class="markdownIt-Anchor" href="#115-死锁"></a> 11.5 死锁</h4>
-<h5 id="1151-latch顺序"><a class="markdownIt-Anchor" href="#1151-latch顺序"></a> 11.5.1 latch顺序</h5>
-<p>当辅助索引页读取到缓存而这时发生merge，可能回引起insert buffer索引树的收缩，所以需要持有insert buffer索引树内存对象x-latch</p>
-<p>还有就是异步I/O，当所有线程都在读取辅助索引页，而辅助索引页又需要合并，没有线程能读insert buffer树，就出现了死锁</p>
-<p>为了方式死锁，InnoDB页的逻辑页分为三个层次</p>
-<ol>
-<li>非insert buffer页</li>
-<li>除了insert buffer bitmap页的insert buffer页</li>
-<li>insert buffer bitmap页</li>
-</ol>
-<p>insert buffer有独立的文件空间管理，insert buffer页的段都保存再root页的free list链表中，当进行insert buffer 树的扩展或收缩时，先判断freelist是否有足够的页，这就使得fsp模块与insert buffer模块分离，避免了死锁</p>
-<h5 id="1152-并发控制"><a class="markdownIt-Anchor" href="#1152-并发控制"></a> 11.5.2 并发控制</h5>
-<p>引入了四个insert buffer latch</p>
-<h5 id="1153-异步io线程"><a class="markdownIt-Anchor" href="#1153-异步io线程"></a> 11.5.3 异步I/O线程</h5>
-<p>由于读取辅助索引页发起了异步I/O，因此当Insert buffer合并时，又发起了异步I/O，会陷入等待状态</p>
-<p>将insert buffer的异步I/O放入一个单独的I/O线程</p>
-<h4 id="116-维护"><a class="markdownIt-Anchor" href="#116-维护"></a> 11.6 维护</h4>
-<h5 id="1161-记录合并"><a class="markdownIt-Anchor" href="#1161-记录合并"></a> 11.6.1 记录合并</h5>
-<p>无论是主动还是被动，顺序都是先读取辅助索引页，再读取insert buffer页</p>
-<h5 id="1162-空间收缩"><a class="markdownIt-Anchor" href="#1162-空间收缩"></a> 11.6.2 空间收缩</h5>
-<p>当删除insert buffer中的记录时，这些页会从树删除，放入free list头部，然后通过收缩将页放回insert buffer段的空间</p>
-<p>为了避免每次回收占用大量空间，每次最多回收4个页</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/mysql/innodb/11.insert%20buffer/" data-id="ckmk7003x001n4kvxgxm5c9f0" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-mysql/innodb/10.B+树索引" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/mysql/innodb/10.B+%E6%A0%91%E7%B4%A2%E5%BC%95/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.288Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/mysql/innodb/10.B+%E6%A0%91%E7%B4%A2%E5%BC%95/">B+树索引</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/innodb/">innodb</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="b树索引"><a class="markdownIt-Anchor" href="#b树索引"></a> B+树索引</h3>
-<h4 id="b树"><a class="markdownIt-Anchor" href="#b树"></a> B+树</h4>
-<h5 id="1011-概述"><a class="markdownIt-Anchor" href="#1011-概述"></a> 10.1.1 概述</h5>
-<p>B+树是为磁盘或其他直接存取辅助设备设计的一种平衡查找树，所有记录节点都按键值大小顺序存放在同一层叶子节点，各节点指针相连</p>
-<h5 id="1012-插入"><a class="markdownIt-Anchor" href="#1012-插入"></a> 10.1.2 插入</h5>
-<p>三种情况：</p>
-<ol>
-<li>叶子，索引都没满：直接插入</li>
-<li>叶子满，索引没满：插入，分裂叶子</li>
-<li>叶子满，索引满：插入，分裂叶子和索引</li>
-</ol>
-<p>B+树主要作用于磁盘，因此要减少分裂操作，B+树也提高了旋转功能</p>
-<p>旋转发生在页子满时，其左右兄弟节点没满，将记录转移到左右兄弟节点上</p>
-<h5 id="1013-删除"><a class="markdownIt-Anchor" href="#1013-删除"></a> 10.1.3 删除</h5>
-<p>B+树使用填充因子控制树的删除变化，50%是填充因子的最小值</p>
-<p>三种情况</p>
-<ol>
-<li>叶子和索引都不小于填充因子：直接删除，如果该节点还是索引页的节点，用右节点代替</li>
-<li>叶子节点小于填充因子：合并叶子节点和兄弟节点，更新索引</li>
-<li>都小于填充因子：合并叶子节点和兄弟，更新索引，合并索引和兄弟节点</li>
-</ol>
-<h4 id="102-b树索引"><a class="markdownIt-Anchor" href="#102-b树索引"></a> 10.2 B+树索引</h4>
-<h5 id="1021-索引的特点"><a class="markdownIt-Anchor" href="#1021-索引的特点"></a> 10.2.1 索引的特点</h5>
-<h5 id="1022-聚簇索引"><a class="markdownIt-Anchor" href="#1022-聚簇索引"></a> 10.2.2 聚簇索引</h5>
-<p>聚簇索引是将表的主键作为键值构建的B+树</p>
-<p>聚簇索引的记录是按键值顺序存放的，是逻辑顺序，不是物理顺序，开销太大</p>
-<h5 id="1023-辅助索引"><a class="markdownIt-Anchor" href="#1023-辅助索引"></a> 10.2.3 辅助索引</h5>
-<p>辅助索引称为二级索引或非聚簇索引。辅助索引的叶子节点保存&lt;键值，记录地址&gt;。聚簇索引页中保存的是下层页的地址，辅助索引页子节点保存记录的地址。记录的地址一般有</p>
-<ol>
-<li>记录的物理地址，页号，槽号：偏移量（MyISAM，没有聚簇索引，记录放在堆表中，主键索引和非主键索引没区别，只是唯一并且非空）</li>
-<li>记录的主键值（InnoDB）</li>
-</ol>
-<p>因为辅助索引叶子节点存放主键，所有还需要通过一次聚簇索引查询，回表</p>
-<p>辅助索引非叶子节点存放记录&lt;键值、主键值、地址&gt;，辅助索引的非叶子节点也存在主键值信息，辅助索引节点不保存因此列（事务id和undo指针）</p>
-<h5 id="1024-填充因子"><a class="markdownIt-Anchor" href="#1024-填充因子"></a> 10.2.4 填充因子</h5>
-<p>因为小于0.5就会合并，索引填充因子大于0.5，顺序插入可能达到0.9以上，一般为0.69</p>
-<h4 id="103-innodb的b树实现"><a class="markdownIt-Anchor" href="#103-innodb的b树实现"></a> 10.3 InnoDB的B+树实现</h4>
-<h5 id="1032-相关latch"><a class="markdownIt-Anchor" href="#1032-相关latch"></a> 10.3.2 相关latch</h5>
-<p>B+树索引的并发控制通过两部分latch进行，每个页都有一个读写锁，每个索引树对象中还有一个读写锁，可以理解为非叶子节点的读写锁（或B+树索引的读/写锁）</p>
-<h5 id="1033-整理"><a class="markdownIt-Anchor" href="#1033-整理"></a> 10.3.3 整理</h5>
-<p>InnoDB中页是一个无序堆，记录之间通过record header的next header串联。删除记录时，记录所占用的空间放到链表page-free，下次再分配空间时查找第一个空间是否满足，满足则分配记录空间，否则从page-heap-top分配</p>
-<p>对页进行DML操作时，若页空间不足，先进行整理操作，空间仍不够，进行分裂</p>
-<p>对页整理时，先加x-latch，该操作仅记录重做日志的类型。</p>
-<h5 id="1034-分裂"><a class="markdownIt-Anchor" href="#1034-分裂"></a> 10.3.4 分裂</h5>
-<p>InnoDB索引存在磁盘，所以对B+树索引进行了优化，不再将中间记录作为分裂点，而是根据插入情况判断，有效利用磁盘空间</p>
-<p>分裂时，先判断拆入模式（递增，递减，无序）</p>
-<p>步骤：</p>
-<ol>
-<li>确定分裂点记录</li>
-<li>从索引数据段分配一个新页，加上x-latch</li>
-<li>确定需要移动页中开始的第一个记录和移动到的记录</li>
-<li>更新上层节点记录</li>
-<li>将记录移到新页</li>
-<li>待插入记录插入页</li>
-<li>若插入失败，页重新组织，再次进行插入</li>
-<li>若上述失败，再次去1进行分裂</li>
-</ol>
-<h5 id="1035-合并"><a class="markdownIt-Anchor" href="#1035-合并"></a> 10.3.5 合并</h5>
-<p>更新或删除后，页的填充率可能小于0.5，这是会进行合并，若左右节点没有空间，不进行合并</p>
-<p>先对内存对象和待合并页加锁，然后合并页判断左兄弟，左兄弟存在，就合并左兄弟，及时空间不足，也不合并右兄弟</p>
-<h4 id="104-查找"><a class="markdownIt-Anchor" href="#104-查找"></a> 10.4 查找</h4>
-<h5 id="1041-mode"><a class="markdownIt-Anchor" href="#1041-mode"></a> 10.4.1 mode</h5>
-<p>查询可能为小于，小于等于，大于，大于等于等，但再非叶子节点查询只能是小于或小于等于。对于插入，只能是小于等于，找到插入记录的前一条记录。</p>
-<p>若对主键或唯一索引进行查询，使用大于等于，因为InnoDB支持MVCC，即使进行了唯一约束，但页内也可能存在多个键值相同记录（例如被标记为删除的记录）。</p>
-<p>当再一个页查询不到，查到supernm时，会继续去下一个页查询</p>
-<h5 id="1042-latch-mode"><a class="markdownIt-Anchor" href="#1042-latch-mode"></a> 10.4.2 latch mode</h5>
-<p>InnoDB总是先对索引内存对象加上s-latch，然后进行页操作，或insert、update、delete不会导致非叶子节点变化（分裂、合并、树的高度变化）立即释放内存对象s-latch（乐观方式）、否则，换成x-latch（悲观方式）</p>
-<h5 id="1043-cursor"><a class="markdownIt-Anchor" href="#1043-cursor"></a> 10.4.3 cursor</h5>
-<h4 id="105-dml操作"><a class="markdownIt-Anchor" href="#105-dml操作"></a> 10.5 DML操作</h4>
-<h5 id="1051-插入"><a class="markdownIt-Anchor" href="#1051-插入"></a> 10.5.1 插入</h5>
-<p>InnoDB插入分为两部分，首先调用乐观插入，如果发生分裂等，调用悲观插入</p>
-<p>乐观插入时，发现不能插入到页中，先进行一次整理，再次尝试</p>
-<p>插入记录是逻辑记录，需要转化成物理记录，然后计算页的容量是否满足。InnoDB要求预留1/16的空间（填充因子）。当发生update时，不需要立即分裂</p>
-<p>当逻辑记录转化成物理记录后，需要检查锁信息，生成undo日志，若检测到下一个记录被其他事务持有锁，等待</p>
-<p>首先插入，失败进行整理，再次插入，然后更新自适应哈希索引。</p>
-<p>插入完成后，可能有行溢出数据，需要对内存对象加x-latch，之后将溢出的列数据放到行溢出页</p>
-<h5 id="1052-非主键更新"><a class="markdownIt-Anchor" href="#1052-非主键更新"></a> 10.5.2 非主键更新</h5>
-<p>分为乐观和悲观，乐观分为原地更新和普通乐观更新。原地更新只更新记录的列大小没有发生变化。</p>
-<p>一般辅助索引更新都不能是原地更新，是delete mark+insert，因为辅助索引更新会导致B+树索引列的值发生变化。</p>
-<p>乐观更新前提是主键没有发生变化，仅持有记录页的x-latch</p>
-<p>若不能原地更新，原记录会先删除，然后插入新的记录，但主键没变，记录还在同一个页中，只是新旧记录的heap_no发生了变化，需要更新锁信息。（将原记录锁信息移到infimum上，完成后移回来）</p>
-<h5 id="1053-主键更新"><a class="markdownIt-Anchor" href="#1053-主键更新"></a> 10.5.3 主键更新</h5>
-<p>若更新包含主键更新：</p>
-<ol>
-<li>将原纪录标记为删除</li>
-<li>插入新的主键记录</li>
-<li>purge线程判断是否有事务使用原主键记录，没有则删除</li>
-</ol>
-<p>当主键旧记录有外部溢出页数据时，更新主键，新记录继承溢出页，旧记录取消继承，则只能删除旧记录，不能删除溢出页。若回滚时旧记录继承溢出页，溢出页不能删除</p>
-<h5 id="1054-删除"><a class="markdownIt-Anchor" href="#1054-删除"></a> 10.5.4 删除</h5>
-<ol>
-<li>更新delete flag（事务中完成）</li>
-<li>等待purge线程（后台线程）</li>
-</ol>
-<p>聚簇索引和辅助索引的记录都需要加flag，都是update操作，需要加锁</p>
-<p>聚簇索引伪删除需要产生undo log和redo log</p>
-<p>乐观删除（只对页加x-latch）条件：</p>
-<ol>
-<li>
-<p>不包含extern属性的列</p>
-</li>
-<li>
-<p>删除不会发生页的合并</p>
-</li>
-</ol>
-<p>悲观删除对内存索引对象加x-latch</p>
-<h4 id="106-持久游标"><a class="markdownIt-Anchor" href="#106-持久游标"></a> 10.6 持久游标</h4>
-<p>大多少情况下，通过持久游标的对象来处理查询，进行select，update，delete操作时，先定位到第一条记录，开始扫描知道不满足条件。</p>
-<p>持久游标用于保存每次查到的记录，查询下一条记录时，首先恢复上一次查询的记录，再获取下一条记录。</p>
-<p>扫描过程可能出现页的修改，发生分裂合并等情况，需要每次对保存的记录恢复，然后查找下一条记录</p>
-<h4 id="107-自哈希索引"><a class="markdownIt-Anchor" href="#107-自哈希索引"></a> 10.7 自哈希索引</h4>
-<p>InnoDB支持自适应哈希索引，根据查询模式，对活页查询页中的记录进行哈希索引</p>
-<p>自适应是指哈希索引的创建和维护都是存储引擎自己做的，用户不能自己进行创建操作。仅对热点页所在的数据进行哈希索引。</p>
-<p>B+树索引只能找到页，哈希索引找到记录</p>
-<p>B+树索引持久化，哈希索引只存在于内存</p>
-<p>首先判断页根据访问模式是否已经被请求了17次，若是，判断页根据访问模式是否请求了100次，若是创建哈希索引</p>
-<p>每个索引对象保存着索引访问模式，每个页也包含也访问模式信息。通过这两个判断是否进行哈希索引</p>
-<h5 id="1072-创建哈希索引"><a class="markdownIt-Anchor" href="#1072-创建哈希索引"></a> 10.7.2 创建哈希索引</h5>
-<p>若存在相同哈希键值的记录，InnoDB会进行更新，而不是通过链表解决冲突</p>
-<p>使用限制</p>
-<ol>
-<li>查询开始是没有任何其他事务持有btr_search_latch的x-latch</li>
-<li>查询不会引起b+树结构变化，是乐观查询，仅对页加s-latch或x-latch</li>
-</ol>
-<h5 id="1073-哈希索引维护"><a class="markdownIt-Anchor" href="#1073-哈希索引维护"></a> 10.7.3 哈希索引维护</h5>
-<p>自适应哈希的DML开销较大，因为需要持有btr_search_latch的x-latch</p>
-<p>删除数据时，若页中记录建立了哈希索引，删除哈希表中记录</p>
-<p>插入</p>
-<p>更新：</p>
-<ol>
-<li>原地更新，键值没有变化，不需要维护</li>
-<li>更新操作没有更新主键：删除哈希表记录，再次搜索找到记录位置然后插入哈希表</li>
-<li>更新并修改主键值：通过删除和插入维护</li>
-</ol>
-<h5 id="1074-优缺点"><a class="markdownIt-Anchor" href="#1074-优缺点"></a> 10.7.4 优缺点</h5>
-<p>优点</p>
-<ol>
-<li>有较好的查询复杂度</li>
-</ol>
-<p>缺点</p>
-<ol>
-<li>btr_search_latch是热点</li>
-<li>占用缓冲池内存</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/mysql/innodb/10.B+%E6%A0%91%E7%B4%A2%E5%BC%95/" data-id="ckmk7003x001l4kvxges0gdkn" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -1400,9 +1340,9 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>5</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>9</strong><br>标签</div></a>
+      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>7</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
     </div>
 
 

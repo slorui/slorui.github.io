@@ -43,9 +43,9 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>5</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>9</strong><br>标签</div></a>
+      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>7</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -70,6 +70,984 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-kernal/7.中断和中断处理" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/kernal/7.%E4%B8%AD%E6%96%AD%E5%92%8C%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.205Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/kernal/7.%E4%B8%AD%E6%96%AD%E5%92%8C%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86/">中断和中断处理</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="中断和中断处理"><a class="markdownIt-Anchor" href="#中断和中断处理"></a> 中断和中断处理</h3>
+<h4 id="71-中断"><a class="markdownIt-Anchor" href="#71-中断"></a> 7.1 中断</h4>
+<p>中断使得硬件得以发出通知给处理器。，本质是一种特殊的电信号，由硬件发送给处理器。</p>
+<p>处理器接收中断后会处理中断，会像操作系统反映信号的到来，由操作系统处理这些数据</p>
+<p>硬件设备发出中断不必与处理器同步，中断可以随时发生</p>
+<p>中断值通常称为中断请求线（IRQ），每个IRQ关联一个数量值，0是时钟中断，1是键盘中断，但是连再PCI总线上的设备，中断是动态分配的</p>
+<p>异常与中断不同，产生时必须与处理器时钟同步，异常也经常称为同步中断，处理器处理到编程出现的错误，除0，内存缺页等，会产生一个异常，交给内核处理。内核处理异常和中断很相似</p>
+<p>x86通过软中断实现系统调用（陷入内核），引起系统调用处理程序异常。</p>
+<h4 id="72-中断处理程序"><a class="markdownIt-Anchor" href="#72-中断处理程序"></a> 7.2 中断处理程序</h4>
+<p>内核响应特定中断的函数叫做中断处理程序/中断服务例程（ISR）</p>
+<p>一个设备的中断处理程序是设备驱动的一部分，驱动是对设备管理的内核代码</p>
+<p>中断处理程序与其他内核函数的区别在于，中断处理程序是被内核调用来响应中断的，运行于中断上下文（原子上下文），改上下文的代码不可阻塞</p>
+<h4 id="73-上半部和下半部的对比"><a class="markdownIt-Anchor" href="#73-上半部和下半部的对比"></a> 7.3 上半部和下半部的对比</h4>
+<p>由于中断处理程序需要很快，但任务又多，把中断处理程序分为上下部</p>
+<p>上半部：接收到中断，立即执行，只做由严格时限的工作，如对接收到中断应答或复位硬件等，这些是再中断禁止的时候做的</p>
+<p>下半部：指向允许稍后完成的工作，下半部会被开中断执行</p>
+<h4 id="74-注册中断处理程序"><a class="markdownIt-Anchor" href="#74-注册中断处理程序"></a> 7.4 注册中断处理程序</h4>
+<p>中断处理程序是驱动的组成部分，如果设备使用中断，那么响应的驱动就会注册一个中断处理程序</p>
+<p>驱动程序可以通过request_irq()注册一个中断处理程序，并且激活给定的中断线</p>
+<p>第一个参数irq是要分配的中断号，传统pc设备的值可以预知，大部分其他设备通过探测获取，或者编程动态确定</p>
+<p>第二个是中断处理程序的函数指针</p>
+<h5 id="741中断处理程序标准"><a class="markdownIt-Anchor" href="#741中断处理程序标准"></a> 7.4.1中断处理程序标准</h5>
+<p>第三个参数flags可以是0，也可以是一个或多个标志位掩码</p>
+<p>IRQF_DISABLED：处理当前中断，禁止其他一切中断</p>
+<p>IRQF_SAMPLE_RANDOM：表明这个设备的中断对内核熵池有关系，内核熵池负责提供各自从随机事件导出的真正随机数。</p>
+<p>IRQF_TIMER：特别位系统定时器的中断处理准备的</p>
+<p>IRQF_SHARED：可以多个中断处理程序共享中断线。同一个线上的每个程序都必须指定这个标志</p>
+<p>第四个参数name是与中断相关设备的ASCII文本表示</p>
+<p>第五个参数dev用于共享中断线，当释放中断处理程序时，必须指定该值以确定共享中断线上哪个程序被释放</p>
+<p>函数request_irq()是可能会睡眠的，不能再中断上下文或不允许阻塞的代码中使用。注册所，内核会创建新项，会调用kmalloc()分配内除，kmalloc()可能会睡眠</p>
+<h5 id="742-注册中断例子"><a class="markdownIt-Anchor" href="#742-注册中断例子"></a> 7.4.2 注册中断例子</h5>
+<h5 id="743-释放中断处理程序"><a class="markdownIt-Anchor" href="#743-释放中断处理程序"></a> 7.4.3 释放中断处理程序</h5>
+<p>卸载驱动程序时，需要注销相应的中断处理程序，释放中断线，free_irq()</p>
+<h4 id="75-编写中断处理程序"><a class="markdownIt-Anchor" href="#75-编写中断处理程序"></a> 7.5 编写中断处理程序</h4>
+<p>linux的中断处理程序是无须重入的。当一个中断处理程序执行，响应的中断线会被禁止，防止接收到其他中断。其他中断线的中断可以被处理。</p>
+<h5 id="751-共享的中断处理程序"><a class="markdownIt-Anchor" href="#751-共享的中断处理程序"></a> 7.5.1 共享的中断处理程序</h5>
+<p>内核接收到中断，会一次调用中断线上注册的中断处理程序，如果一个中断处理程序知道它不负责这个中断，应该立即退出。因此，硬件需要提供状态寄存器（或类似机制）让中断处理程序检查是否是当前硬件产生的中断。</p>
+<h5 id="752-中断处理程序实例"><a class="markdownIt-Anchor" href="#752-中断处理程序实例"></a> 7.5.2 中断处理程序实例</h5>
+<p>RTC（real-time clock）驱动程序，从系统定时器独立出来的设备，用于设置系统时间，提供报警器和周期性定时器。</p>
+<h4 id="76-中断上下文"><a class="markdownIt-Anchor" href="#76-中断上下文"></a> 7.6 中断上下文</h4>
+<p>进程上下文是一种内核所处的操作模式，此时内核会代表进程指向。可以提供current宏关联当前进程。因为进程是以进程上下文连接到内核的，进程上下文可以睡眠</p>
+<p>中断上下文没有后背进程，不可以睡眠，不能从中断上下文调用某些可以睡眠的函数</p>
+<p>中断处理程序打断了其他代码，所以中断处理程序应该尽可能迅速简洁。尽量把工作放到下半部指向。</p>
+<p>旧版中断处理程序共享中断进程的内核栈，大小为2页</p>
+<p>现在每个中断处理程序有自己的栈，大小1页</p>
+<h4 id="77-中断处理机制的实现"><a class="markdownIt-Anchor" href="#77-中断处理机制的实现"></a> 7.7 中断处理机制的实现</h4>
+<p>硬件产生中断电信号，通过总线发送到中断控制器，如果中断激活，中断控制器把中断发给处理器（大多通过电信号给处理器引进发送特定信号），除非处理器禁止该中断，处理器立即执行中断，关闭中断系统，跳到内存预设点执行代码（中断处理程序入口）。处理器开中断，执行中断程序，禁止中断，执行返回。</p>
+<p>如果返回用户空间，调用schedule()选择线程</p>
+<p>如果返回内核空间，只有再preempt_count()为0时执行schedule()，否则抢占内核不安全</p>
+<p>schedule()返回后，寄存器恢复，内核恢复到中断的点</p>
+<h4 id="78-procinterrupts"><a class="markdownIt-Anchor" href="#78-procinterrupts"></a> 7.8 /proc/interrupts</h4>
+<p>procfs是一个虚拟文件系统，只存在于内核，安装于/proc目录。再procfs读取文件都要调用内核函数，这些函数模拟从真实文件读写。/proc/interrupts就是相关的例子，存放系统中与中断相关的统计信息</p>
+<h4 id="79-中断控制"><a class="markdownIt-Anchor" href="#79-中断控制"></a> 7.9 中断控制</h4>
+<p>linux内核提供了接口用于操作机器上的中断状态。提供能够禁止当前处理器的中断系统，屏蔽某个中断线的能力。</p>
+<p>控制中断系统的原因是需要控制同步。</p>
+<p>禁止中断可以禁止内核抢占</p>
+<p>linux内核代码加锁可以防止其他处理器并发访问共享数据</p>
+<h5 id="791-禁止和激活中断"><a class="markdownIt-Anchor" href="#791-禁止和激活中断"></a> 7.9.1 禁止和激活中断</h5>
+<p>禁止当前处理器的本地断，随后又激活的语句为local_irq_disable()和local_irq_enable()。再发出中断的处理器上，他们将禁止和激活中断的传递。这两个函数不安全，再禁止中断前应该保存中断状态</p>
+<p>local_irq_save(flags) 保存并禁止中断</p>
+<p>local_irq_restore(flags)恢复中断原来的状态</p>
+<p>这两个函数需要再一个函数中调用</p>
+<p>不在使用全局cli()和sti()，关闭或开启所以处理器上的中断</p>
+<p>因为细粒度的锁更快</p>
+<h5 id="792-禁止指定中断线"><a class="markdownIt-Anchor" href="#792-禁止指定中断线"></a> 7.9.2 禁止指定中断线</h5>
+<p>disable_irq(unsigned int irq)  必须等已经开始的处理程序完成才能返回</p>
+<p>disable_irq_nosycn(unsigned int irq)	不必等处理程序完成就跨域返回</p>
+<p>enable_irq(unsigned int irq)  开启一个中断线</p>
+<p>synchronize_irq(unsigned int irq)	等待一个特定的中断处理程序退出</p>
+<p>可以嵌套使用，关闭几次就必须打开几次，否则中断线不能使用</p>
+<h5 id="793-中断系统的状态"><a class="markdownIt-Anchor" href="#793-中断系统的状态"></a> 7.9.3 中断系统的状态</h5>
+<p>irqs_disable()返回中断系统的状态</p>
+<p>in_interrupte()和in_irq()检查内核当前上下文的接口。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/kernal/7.%E4%B8%AD%E6%96%AD%E5%92%8C%E4%B8%AD%E6%96%AD%E5%A4%84%E7%90%86/" data-id="ckmk7003g00084kvx3f2y3wxx" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernal/" rel="tag">kernal</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-kernal/6.内核数据结构" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/kernal/6.%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.195Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/kernal/6.%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">内核数据结构</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="内核数据结构"><a class="markdownIt-Anchor" href="#内核数据结构"></a> 内核数据结构</h3>
+<h4 id="61-链表"><a class="markdownIt-Anchor" href="#61-链表"></a> 6.1 链表</h4>
+<p>linux内核标准链表采用双向环形链表</p>
+<p>linux内核链表与众不同，不是将数据结构塞入链表，而是将链表节点塞入数据结构</p>
+<p>内核的链表操作方法只接收list_head作为参数</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">list_head</span>&#123;</span></span><br><span class="line">	<span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> *<span class="title">next</span>;</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> *<span class="title">prev</span>;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">fox</span>&#123;</span></span><br><span class="line">	<span class="keyword">unsigned</span> <span class="keyword">long</span> tail_length;</span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">long</span> weight;</span><br><span class="line">    <span class="keyword">bool</span> is_fantastic;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">list_head</span> <span class="title">list</span>;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>使用c的container_of()可以获取到fox内的其他变量，因为c语言结构的遍历偏移再编译时就被ABI固定下了</p>
+<p>我们需要给链表一个索引指针（头指针）指向链表</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">static</span> <span class="title">LIST_HEAD</span><span class="params">(fox_list)</span></span>; <span class="comment">// 初始化链表例程，已经加了头指针</span></span><br></pre></td></tr></table></figure>
+<h4 id="62-队列"><a class="markdownIt-Anchor" href="#62-队列"></a> 6.2 队列</h4>
+<p>linux的kfifo主要提供两个操作enqueue和dequeue</p>
+<p>kfifo维护了两个偏移量，入口偏移和出口偏移</p>
+<h4 id="63-映射map-idr"><a class="markdownIt-Anchor" href="#63-映射map-idr"></a> 6.3 映射（map  idr）</h4>
+<h4 id="64-二叉树"><a class="markdownIt-Anchor" href="#64-二叉树"></a> 6.4 二叉树</h4>
+<p>linux主要的平衡二叉树数据结构就是红黑树，</p>
+<ol>
+<li>所有叶子节点是黑色的</li>
+<li>节点红色或者黑色</li>
+<li>叶子节点不包含数据</li>
+<li>非叶子节点都有两个节点</li>
+<li>红色节点的父亲和孩子都是黑色</li>
+<li>一个节点到它的叶子节点路径中，如果总是包含同样数目的黑色节点，改路径相比其他路径是最短的（树到任何叶子节点的黑色节点数相同）</li>
+</ol>
+<p>linux实现的红黑叔叫做rbtree</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/kernal/6.%E5%86%85%E6%A0%B8%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" data-id="ckmk7003f00074kvxba5z0135" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernal/" rel="tag">kernal</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-kernal/5.系统调用" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/kernal/5.%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.175Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/kernal/5.%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/">系统调用</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="系统调用"><a class="markdownIt-Anchor" href="#系统调用"></a> 系统调用</h3>
+<p>用户进程和内核交互的一组接口</p>
+<ol>
+<li>接口提供了应用程序受限的访问硬件设备</li>
+<li>接口提供了创建新进程并与已有进程进行通信的机制</li>
+<li>接口提供了申请操作系统其他资源的能力</li>
+</ol>
+<p>应用程序发出请求，内核满足这些请求，接口主要是为了保证系统稳定可靠</p>
+<h4 id="51-与内核通信"><a class="markdownIt-Anchor" href="#51-与内核通信"></a> 5.1 与内核通信</h4>
+<p>系统调用是在用户空间和硬件设备之间添加了一个中间层，作用有三</p>
+<ol>
+<li>为用户控件提供了一种硬件的抽象接口，应用程序可以屏蔽底层硬件类型</li>
+<li>系统调用保证了系统的稳定和安全，内核作为硬件设备和应用程序的中间人，可以对访问进行裁决，保证系统的安全</li>
+<li>每个进程都可以允许在虚拟系统中，在用户程序和系统其余部分添加一层公共接口，也是出于这种考虑，如果应用程序可以随意访问硬件而内核一无所知的话，无法实现多任务和虚拟内存，也不能实现良好的稳定性和安全行</li>
+</ol>
+<p>linux中，系统调用是用户空间访问内核的唯一手段，除了异常和陷入外，他们是内核的唯一合法入口</p>
+<h4 id="52-api-posix和c库"><a class="markdownIt-Anchor" href="#52-api-posix和c库"></a> 5.2 API、POSIX和C库</h4>
+<p>应用程序通过在用户空间实现的应用编程接口API而不是直接通过系统调用来编程。</p>
+<p>Unix中，最流行的应用编程接口是基于POSIX标准的</p>
+<p>应用程序 -&gt; c库   c 库 -&gt; 内核</p>
+<h4 id="53-系统调用"><a class="markdownIt-Anchor" href="#53-系统调用"></a> 5.3 系统调用</h4>
+<p>访问系统调用，通常通过c库定义的函数进行。通常需要定义零个、一个或几个参数（输入），还有可能产生副作用（系统状态的某种变化）。系统还会返回一个long的返回值表示结果（long是为了64位兼容），通常负数表示错误，0表示成功。</p>
+<h5 id="531-系统调用号"><a class="markdownIt-Anchor" href="#531-系统调用号"></a> 5.3.1 系统调用号</h5>
+<p>每个系统调用没赋予系统调用号，进程执行系统调用时，就用这个号指明哪个系统调用，不会提及系统调用名</p>
+<p>系统调用号分配就不能改变，系统调用删除也不能再利用，否则以前编译好的程序调用出错，sys_nia_syscall()负责无效的系统调用号</p>
+<p>内核记录了已注册过的系统调用列表，存在sys_call_table中</p>
+<h5 id="532-系统调用的性能"><a class="markdownIt-Anchor" href="#532-系统调用的性能"></a> 5.3.2 系统调用的性能</h5>
+<p>linux很短的上下文切换时间，进出内核都被优化，系统调用处理程序和每个系统调用都很简洁</p>
+<h5 id="54-系统调用处理程序"><a class="markdownIt-Anchor" href="#54-系统调用处理程序"></a> 5.4 系统调用处理程序</h5>
+<p>用户空间无法直接执行内核代码，内核代码驻留在受保护的地址空间。</p>
+<p>应用程序通过软中断通知内核自己需要执行系统调用。软中断通过一个异常来促使系统切换到内核态去执行异常处理程序。此时的异常处理程序实际上就是系统调用处理程序。x86上预定义的软中断中断号是128，通过int $0x80指令触发中断，使系统切换到内核态执行128号异常处理程序，就是系统调用处理程序。system_call()</p>
+<h5 id="541-指定恰当的系统调用"><a class="markdownIt-Anchor" href="#541-指定恰当的系统调用"></a> 5.4.1 指定恰当的系统调用</h5>
+<p>系统调用必须同时把系统调用号传给内核，x86系统通过eax寄存器传递给内核，陷入内核前，用户空间把系统调用号放入eax中，系统调用号需要乘4才是系统调用表的内容</p>
+<h5 id="542-参数传递"><a class="markdownIt-Anchor" href="#542-参数传递"></a> 5.4.2 参数传递</h5>
+<p>除了系统调用号，还有一些外部参数输入，陷入时应该把参数从用户空间传递给内核。x86-32系统，ebx、ecx、edx、esi、edi按顺序存储前五个参数，系统返回给用户的参数也用寄存器传递，x86中，存放在eax中</p>
+<h5 id="55-系统调用的实现"><a class="markdownIt-Anchor" href="#55-系统调用的实现"></a> 5.5 系统调用的实现</h5>
+<h5 id="551-实现系统调用"><a class="markdownIt-Anchor" href="#551-实现系统调用"></a> 5.5.1 实现系统调用</h5>
+<p>考虑移植性和健壮性</p>
+<ol>
+<li>每个系统调用都应该有一个明确的用途</li>
+<li>接口应该力求简洁，参数尽可能少</li>
+<li>尽量位未来考虑，设计的越通用越好</li>
+</ol>
+<p>通过机制而不是策略</p>
+<h5 id="552-参数验证"><a class="markdownIt-Anchor" href="#552-参数验证"></a> 5.5.2 参数验证</h5>
+<p>系统调用必须检查参数是否合法有效</p>
+<p>I/O系统调用需要检查文件描述符是否有效</p>
+<p>进程系统调用检查PID是否有效</p>
+<p>最重要的检查是检查用户提供的指针是否有效，再接收到一个指针之前必须</p>
+<ol>
+<li>指针指向的内存区域属于该用户</li>
+<li>指针指向的内存区域在进程的地址空间里</li>
+<li>如果是读、写、指向，对于的内存区域必须也是相应的标志状态，进程不能绕过内存访问限制</li>
+</ol>
+<p>内核提供了两个方法完成检查和内核空间和用户空间的数据拷贝。内核无论何时都不能轻率的接收用户指针</p>
+<ol>
+<li>为了向用户空间写数据，内核提供了copy_to_usser()，三个参数：进程空间的目的地址，内核的源地址和数据长度（字节数）</li>
+<li>为了从用户空间读数据，内核提供了copy_from_user()，同上</li>
+</ol>
+<p>如果拷贝失败，返回没能拷贝完成的字节数，成功返回0，错误返回-EFAULT</p>
+<p>当用户数据页被换到硬盘而不在内存，该方法会阻塞，知道缺页处理程序把数据页加载到内存</p>
+<p>还有一项检查是针对是否有合法权限，老linux只有超级用户可以调用suser()完成检查，现在调用者可以使用capable()函数检查是否有权限对指定资源进行操作，非0就是有权限，0就是无权限。</p>
+<p>默认情况只有超级用户进程拥有所有权限而非超级用户没有任何权利</p>
+<h4 id="56-系统调用上下文"><a class="markdownIt-Anchor" href="#56-系统调用上下文"></a> 5.6 系统调用上下文</h4>
+<p>内核在执行系统调用时处于进程上下文，current指针指向当前任务，引发系统调用的进程</p>
+<p>在进程上下文，内核可以休眠（系统调用阻塞或显示调用schedule()）并且可以被抢占。休眠说明系统调用可以使用内核提供的绝大部分功能，给内核编程带来了极大的便利（中断处理程序不能休眠，所以有很大限制）。抢占表明，像用户空间内的进程一样，当前进程同样可以被抢占，新的进程可以使用相同的系统调用。保证该系统调用是可重入的。</p>
+<p>系统调用结束，控制圈处于system_call()，它负责切换回用户态</p>
+<h5 id="561-绑定一个系统调用的最后步骤"><a class="markdownIt-Anchor" href="#561-绑定一个系统调用的最后步骤"></a> 5.6.1 绑定一个系统调用的最后步骤</h5>
+<p>把系统调用注册为正式系统调用</p>
+<ol>
+<li>在系统调用表最后加一个表项，每种支持该系统调用的硬件体系都得做，系统调用号从0开始</li>
+<li>对于所有支持的体系结构，系统调用号定义与&lt;asm/unistd.h&gt;</li>
+<li>系统调用必须编译进内核映像（不能被编程成模块）只有把他放入kernel/的一个相关文件即可，比如sys.c</li>
+</ol>
+<h5 id="562-从用户空间访问系统调用"><a class="markdownIt-Anchor" href="#562-从用户空间访问系统调用"></a> 5.6.2 从用户空间访问系统调用</h5>
+<p>通常情况，系统调用靠c库支持，用户程序通过包含标志头文件并和c库链接，就可以使用系统调用（或调用库函数，库函数调用系统调用）。不能直接写出系统调用</p>
+<p>linux提供了一组宏，直接对系统调用进行访问。他会设置好寄存器并调用陷入指令，这些宏是syscalln()，n是0-6，代表传入系统调用的参数</p>
+<p>_syscall3(long, open, const char*, filename, int flags, int mode)</p>
+<p>每个宏都有2+2n个参数，前两个是返回的参数类型和系统调用名，后面是顺序排列的参数类型和参数名</p>
+<p>该宏会被扩充成内嵌汇编的c函数，将系统调用号和参数压入寄存器，并出发软中断陷入内核</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/kernal/5.%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8/" data-id="ckmk7003b00034kvxgjd51blz" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernal/" rel="tag">kernal</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-kernal/4.进程调度" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/kernal/4.%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.154Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/kernal/4.%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6/">进程调度</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="进程调度"><a class="markdownIt-Anchor" href="#进程调度"></a> 进程调度</h3>
+<p>进程调度程序是确保进程有效工作的一个内核子系统，决定哪个进程投入允许，何时运行以及运行时间。</p>
+<h4 id="41-多任务"><a class="markdownIt-Anchor" href="#41-多任务"></a> 4.1 多任务</h4>
+<p>多任务系统分为：非抢占式多任务和抢占式多任务。（linux是抢占式）</p>
+<h4 id="42-linux进程调度"><a class="markdownIt-Anchor" href="#42-linux进程调度"></a> 4.2 linux进程调度</h4>
+<p>O(1)调度器多处理器环境下表现仍很完美，但是没有办法处理交互进程</p>
+<p>翻转楼梯最后期限调度算法（RSDL）-完全公平调度算法（CFS）</p>
+<h4 id="43-策略"><a class="markdownIt-Anchor" href="#43-策略"></a> 4.3 策略</h4>
+<p>策略决定了调度程序何时让什么进程运行</p>
+<h5 id="431-io消耗型和处理器消耗型"><a class="markdownIt-Anchor" href="#431-io消耗型和处理器消耗型"></a> 4.3.1 I/O消耗型和处理器消耗型</h5>
+<p>进程可以被分为I/O消耗型和处理器消耗型。</p>
+<p>I/O消耗型经常处于可运行状态，但通常运行短短一会就会再次阻塞</p>
+<p>处理器消耗型的调度策略往往是降低调度频率，延迟运行时间</p>
+<p>调度策略要满足的需求：进程响应迅速（响应时间短）和最大系统利用率（高吞吐量）</p>
+<p>linux为了保证交互时应用和桌面系统性能，倾向于优先调度I/O消耗型</p>
+<h5 id="432-进程优先级"><a class="markdownIt-Anchor" href="#432-进程优先级"></a> 4.3.2 进程优先级</h5>
+<p>linux采用了两种不同的优先级</p>
+<p>nice值：-20 - 19 默认是0，越大优先级越低  linux系统中nice值代表时间片比例</p>
+<p>实时优先级：默认是0-99变化 越大优先级越高 任何实时进程的优先级都比普通进程高，实时优先级和nice优先级处于不同的范畴</p>
+<h5 id="433-时间片"><a class="markdownIt-Anchor" href="#433-时间片"></a> 4.3.3 时间片</h5>
+<p>时间片表示进程在被抢占前所能持续运行的时间，调度策略必须规定一个默认的时间片</p>
+<p>linux的CFS、调度器系统没有直接分配时间片，而是将处理器的使用比例划分给了进程，使得进程获得处理器时间和系统负载密切相关</p>
+<p>通常抢占完全由进程优先级和是否有时间片决定，CFS调度器抢占时间取决于新的可运行进程消耗量多少处理器使用比，消耗的使用比比当前进程小，就抢占</p>
+<h5 id="434-调度策略和活动"><a class="markdownIt-Anchor" href="#434-调度策略和活动"></a> 4.3.4 调度策略和活动</h5>
+<p>对于文字编辑程序和视频编码程序，通常应给文字编辑程序更高的优先级保证交互性的可用。再linux的CFS调度器中，给两个进程都是50%的处理器使用比，再需要文字编辑程序抢占时，由于文字编辑程序没有消耗掉50%的使用比，消耗的使用比小，所以可以快速抢占</p>
+<h4 id="44-linux调度算法"><a class="markdownIt-Anchor" href="#44-linux调度算法"></a> 4.4 linux调度算法</h4>
+<h5 id="441-调度器类"><a class="markdownIt-Anchor" href="#441-调度器类"></a> 4.4.1 调度器类</h5>
+<p>linux调度器时以模块工作的，不同类型的进程可以针对性的选择调度算法，这种模块化结构成为调度器类，允许多种不同的可动态添加的调度算法并存。每个调度器都有一个优先级，基础调度代码按照优先级遍历调度器类然后执行进程。</p>
+<p>CFS是一个普通进程调度类。</p>
+<h5 id="442-unix的进程调度"><a class="markdownIt-Anchor" href="#442-unix的进程调度"></a> 4.4.2 unix的进程调度</h5>
+<h5 id="443-公平调度"><a class="markdownIt-Anchor" href="#443-公平调度"></a> 4.4.3 公平调度</h5>
+<p>理念：每个进程能获得处理器1/n的处理器时间</p>
+<p>首先CFS要考虑大量切换代理的开销</p>
+<p>CFS的做法是允许每个进程运行一段时间、循环轮转、选择运行最少的进程作为下一个运行进程</p>
+<p>再CFS中，nice值代表进程获得处理器运行比的权重，nice值的比值决定分配的比例</p>
+<p>CFS为每个进程引入了获取的时间片底线，成为最小粒度。默认是1ms（因此不是完全公平）</p>
+<h4 id="45-linux调度的实现"><a class="markdownIt-Anchor" href="#45-linux调度的实现"></a> 4.5 linux调度的实现</h4>
+<p>时间记账</p>
+<p>进程选择</p>
+<p>调度器入口</p>
+<p>睡眠和唤醒</p>
+<h5 id="451-时间记账"><a class="markdownIt-Anchor" href="#451-时间记账"></a> 4.5.1 时间记账</h5>
+<p>多数unix系统根据系统节拍器减少进程占用的时间片</p>
+<ol>
+<li>
+<p>调度器实体结构</p>
+<p>CFS使用调度器实体结构追踪进程运行记账，sche_entity作为一个变量se嵌入到进程描述符task_struct内</p>
+</li>
+<li>
+<p>虚拟实时</p>
+<p>vruntime(位于调度器实体结构)存放进程的虚拟运行时间。CFS使用vruntime变量记录一个程序到底运行了多长时间和还应该运行多长时间</p>
+<p>vruntime可以准确测量给定进程的运行时间，还可以知道谁应该下一个被运行</p>
+</li>
+</ol>
+<h5 id="452-进程选择"><a class="markdownIt-Anchor" href="#452-进程选择"></a> 4.5.2 进程选择</h5>
+<p>CFS选择下一个运行进程时，选择具有最小vruntime的任务</p>
+<p>CFS使用红黑树组织可运行的进程队列，并利用其迅速找到最小vruntime的进程</p>
+<ol>
+<li>
+<p>挑选下一个任务</p>
+<p>一个红黑叔存储了系统中所有可以运行的进程，其中节点的键值便是可运行进程的虚拟运行时间</p>
+</li>
+<li>
+<p>向树中加入进程</p>
+<p>当进程变为可运行状态或通过fork()第一次创建时，更新运行时间和其他统计数据，然后插入数据项</p>
+</li>
+<li>
+<p>从树中删除进程</p>
+<p>删除发生在进程阻塞（变为不可用）或终止（结束运行）时</p>
+</li>
+</ol>
+<h5 id="453-调度器入口"><a class="markdownIt-Anchor" href="#453-调度器入口"></a> 4.5.3 调度器入口</h5>
+<p>进程调度的主要入口函数是schedule()。它是内核其他部分用于调用进程调度器的入口：选择哪个进程可以运行，何时投入运行。Schedule()通常需要和一个具体的调度类关联。从高优先级开始找到一个调度类（有自己的可运行队列），然后知道下一个可运行的进程。</p>
+<h5 id="454-睡眠和唤醒"><a class="markdownIt-Anchor" href="#454-睡眠和唤醒"></a> 4.5.4 睡眠和唤醒</h5>
+<p>进程把自己标记成休眠状态，从可执行红黑树移除，调用schedule()执行下一个进程，唤醒则相反</p>
+<ol>
+<li>
+<p>等待队列</p>
+<p>休眠通过等待队列处理。等待队列是由等待某些事件发生的进程组成的简单链表。</p>
+<p>休眠的步骤</p>
+<p>1）调用宏DEFINE_WAIT()创建一个等待队列的项</p>
+<p>2）调用add_wait_queue()把自己加入队列，需要唤醒时对等待队列执行wake_up()</p>
+<p>3）调用prepare_to_wait()把进程变为TASK_INTERRUPTIBLE或TASK_UNINTERRUPTIBLE</p>
+<p>4）如果进程被设置为TASK_INTERRUPTIBLE，则信号唤醒进程（不是因为事件发生唤醒），检查并处理信号</p>
+<p>5）唤醒时检查条件是否为真，是就退出循环，不是就调用schedule()并一直重复这步操作</p>
+<p>6）满足条件时，设置位TASK_RUNNING并调用finish_wait()把自己移除等待队列</p>
+</li>
+<li>
+<p>唤醒</p>
+<p>唤醒通过wake_up()进行，唤醒指定等待队列的所有进程。调用try_to_wake_up()将进程设为TASK_RUNNING，调用enqueue_task()加入红黑树，如果唤醒的进程优先级高于正在执行的进程，还要设置need_resched标志。通常哪段代码促使了条件完成，就需要执行wake_up()</p>
+</li>
+</ol>
+<h4 id="46-抢占和上下文切换"><a class="markdownIt-Anchor" href="#46-抢占和上下文切换"></a> 4.6 抢占和上下文切换</h4>
+<p>上下文切换：一个可执行进程切换到另一个可执行进程</p>
+<p>调度时,schedule()调用context_switch()进行两项基本工作：</p>
+<ol>
+<li>把虚拟内存从上一个进程映射切换到新进程</li>
+<li>从上一个进程处理器状态切换到新进程处理器状态：保存、恢复栈信息和寄存器信息，任何与体系结构相关的状态信息，都必须以每个进程为对象进行保管</li>
+</ol>
+<p>内核会为每个需要被抢占的线程标志need_resched，包含在每个进程中，因为访问进程描述符内</p>
+<h5 id="461-用户抢占"><a class="markdownIt-Anchor" href="#461-用户抢占"></a> 4.6.1 用户抢占</h5>
+<p>当内核从系统调用或者中断处理程序返回用户空间时，如果标志位被设置，则发送用户抢占，选择更合适的进程执行</p>
+<h5 id="462-内核抢占"><a class="markdownIt-Anchor" href="#462-内核抢占"></a> 4.6.2 内核抢占</h5>
+<p>Linux支持完整的内核抢占（非内核抢占：内核工作时无法中止），只要重新调度是安全的（没有只有锁，锁是非抢占区域的标志，内核支持SMP，只要没有持有锁，正在执行的代码就可以重新导入，可以被抢占），内核可以再任何时间抢占正在执行的任务</p>
+<p>为了支持内核抢占，每个进程的thread_info添加了preempt_count计数器，使用锁就+1，0时可以抢占</p>
+<p>中断返回内核时，检查need_resched和preempt_count，如果有锁，继续执行，没有锁，看是否执行新的调度</p>
+<p>内核抢占发送在：</p>
+<ol>
+<li>中断处理结束返回内核前</li>
+<li>内核代码再一次具有可抢占性时</li>
+<li>内核显示调用schedule()</li>
+<li>内核任务阻塞（也会调用schedule()）</li>
+</ol>
+<h4 id="47-实时调度策略"><a class="markdownIt-Anchor" href="#47-实时调度策略"></a> 4.7 实时调度策略</h4>
+<p>SCHED_FIFO：处于可运行的FIFO进程比SCHED_NORMAL优先得到调度，一旦FIFO进程处于可执行，就一直执行，直到受阻塞或显示放弃处理器，只有更高级的FIFO和RR才能抢占，如果同级将轮流执行，但也不能抢占</p>
+<p>RR：与FIFO大体相同，RR在耗尽分配的时间后就不能继续执行</p>
+<p>这两种都是静态优先级。内核不为实时进程计算动态优先级，保证给定的优先级实时进程总能抢占低优先级进程</p>
+<p>实时优先级从0-MAX_RT_PRIO-1（默认100）,SCHED_NORMAL的nice值共享了这个取值空间，从MAX_RT_PRIO到MAX_RO_PRIO+40，nice值-20-19对于100-139</p>
+<h4 id="48-调度相关的系统调用"><a class="markdownIt-Anchor" href="#48-调度相关的系统调用"></a> 4.8 调度相关的系统调用</h4>
+<h5 id="481-调度策略和优先级相关的系统调用"><a class="markdownIt-Anchor" href="#481-调度策略和优先级相关的系统调用"></a> 4.8.1 调度策略和优先级相关的系统调用</h5>
+<ol>
+<li>sched_setscheduler()/sched_getscheduler() 设置和获取进程的调度策略和实时优先级</li>
+<li>sched_setparam()/sched_getparam()设置和获取进程的实时优先级</li>
+<li>nice()将给定的静态优先级增加一个给定的量，普通进程只能加，只有超进程才能使用负值提高优先级</li>
+</ol>
+<h5 id="482-与处理器绑定有关的系统调用"><a class="markdownIt-Anchor" href="#482-与处理器绑定有关的系统调用"></a> 4.8.2 与处理器绑定有关的系统调用</h5>
+<ol>
+<li>sched_setaffinity()/sched_getaffinity()设置和获取掩码标志，指定某个特定的cpu处理进程</li>
+</ol>
+<h5 id="483-放弃处理器时间"><a class="markdownIt-Anchor" href="#483-放弃处理器时间"></a> 4.8.3 放弃处理器时间</h5>
+<ol>
+<li>sched_yield()让进程显示将处理器时间让给其他等待执行的进程，将进程从活动队列以到过期队列实现。进程被放到优先级队列的最后并进入过期队列，实时进程不会过期，所以只会放到优先级队列的最后</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/kernal/4.%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6/" data-id="ckmk7003f00064kvx31p7ggcc" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernal/" rel="tag">kernal</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-kernal/10.内核同步方法" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/kernal/10.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.136Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/kernal/10.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/">内核同步方法</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="内核同步方法"><a class="markdownIt-Anchor" href="#内核同步方法"></a> 内核同步方法</h3>
+<h4 id="101-原子操作"><a class="markdownIt-Anchor" href="#101-原子操作"></a> 10.1 原子操作</h4>
+<p>原子操作可以保证指令以原子的方式执行——过程不被打断。</p>
+<p>内核通过了两组原子接口——针对整数进行操作和针对单独的位进行操作。</p>
+<p>大多体系结构都提供了支持原子操作的简单算数指令，少部分缺少的也为单步执行提供了锁内存总线的指令，保证了其他改变内存的操作不能同时发生</p>
+<h5 id="1011-原子整数操作"><a class="markdownIt-Anchor" href="#1011-原子整数操作"></a> 10.1.1 原子整数操作</h5>
+<p>atomic_t变量代替原始变量</p>
+<h5 id="1012-64位原子操作"><a class="markdownIt-Anchor" href="#1012-64位原子操作"></a> 10.1.2 64位原子操作</h5>
+<p>引入atomic64_t适应64位机器</p>
+<h5 id="1013-原子位操作"><a class="markdownIt-Anchor" href="#1013-原子位操作"></a> 10.1.3 原子位操作</h5>
+<p>使用指针和位号访问内存。0位号是最低有效位，31是最高有效位</p>
+<h4 id="102-自旋锁"><a class="markdownIt-Anchor" href="#102-自旋锁"></a> 10.2 自旋锁</h4>
+<p>linux内核最常见的锁是自旋锁。自旋锁最多只能被一个可执行线程持有。如果一个可执行线程试图获得一个已被持有的自旋锁，该线程会一直执行循环旋转等待锁可用。自旋锁可用防止多于一个线程同时进入临界区</p>
+<p>自旋很浪费处理器时间，所以自旋锁不应该被长时间持有。</p>
+<p>初衷：短期内进行轻量级加锁。</p>
+<p>还有其他方法：让等待的线程睡眠，可用时唤醒。会产生两次上下文切换。</p>
+<p>linux内核自旋锁是不可递归的，如果要获得已持有的锁，就会自旋，然后产生死锁。</p>
+<p>自旋锁可用再中断处理程序（不能使用信号量，会导致睡眠）。中断处理程序使用自旋锁时，要再获得锁之前禁用本地中断，否则新的中断处理程序会自旋，导致双重请求死锁。</p>
+<p>锁保护的是数据不是代码。</p>
+<h4 id="103-读-写锁"><a class="markdownIt-Anchor" href="#103-读-写锁"></a> 10.3 读-写锁</h4>
+<p>linux提供了专门的读-写自旋锁。（共享/排斥锁）</p>
+<p>read_lock(&amp;mr_rwlock)</p>
+<p>write_lock(&amp;mr_rwlock)</p>
+<p>通常情况，读写锁位于完全分割的代码，再一起出现读写锁，会产生锁升级，导致自旋</p>
+<h4 id="104-信号量"><a class="markdownIt-Anchor" href="#104-信号量"></a> 10.4 信号量</h4>
+<p>Linux里是信号量是一种睡眠锁。如果一个任务试图获得一个不可用（已被占用）的信号量，信号量会将其推进到等待队列，让其睡眠。当信号量被释放，唤醒等待队列的任务获得信号量。</p>
+<ol>
+<li>由于争用信号量的进程等待锁会睡眠，所以信号量适用于被锁长时间持有的情况</li>
+<li>锁短时间被持有，信号量不合适。因为睡眠、维护队列、唤醒等开销很大</li>
+<li>由于线程争用信号量会睡眠，所以只有再进程上下文才能获取信号量，中断不可用获取信号量</li>
+<li>你可用再持有信号量时去睡眠，因为其他线程不会死锁</li>
+<li>占用信号量时不能占用自旋锁，因为自旋锁不允许睡眠</li>
+</ol>
+<h5 id="1041-计数信号量和二值信号量"><a class="markdownIt-Anchor" href="#1041-计数信号量和二值信号量"></a> 10.4.1 计数信号量和二值信号量</h5>
+<p>信号量同时允许的持有者可用再声明信号量时指定。称为使用者数量。</p>
+<p>通常情况，自旋锁和信号量都只允许有一个持有者，计数等于1，叫二值信号量或互斥信号量。</p>
+<p>计数信号量数量大于1时，不能用来互斥，正在信号量用来给特定的代码加限制</p>
+<p>信号量有两个操作down()和up()，down()通过对信号量计数减1来获得一个信号量，如果结果大于等于0，获得信号量锁，任务可进入临界区。如果是负数，放入等待队列。up()用来释放信号量，增加信号量的计数值，如果等待队列不为空，唤醒一个任务并获得信号量。</p>
+<h5 id="1042-创建和初始化信号量"><a class="markdownIt-Anchor" href="#1042-创建和初始化信号量"></a> 10.4.2 创建和初始化信号量</h5>
+<h5 id="1043-使用信号量"><a class="markdownIt-Anchor" href="#1043-使用信号量"></a> 10.4.3 使用信号量</h5>
+<h4 id="105-读-写信号量"><a class="markdownIt-Anchor" href="#105-读-写信号量"></a> 10.5 读-写信号量</h4>
+<p>读写信号量都是互斥信号量，计数值是1。只对写互斥。</p>
+<h4 id="106-互斥体mutex"><a class="markdownIt-Anchor" href="#106-互斥体mutex"></a> 10.6 互斥体(mutex)</h4>
+<p>目前只有信号量可以睡眠，但是一般都使用互斥信号量实现互斥，类似允许睡眠的自旋锁。但是信号量很复杂。</p>
+<p>指任何强制睡眠的互斥锁</p>
+<p>linux的互斥体mutex是一种实现互斥的特定睡眠锁。</p>
+<p>mutex行为和使用计数值1的信号量很像。</p>
+<ol>
+<li>任何时候只有一个任务持有mutex</li>
+<li>给mutex上锁必须负责解锁</li>
+<li>递归的上锁和解锁不允许</li>
+<li>持有一个mutex时，进程不能退出</li>
+<li>mutex不能再中断中使用</li>
+<li>mutex只能通过官方API管理，不能手动初始化，拷贝等</li>
+</ol>
+<h5 id="1061-信号量和互斥体"><a class="markdownIt-Anchor" href="#1061-信号量和互斥体"></a> 10.6.1 信号量和互斥体</h5>
+<h5 id="1062-自旋锁和互斥体"><a class="markdownIt-Anchor" href="#1062-自旋锁和互斥体"></a> 10.6.2 自旋锁和互斥体</h5>
+<h4 id="107-完成变量"><a class="markdownIt-Anchor" href="#107-完成变量"></a> 10.7 完成变量</h4>
+<p>如果内核一个任务需要发出信号通知另一个任务发生了某个特定事件，利用完成变量</p>
+<p>一个任务执行时，另一个任务再完成变量上等待，当任务完成时通过完成变量唤醒等待的任务</p>
+<p>完成变量提供了代替信号量的一种简单解决方法</p>
+<h4 id="108-bkl大内核锁"><a class="markdownIt-Anchor" href="#108-bkl大内核锁"></a> 10.8 BKL大内核锁</h4>
+<p>BKL是一个全局自旋锁</p>
+<ol>
+<li>持有BKL的任务仍可用睡眠。任务无法被调度时，所有加锁会被自动放弃，当任务被调度时，锁会被重新获得。不会造成死锁</li>
+<li>BKL是递归锁，可用多次请求一个锁</li>
+<li>BKL只可以再进程上下文使用</li>
+<li>新用户不可用使用BKL</li>
+</ol>
+<h4 id="109-顺序锁"><a class="markdownIt-Anchor" href="#109-顺序锁"></a> 10.9 顺序锁</h4>
+<p>seq锁，提供了一种简单的机制用于读写共享数据，实现这种锁依靠一个序列计数器，当有疑义的数据写入时，会得到一个锁，序列号增加，再读取数据前后都会读取序列号。如果序列号相同，说明没有被写打断过，如果读取的是偶数，说明没有发生写操作。从0开始，写会变成计数，释放也会增加变成偶数</p>
+<p>被挂起的写者会不断的使得读操作循环，知道没有写者</p>
+<ol>
+<li>你的数据存在很多读者</li>
+<li>数据写者很少</li>
+<li>虽然写者少，但是希望写优先读，不然写饥饿</li>
+<li>数据简单</li>
+</ol>
+<p>例如：jiffies存储了linux启动到现在的时间</p>
+<h4 id="1010-禁止抢占"><a class="markdownIt-Anchor" href="#1010-禁止抢占"></a> 10.10 禁止抢占</h4>
+<p>内核是抢占性的，内核的进程可能再任何时刻停下来执行高优先级进程。可用使用自旋锁防止抢占</p>
+<p>当不需要自旋锁也要关闭内核抢占时，可用使用preempt_disable()禁止内核抢占，可用嵌套使用，调用多次，必须使用多个preempt_enable()打开</p>
+<p>抢占计数存放在持有锁的数量和preempt_disable()的调用次数</p>
+<h4 id="1011-顺序和屏障"><a class="markdownIt-Anchor" href="#1011-顺序和屏障"></a> 10.11 顺序和屏障</h4>
+<p>当多处理器之间或硬件设备之间的同步出现问题时，需要再自己的代码中以指定的顺序发出内存读写指令</p>
+<p>和硬件交互时，需要确保一个给定的读操作发生再其他读或写之前</p>
+<p>但是编译器可能为了处理效率对读和写重排序</p>
+<p>所有可能重排序和写的处理器提供了机器指令确保顺序要求，也可用指示编译器不要指令重排序。这些确保顺序的指令叫屏障</p>
+<p>rmb()提供一个读内存屏障，确保跨域rmb()的载入动作不会发生重排序，也就是说再rmb前后的指令不会相互跨越</p>
+<p>wmb()提供了一个写内存屏障，同rmb()</p>
+<p>mb()既提供了读也提供了写屏障，都不会跨越屏障</p>
+<p>重排序的发生时现代处理器为了优化传送管道（pipeline），打乱了分派和提交指令的顺序</p>
+<h4 id="1012-管程"><a class="markdownIt-Anchor" href="#1012-管程"></a> 10.12 管程</h4>
+<p>虽然<a target="_blank" rel="noopener" href="http://c.biancheng.net/view/1232.html">信号量</a>提供了一种方便且有效的进程同步机制，但是它们的使用错误可能导致难以检测的时序错误，因为这些错误只有在特定执行顺序时才会出现，而这些顺序并不总是出现。</p>
+<p>为了处理这种错误，研究人员开发了一些高级语言工具，一种重要的、高级的同步工具，即<strong>管程（monitor）</strong>。</p>
+<p>管程类型的表示不能直接由各种进程所使用。因此，只有管程内定义的函数才能访问管程内的局部声明的变量和形式参数。类似地，管程的局部变量只能为局部函数所访问。</p>
+<p>管程结构确保每次只有一个进程在管程内处于活动状态。因此，程序员不需要明确编写同步约束（图 1)。</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200549750.png" alt="image-20210309200549750" /></p>
+<p>然而，如到目前为止所定义的管程结构，在处理某些同步问题时，还不够强大。为此，我们需要定义附加的同步机制；这些可由条件（condition)结构来提供。 当程序员需要编写定制的同步方案时，他可定义一个或多个类型为 condition 的变量：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">condition x, y;</span><br></pre></td></tr></table></figure>
+<p>对于条件变量，只有操作 wait() 和 signal() 可以调用。操作 <code>x.wait();</code> 意味着调用这一操作的进程会被挂起，直到另一进程调用 <code>x.signal();</code></p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200649195.png" alt="image-20210309200649195" /></p>
+<p>现在，假设当操作 <code>x.signal()</code> 被一个进程 P 调用时，在条件变量 x 上有一个挂起进程 Q。显然，如果挂起进程 Q 允许重执行，那么进程 P 必须等待。否则，管程内有两个进程 P 和 Q 可能同时执行。</p>
+<p>注意，从概念上说两个进程都可以继续执行。有两种可能性存在：</p>
+<ol>
+<li>唤醒并等待：进程 P 等待直到 Q 离开管程，或者等待另一个条件。</li>
+<li>唤醒并继续：进程 Q 等待直到 P 离开管程或者等待另一个条件。</li>
+</ol>
+<p>对于任一选项，都有赞同理由。一方面，由于 P 已经在管程中执行，唤醒并继续的方法似乎更为合理。另一方面，如果我们允许线程 P 继续，那么 Q 等待的逻辑条件在 Q 重新启动时可能已不再成立。Concurrent Pascal 语言采用这两种选择的折中。当进程 P 执行操作 signal 时，它立即离开管程。因此，进程 Q 立即重新执行。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/kernal/10.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/" data-id="ckmk7003600014kvxft5g0i3t" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernal/" rel="tag">kernal</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-java/语法糖" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/java/%E8%AF%AD%E6%B3%95%E7%B3%96/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.071Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/java/%E8%AF%AD%E6%B3%95%E7%B3%96/">语法糖</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="语法糖syntax-sugar"><a class="markdownIt-Anchor" href="#语法糖syntax-sugar"></a> 语法糖（Syntax sugar)</h3>
+<p>语法糖使编程语言更容易表达或阅读</p>
+<h4 id="for-vs-for-each"><a class="markdownIt-Anchor" href="#for-vs-for-each"></a> for vs for-each</h4>
+<p>collection实现了iterable接口，内部有iterator，通过调用iterator进行遍历</p>
+<p><img src="/images/image-20210316100157702.png" alt="image-20210316100157702" /></p>
+<p>for和for-each性能相近</p>
+<p>for-each从jdk5开始引入，语法简洁，避免越界</p>
+<p>缺点：</p>
+<ol>
+<li>for可以删除元素，for-each不可删除或替代元素（指针变了，内容没变，但是可以改变元素属性）</li>
+<li>for-each不知道具体的索引位置</li>
+<li>for-each只能正向</li>
+<li>for-each不能同时遍历两个集合</li>
+</ol>
+<p><img src="/images/image-20210316100440995.png" alt="image-20210316100440995" /></p>
+<h4 id="枚举"><a class="markdownIt-Anchor" href="#枚举"></a> 枚举</h4>
+<p>java5推出枚举类</p>
+<p>enum关键字声明了当前类是enum的子类（不需要extend）</p>
+<p>enum内部有多少个值，就有多少个实例</p>
+<p>enum类不能new</p>
+<p>enum类可以添加属性、构造函数（只能是default或者private，内部调用）、方法</p>
+<p>枚举方法：<br />
+ordinal（）返回枚举索引</p>
+<p>compareTo（）比较枚举索引大小</p>
+<p>valueOf（）根据字符串查找枚举对象</p>
+<p>values（）返回所有枚举值</p>
+<h4 id="不定项参数"><a class="markdownIt-Anchor" href="#不定项参数"></a> 不定项参数</h4>
+<p>java5提供了不定项参数，本质是一个数组</p>
+<p>一个方法只能由一个不定项参数，且必须位于最后</p>
+<p>重载规则：</p>
+<ol>
+<li>固定参数的方法比可变参数方法优先级更高</li>
+<li>同时匹配到两个可变参数方法时，报错</li>
+</ol>
+<h4 id="静态导入"><a class="markdownIt-Anchor" href="#静态导入"></a> 静态导入</h4>
+<p>import导入程序所需的类</p>
+<p>import static导入一个类的静态方法和静态遍历（JKD5引入）</p>
+<p>尽量少使用通配符，否则可能多个类有相同的属性</p>
+<h4 id="装箱和拆箱"><a class="markdownIt-Anchor" href="#装箱和拆箱"></a> 装箱和拆箱</h4>
+<p>从java5引入，简化基本类型和对象的转化，编译器帮忙转化</p>
+<p><img src="/images/image-20210316102529586.png" alt="image-20210316102529586" /></p>
+<p>基本类型和包装类运算，会拆箱运算</p>
+<p>下面我们进行一个归类：<br />
+Integer派别：Integer、Short、Byte、Character、Long这几个类的valueOf方法的实现是类似的。 都再某个范围返回固定生成的对象，大于时才产生新的对象。<br />
+Double派别：Double、Float的valueOf方法的实现是类似的。每次都返回不同的对象。</p>
+<p>equals传入基本类型，会装箱成对应的包装类传入，然后拆箱比较</p>
+<h4 id="多异常并列"><a class="markdownIt-Anchor" href="#多异常并列"></a> 多异常并列</h4>
+<p>jdk7引入，多个异常不能有直接或间接继承关系</p>
+<p><img src="/images/image-20210316103426152.png" alt="image-20210316103426152" /></p>
+<h4 id="整数类型二进制赋值"><a class="markdownIt-Anchor" href="#整数类型二进制赋值"></a> 整数类型二进制赋值</h4>
+<p>java7新语法，整数用二进制赋值，避免二进制计算（byte/short/int/long)</p>
+<p><img src="/images/image-20210316103635903.png" alt="image-20210316103635903" /></p>
+<p>0b或0B开头是二进制</p>
+<h4 id="数字中的下划线"><a class="markdownIt-Anchor" href="#数字中的下划线"></a> 数字中的下划线</h4>
+<p>java7新语法，</p>
+<p><img src="/images/image-20210316103812398.png" alt="image-20210316103812398" /></p>
+<h4 id="接口的默认方法"><a class="markdownIt-Anchor" href="#接口的默认方法"></a> 接口的默认方法</h4>
+<p>java最初接口方法没有实现，公开的</p>
+<p>java8接口可以有默认方法和静态方法，为lambda表达式提供支持</p>
+<p><img src="/images/image-20210316104031479.png" alt="image-20210316104031479" /></p>
+<p>接口的默认方法：</p>
+<ol>
+<li>dufault作为关键字，其他和普通函数一样</li>
+<li>默认方法不能重写Object方法</li>
+<li>实现类可以继承、重写父类接口的默认方法</li>
+<li>接口可以继承和重写父类接口的默认方法</li>
+<li>当父类和父接口有同样（同名同参数）默认方法，子类继承父类默认方法，兼容7以前的代码</li>
+<li>子类继承的两个接口至少有一个是默认方法，必须重写，不然报错</li>
+</ol>
+<p><img src="/images/image-20210316104718763.png" alt="image-20210316104718763" /></p>
+<p>这样写才能调用父接口的默认方法</p>
+<p>java8接口的静态方法属于接口，不属于子类、子接口，不能继承，只能直接调用接口</p>
+<p>java9接口的私有方法</p>
+<ol>
+<li>解决多个默认方法和静态方法内容重复</li>
+<li>私有方法属于本接口</li>
+<li>静态私有方法可以被静态、默认方法调用，非静态私有方法只能被默认方法调用</li>
+</ol>
+<h5 id="接口和抽象类jdk12以前"><a class="markdownIt-Anchor" href="#接口和抽象类jdk12以前"></a> 接口和抽象类（jdk12以前）</h5>
+<p>相同点：</p>
+<ol>
+<li>都是抽象的，不能被实例化</li>
+<li>都可以实现方法</li>
+<li>都可以不需要继承者实现所有方法（有些有实现的方法，可以直接继承）</li>
+</ol>
+<p>不同点：</p>
+<ol>
+<li>抽象类只能继承一个，接口可以实现多个</li>
+<li>接口的变量默认是public static final，必须有初值，子类不能修改。抽象类的遍历默认default，子类可以修改</li>
+<li>接口没有构造方法，抽象类有构造函数</li>
+<li>接口没有main，抽象类可以有main</li>
+<li>接口有public、default、private，抽象类有public、private、protected、和不写（default）</li>
+</ol>
+<h4 id="try-with-resouce"><a class="markdownIt-Anchor" href="#try-with-resouce"></a> try-with-resouce</h4>
+<p>jdk7提供，java如果打开外部资源文件，使用后需要正确关闭</p>
+<p>原理：资源对象必须实现AutoCloseable接口，既实现了close（）方法</p>
+<p><img src="/images/image-20210316105631184.png" alt="image-20210316105631184" /></p>
+<p>jdk7必须再try内部定义，否则需要一个临时变量，jdk9可以直接使用外部变量</p>
+<p><img src="/images/image-20210316105753414.png" alt="image-20210316105753414" /></p>
+<p>编译器默认改造</p>
+<p><img src="/images/image-20210316105951432.png" alt="image-20210316105951432" /></p>
+<h4 id="resourcebundle文件加载"><a class="markdownIt-Anchor" href="#resourcebundle文件加载"></a> ResourceBundle文件加载</h4>
+<p><img src="/images/image-20210316110117804.png" alt="image-20210316110117804" /></p>
+<p><img src="/images/image-20210316110331232.png" alt="image-20210316110331232" /></p>
+<h4 id="var"><a class="markdownIt-Anchor" href="#var"></a> var</h4>
+<p>java以前是强类型语言，定义时就确定了类型，不能改类型</p>
+<p>java10推出了var，局部变量推断</p>
+<ol>
+<li>避免了信息冗余</li>
+<li>对其了变量名</li>
+<li>容易阅读</li>
+</ol>
+<p><img src="/images/image-20210316110608972.png" alt="image-20210316110608972" /></p>
+<p>本质上还是强类型语言，编译器进行推断后写入字节码文件，推断后不能更改</p>
+<p>限制：</p>
+<ol>
+<li>只能用在局部变量，不能用再类成员变量</li>
+<li>可以再for/for-each循环使用</li>
+<li>声明时必须初始化</li>
+<li>不能用在参数和返回类型</li>
+<li>大面积使用会使代码阅读性变差</li>
+<li>只再编译时使用</li>
+</ol>
+<h4 id="switch"><a class="markdownIt-Anchor" href="#switch"></a> switch</h4>
+<p>支持的类型：byte、short、char、int、String（7.0支持）、enum（5.0支持）</p>
+<p>不支持的类型：long、float、double（switch字节码函数只支持int类型）</p>
+<p>jdk12提出多分支合并</p>
+<p><img src="/images/image-20210316111157037.png" alt="image-20210316111157037" /></p>
+<p>jdk12提出表达式赋值</p>
+<p><img src="/images/image-20210316111235088.png" alt="image-20210316111235088" /></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/java/%E8%AF%AD%E6%B3%95%E7%B3%96/" data-id="ckmk7003m000m4kvx2vji9at7" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%AD%E6%B3%95%E7%B3%96/" rel="tag">语法糖</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-java/泛型" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/java/%E6%B3%9B%E5%9E%8B/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:04.991Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/java/%E6%B3%9B%E5%9E%8B/">泛型</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/Java/">Java</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="泛型generic-programming"><a class="markdownIt-Anchor" href="#泛型generic-programming"></a> 泛型（Generic Programming）</h3>
+<p>JKD5引入泛型</p>
+<p>泛型本质：参数化类型，避免类型转化，代码可复用</p>
+<p>泛型类：</p>
+<ol>
+<li>具有泛型变量的类</li>
+<li>再类名后面用<T>代表引入类型，E代表单个元素，KV代表键值，T代表自定义泛型变量</li>
+<li>引入类型可以修饰成员变量，局部变量，参数，返回值</li>
+</ol>
+<p><img src="/images/image-20210316140856766.png" alt="image-20210316140856766" /></p>
+<p>泛型方法（不是泛型类时）：前面<T>代表引入类型，后面的Interval<T>代表返回值</p>
+<p><img src="/images/image-20210316141200024.png" alt="image-20210316141200024" /></p>
+<h5 id="泛型类型限定"><a class="markdownIt-Anchor" href="#泛型类型限定"></a> 泛型类型限定</h5>
+<p><img src="/images/image-20210316141608240.png" alt="image-20210316141608240" /></p>
+<p>表示T必须是Comparable的子类，extends是固定的，可以用&amp;链接</p>
+<p>&lt;T extends Comparable &amp; Serializable&gt;</p>
+<p>extends限定可以有多个接口，只能有一个类，类必须在第一个</p>
+<p><img src="/images/image-20210316141828092.png" alt="image-20210316141828092" /></p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316142041442.png" alt="image-20210316142041442" /></p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210316142116147.png" alt="image-20210316142116147" /></p>
+<h5 id="泛型通配符"><a class="markdownIt-Anchor" href="#泛型通配符"></a> 泛型通配符</h5>
+<p><img src="/images/image-20210316142234694.png" alt="image-20210316142234694" /></p>
+<p><img src="/images/image-20210316142446279.png" alt="image-20210316142446279" /></p>
+<p><img src="/images/image-20210316142501158.png" alt="image-20210316142501158" /></p>
+<p><img src="/images/image-20210316142708272.png" alt="image-20210316142708272" /></p>
+<p>泛型PECS（Product，Extends，Consumer，Super）原则</p>
+<ol>
+<li>要从泛型类读取类型T的数据，并且不能写入，可以用？ extends （泛型是生产者）</li>
+<li>要向泛型类写入类型T的数据，并且不能读取，可以用？super（泛型是消费者）</li>
+</ol>
+<p>无限定通配符&lt;?&gt;</p>
+<p><img src="/images/image-20210316143308697.png" alt="image-20210316143308697" /></p>
+<h4 id="泛型的本质"><a class="markdownIt-Anchor" href="#泛型的本质"></a> 泛型的本质</h4>
+<p>泛型是1.5引入的，因为java向后兼容，所以jvm里没有泛型对象，而是采取类型擦除，只有普通的方法和类</p>
+<p>类型擦除：擦除泛型变量，替换为原始类型，无限定为Object</p>
+<p><img src="/images/image-20210316143620689.png" alt="image-20210316143620689" /></p>
+<p><img src="/images/image-20210316143648952.png" alt="image-20210316143648952" />.</p>
+<p>擦除泛型变量后，为了保证类的安全，需要进行类型转化。</p>
+<p><img src="/images/image-20210316143817605.png" alt="image-20210316143817605" /></p>
+<p><img src="/images/image-20210316143753199.png" alt="image-20210316143753199" /></p>
+<p><img src="/images/image-20210316144003567.png" alt="image-20210316144003567" /></p>
+<p>自动桥使得本质上也是调用子类方法，使得多态方法被真确调用</p>
+<p><img src="/images/image-20210316144129777.png" alt="image-20210316144129777" /></p>
+<h4 id="协变和逆变"><a class="markdownIt-Anchor" href="#协变和逆变"></a> 协变和逆变</h4>
+<p><img src="/images/image-20210316150705142.png" alt="image-20210316150705142" /></p>
+<p><img src="/images/image-20210316150826775.png" alt="image-20210316150826775" /></p>
+<p><img src="/images/image-20210316150927768.png" alt="image-20210316150927768" /></p>
+<p>java数组是协变的</p>
+<p><img src="/images/image-20210316152823007.png" alt="image-20210316152823007" /></p>
+<p><img src="/images/image-20210316152920655.png" alt="image-20210316152920655" /></p>
+<p><img src="/images/image-20210316153223323.png" alt="image-20210316153223323" /></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/java/%E6%B3%9B%E5%9E%8B/" data-id="ckmk7003p000u4kvxfs01fi76" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E6%B3%9B%E5%9E%8B/" rel="tag">泛型</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-java/反射" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -208,9 +1186,9 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>31</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>5</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>9</strong><br>标签</div></a>
+      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>7</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
     </div>
 
 

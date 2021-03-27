@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>定时器和时间管理 | Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="定时器和时间管理 时间管理在内核非常重要，内核有大量函数都是基于时间驱动的。有些函数周期执行（例如调度程序运行队列进行平衡调整或屏幕刷新等），另一些函数需要等待一个相对时间才运行（需要推后执行的磁盘I&#x2F;O操作）  11.1 时间概念 内核必须在硬件帮助下才能计算和管理时间，硬件为内核提高了一个系统定时器计算流逝的时间。系统定时器以某种频率自行触发（称为射中）时钟中断，该频率可以预设，称为节拍率。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="定时器和时间管理">
+<meta property="og:url" content="http://example.com/2021/03/23/kernal/11.%E5%AE%9A%E6%97%B6%E5%99%A8%E5%92%8C%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="定时器和时间管理 时间管理在内核非常重要，内核有大量函数都是基于时间驱动的。有些函数周期执行（例如调度程序运行队列进行平衡调整或屏幕刷新等），另一些函数需要等待一个相对时间才运行（需要推后执行的磁盘I&#x2F;O操作）  11.1 时间概念 内核必须在硬件帮助下才能计算和管理时间，硬件为内核提高了一个系统定时器计算流逝的时间。系统定时器以某种频率自行触发（称为射中）时钟中断，该频率可以预设，称为节拍率。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-23T07:19:14.745Z">
+<meta property="article:modified_time" content="2021-03-23T08:30:42.118Z">
+<meta property="article:author" content="Slorui">
+<meta property="article:tag" content="kernal">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>7</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-kernal/11.定时器和时间管理" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/23/kernal/11.%E5%AE%9A%E6%97%B6%E5%99%A8%E5%92%8C%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" class="article-date">
+  <time class="post-time" datetime="2021-03-23T07:19:14.745Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">23</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      定时器和时间管理
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="定时器和时间管理"><a class="markdownIt-Anchor" href="#定时器和时间管理"></a> 定时器和时间管理</h3>
+<p>时间管理在内核非常重要，内核有大量函数都是基于时间驱动的。有些函数周期执行（例如调度程序运行队列进行平衡调整或屏幕刷新等），另一些函数需要等待一个相对时间才运行（需要推后执行的磁盘I/O操作）</p>
+<h4 id="111-时间概念"><a class="markdownIt-Anchor" href="#111-时间概念"></a> 11.1 时间概念</h4>
+<p>内核必须在硬件帮助下才能计算和管理时间，硬件为内核提高了一个系统定时器计算流逝的时间。系统定时器以某种频率自行触发（称为射中）时钟中断，该频率可以预设，称为节拍率。当时钟中断时，内核通过特殊中断处理程序处理。两次时钟中断的时间就是节拍。</p>
+<p>时钟中断对于管理操作系统十分重要，大量内核函数都离不开时间控制：</p>
+<ol>
+<li>更新系统运行时间</li>
+<li>更新实际时间</li>
+<li>smp系统上，均衡调度程序中各个处理器的运行队列</li>
+<li>检测当前进程时间片是否耗尽</li>
+<li>运行超时的动态定时器</li>
+<li>更新资源消耗和处理器时间统计</li>
+</ol>
+<h4 id="112-节拍率hz"><a class="markdownIt-Anchor" href="#112-节拍率hz"></a> 11.2 节拍率HZ</h4>
+<p>通过静态预处理定义，x86默认是100。</p>
+<p>提高节拍率好处：</p>
+<ol>
+<li>更新时钟中断解析度可以提高时间驱动事件的解析度</li>
+<li>提高了时间驱动时间的准确度</li>
+<li>内核定时器以更高的频率和准确度运行</li>
+<li>依赖定时执行的系统调用能以更高经度运行</li>
+<li>提高进程抢占精度</li>
+</ol>
+<p>劣势：</p>
+<ol>
+<li>频率越高，系统负担越重</li>
+<li>中断处理程序占用时间增加</li>
+<li>增加电耗</li>
+</ol>
+<p>linux支持无节拍操作，设置了config_hz，系统根据这个选项动态调度时钟中断，并不固定时间间隔出发中断</p>
+<h4 id="113-jiffies"><a class="markdownIt-Anchor" href="#113-jiffies"></a> 11.3 jiffies</h4>
+<p>jiffies记录系统启动以来的节拍总数。启动时内核初始化为0，每次中断加1。实际上内核给jiffies设置了初值，引起变量不断溢出，由此捕获bug。获得jiffies需要减去偏差</p>
+<p>科学中，jiffies表示时间间隔，计算机中表示两个连续时钟周期的时间。</p>
+<p>jiffies是无符号长整型(unsigned long)，32位会溢出，64位不会，一般读取低32位</p>
+<p>jiffies超出后会回绕到0，有宏帮助解决回绕带来的问题</p>
+<p>用户空间的hz可以通过jiffies转化</p>
+<h4 id="114-硬时钟和定时器"><a class="markdownIt-Anchor" href="#114-硬时钟和定时器"></a> 11.4 硬时钟和定时器</h4>
+<p>体系结构提供了两种设备计数器：系统定时器和实时时钟</p>
+<p>实时时钟（RTC）是用来存放系统时间的设备，系统关闭后也可以考主板微型电池保持计时，系统启动时读取RTC初始化墙上时间。</p>
+<p>系统定时器是内核定时机制的重要角色，提供一种周期性出发中断机制。有些是通过系统晶振进行分频实现，有些是通过衰减测量器实现中断</p>
+<h4 id="115-时钟中断处理程序"><a class="markdownIt-Anchor" href="#115-时钟中断处理程序"></a> 11.5 时钟中断处理程序</h4>
+<p>时钟中断可以分为两部分：系统结构相关和体系结构无关部分</p>
+<p>与体系结构相关的例程作为系统定时器的中断处理程序注册到内核，产生中断时运行。绝大多数做的工作有：</p>
+<ol>
+<li>获得xtime_lock锁，对访问jiffies和墙上时间xtime保护</li>
+<li>需要时应答或重设系统时钟</li>
+<li>周期性读取墙上时间更新实时时钟</li>
+<li>调用体系结构无关时钟例程</li>
+</ol>
+<p>体系结构无关：</p>
+<ol>
+<li>更新jiffies</li>
+<li>更新资源消耗的统计值，如进程消耗的时间系统时间和用户时间</li>
+<li>执行已到期的动态定时器</li>
+<li>执行scheduler_tick()函数</li>
+<li>更新墙上时间</li>
+<li>计算平均负载</li>
+</ol>
+<h4 id="116-实际时间"><a class="markdownIt-Anchor" href="#116-实际时间"></a> 11.6 实际时间</h4>
+<p>xtime是实际时间。除了更新xtime时间外，内核不会频繁使用xime，除了文件系统代码存放文件时访问时间戳需要使用xtime</p>
+<h4 id="117-定时器"><a class="markdownIt-Anchor" href="#117-定时器"></a> 11.7 定时器</h4>
+<p>定时器是管理内核流逝的时间的基础。定时器不周期运行，超时后自动撤销。</p>
+<p>定义定时器–&gt;初始化内部值（以节拍位绝对计数值）–&gt;激活定时器</p>
+<p>内核保证不会提前运行定时器，但可能会有延误。不能用定时器实现硬实时任务。</p>
+<p>定时器和当前代码异步，所以可能产生竞争条件。在多处理机上，要防止并发访问。尤其重点保护定时器中断处理程序中的共享数据。</p>
+<p>内核将定时器链表分为五组，定时器超时时间接近时，定时器随组下移，减少搜索带来的负担。</p>
+<h4 id="118-延时执行"><a class="markdownIt-Anchor" href="#118-延时执行"></a> 11.8 延时执行</h4>
+<p>内核代码（尤其程序驱动）除了使用定时器或下半部机制外，还需要其他方法推迟任务。这种推迟通常发生在等待硬件完工，而且等待时间较短（例如重设网卡以太模式需要2ms，重设后驱动程序需要等待2ms）</p>
+<h5 id="1181-忙等待"><a class="markdownIt-Anchor" href="#1181-忙等待"></a> 11.8.1 忙等待</h5>
+<p>忙时等待，可以延迟节拍的整数倍时间，适用于不精确。循环中不断等待节拍数耗尽。</p>
+<p>忙等待cpu会一直旋转等待，效率很低。这时可以调用调度程序（必须存在更重要的任务运行）。因为调用调度函数，所以不能在中断中运行，</p>
+<h5 id="1182-短延时"><a class="markdownIt-Anchor" href="#1182-短延时"></a> 11.8.2 短延时</h5>
+<p>有些内核代码（通常驱动程序）不但需要很短暂的延迟（比时钟节拍短），还要求精确。多发生在硬件同步时，内核提供了ms、ns、ms级别的延迟函数。函数通过循环次数来决定延迟（系统知道循环一次的时间）</p>
+<h5 id="1183-schedule_timeout"><a class="markdownIt-Anchor" href="#1183-schedule_timeout"></a> 11.8.3 schedule_timeout()</h5>
+<p>该方法会让需要延迟执行的任务睡眠到指定的延迟时间耗尽再运行。不能保证正好是指定时间，只能尽量接近延迟时间。睡眠时间结束，内核唤醒任务放入运行队列。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/23/kernal/11.%E5%AE%9A%E6%97%B6%E5%99%A8%E5%92%8C%E6%97%B6%E9%97%B4%E7%AE%A1%E7%90%86/" data-id="ckmromks60001awvx5y9jfd8t" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernal/" rel="tag">kernal</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/23/kernal/12.%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          内存管理
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/21/%E7%AE%97%E6%B3%95/%E9%93%BE%E8%A1%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">链表</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Blog</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>7</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 Slorui<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

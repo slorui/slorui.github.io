@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>mybatis扫描原理 | Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="mybatis扫描原理   MapperScan导入了MapperScannerRegistrar类，该类继承了ImportBeanDefinitionRegistrar，可以进行新的beanDefinition注册  1public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLo">
+<meta property="og:type" content="article">
+<meta property="og:title" content="mybatis扫描原理">
+<meta property="og:url" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="mybatis扫描原理   MapperScan导入了MapperScannerRegistrar类，该类继承了ImportBeanDefinitionRegistrar，可以进行新的beanDefinition注册  1public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLo">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327193702843.png">
+<meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327194057000.png">
+<meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327195223282.png">
+<meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327195433602.png">
+<meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327195533926.png">
+<meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327195745251.png">
+<meta property="article:published_time" content="2021-03-27T11:34:16.778Z">
+<meta property="article:modified_time" content="2021-03-27T12:00:06.158Z">
+<meta property="article:author" content="Slorui">
+<meta property="article:tag" content="mybatis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327193702843.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>7</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-spring/mybatis/mybatis扫描原理" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/" class="article-date">
+  <time class="post-time" datetime="2021-03-27T11:34:16.778Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">27</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      mybatis扫描原理
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/mybatis/">mybatis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="mybatis扫描原理"><a class="markdownIt-Anchor" href="#mybatis扫描原理"></a> mybatis扫描原理</h3>
+<ol>
+<li>
+<p>MapperScan导入了<code>MapperScannerRegistrar</code>类，该类继承了<code>ImportBeanDefinitionRegistrar</code>，可以进行新的<code>beanDefinition</code>注册</p>
+<p><img src="images/image-20210327193702843.png" alt="image-20210327193702843" /></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapperScannerRegistrar</span> <span class="keyword">implements</span> <span class="title">ImportBeanDefinitionRegistrar</span>, <span class="title">ResourceLoaderAware</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><code>MapperScannerRegistrar</code>注册了<code>MapperScannerConfigurer</code>类，该类实现了<code>BeanDefinitionRegistryPostProcessor</code>，在注册<code>beanDefinition</code>后进行了后置处理</p>
+<p><img src="images/image-20210327194057000.png" alt="image-20210327194057000" /></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapperScannerConfigurer</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">BeanDefinitionRegistryPostProcessor</span>, <span class="title">InitializingBean</span>, <span class="title">ApplicationContextAware</span>, <span class="title">BeanNameAware</span></span></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p><code>MapperScannerConfigurer</code>的<code>postProcessBeanDefinitionRegistry</code>进行了包扫描</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ClassPathMapperScanner scanner = <span class="keyword">new</span> ClassPathMapperScanner(registry);</span><br><span class="line">scanner.scan()</span><br></pre></td></tr></table></figure>
+<p>**<code>ClassPathMapperScanner</code>是<code>ClassPathBeanDefinitionScanner</code>**的子类，这里scan调用了父类的scan方法，然后执行了子类的doScan</p>
+<p><code>ClassPathBeanDefinitionScanner</code></p>
+</li>
+</ol>
+<p><img src="images/image-20210327195223282.png" alt="image-20210327195223282" /></p>
+<p><code>ClassPathMapperScanner</code></p>
+<p><img src="images/image-20210327195433602.png" alt="image-20210327195433602" /></p>
+<ol start="4">
+<li>
+<p><code>processBeanDefinitions</code>进行了类的替换，把所有的mapper替换成了<code>mapperFacotryBean</code></p>
+<p><img src="images/image-20210327195533926.png" alt="image-20210327195533926" /></p>
+<ol>
+<li>
+<p>获取mapper的类名</p>
+</li>
+<li>
+<p>把mapper类放入<code>beanDefinition的</code>构造器中，作为<code>mapperFacotryBean</code>的<code>mapperInterface</code>，进行后续代理注入容器</p>
+<p><img src="images/image-20210327195745251.png" alt="image-20210327195745251" /></p>
+</li>
+<li>
+<p>把当前<code>beanDefinition</code>替换为<code>mapperFacotryBean</code></p>
+</li>
+</ol>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/" data-id="ckmromktc000cawvxgr8t0m7q" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mybatis/" rel="tag">mybatis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/03/27/spring/mybatis/mybatis%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">mybatis基本配置</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Blog</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>7</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 Slorui<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
