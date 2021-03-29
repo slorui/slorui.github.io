@@ -13,13 +13,13 @@
 <meta property="og:description" content="mybatis扫描原理   MapperScan导入了MapperScannerRegistrar类，该类继承了ImportBeanDefinitionRegistrar，可以进行新的beanDefinition注册  1public class MapperScannerRegistrar implements ImportBeanDefinitionRegistrar, ResourceLo">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327193702843.png">
-<meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327194057000.png">
+<meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210329091956851.png">
 <meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327195223282.png">
 <meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327195433602.png">
 <meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327195533926.png">
 <meta property="og:image" content="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/images/image-20210327195745251.png">
 <meta property="article:published_time" content="2021-03-27T11:34:16.778Z">
-<meta property="article:modified_time" content="2021-03-27T12:00:06.158Z">
+<meta property="article:modified_time" content="2021-03-29T01:20:21.121Z">
 <meta property="article:author" content="Slorui">
 <meta property="article:tag" content="mybatis">
 <meta name="twitter:card" content="summary">
@@ -55,7 +55,7 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>41</strong><br>文章</div></a>
       <a href="/categories"><div><strong>7</strong><br>分类</div></a>
       <a href="/tags"><div><strong>11</strong><br>标签</div></a>
     </div>
@@ -126,7 +126,7 @@
 </li>
 <li>
 <p><code>MapperScannerRegistrar</code>注册了<code>MapperScannerConfigurer</code>类，该类实现了<code>BeanDefinitionRegistryPostProcessor</code>，在注册<code>beanDefinition</code>后进行了后置处理</p>
-<p><img src="images/image-20210327194057000.png" alt="image-20210327194057000" /></p>
+<p><img src="images/image-20210329091956851.png" alt="image-20210329091956851" /></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapperScannerConfigurer</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">BeanDefinitionRegistryPostProcessor</span>, <span class="title">InitializingBean</span>, <span class="title">ApplicationContextAware</span>, <span class="title">BeanNameAware</span></span></span><br></pre></td></tr></table></figure>
 </li>
 <li>
@@ -171,6 +171,15 @@
   
     
 <nav id="article-nav">
+  
+    <a href="/2021/03/27/spring/mybatis/%E8%87%AA%E5%AE%9A%E4%B9%89mybatis%E6%89%AB%E6%8F%8F/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          自定义mybatis
+        
+      </div>
+    </a>
   
   
     <a href="/2021/03/27/spring/mybatis/mybatis%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE/" id="article-nav-older" class="article-nav-link-wrap">
@@ -224,7 +233,7 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>41</strong><br>文章</div></a>
       <a href="/categories"><div><strong>7</strong><br>分类</div></a>
       <a href="/tags"><div><strong>11</strong><br>标签</div></a>
     </div>

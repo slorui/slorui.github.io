@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>自定义mybatis | Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="自定义mybatis   创建自定义扫描注解DaoScannerRegister 123456789@Retention(RetentionPolicy.RUNTIME)@Import(DaoScannerRegister.class)public @interface DaoScan &amp;#123;	String value() default &quot;&quot;;	String base">
+<meta property="og:type" content="article">
+<meta property="og:title" content="自定义mybatis">
+<meta property="og:url" content="http://example.com/2021/03/27/spring/mybatis/%E8%87%AA%E5%AE%9A%E4%B9%89mybatis%E6%89%AB%E6%8F%8F/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="自定义mybatis   创建自定义扫描注解DaoScannerRegister 123456789@Retention(RetentionPolicy.RUNTIME)@Import(DaoScannerRegister.class)public @interface DaoScan &amp;#123;	String value() default &quot;&quot;;	String base">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-03-27T13:45:15.527Z">
+<meta property="article:modified_time" content="2021-03-29T01:19:07.262Z">
+<meta property="article:author" content="Slorui">
+<meta property="article:tag" content="mybatis">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>41</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>7</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-spring/mybatis/自定义mybatis扫描" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/27/spring/mybatis/%E8%87%AA%E5%AE%9A%E4%B9%89mybatis%E6%89%AB%E6%8F%8F/" class="article-date">
+  <time class="post-time" datetime="2021-03-27T13:45:15.527Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">27</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      自定义mybatis
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/mybatis/">mybatis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="自定义mybatis"><a class="markdownIt-Anchor" href="#自定义mybatis"></a> 自定义mybatis</h3>
+<ol>
+<li>
+<p>创建自定义扫描注解<code>DaoScannerRegister</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Import(DaoScannerRegister.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> DaoScan &#123;</span><br><span class="line"></span><br><span class="line">	<span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> &quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function">String <span class="title">basePackage</span><span class="params">()</span> </span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>创建扫描注册器<code>DaoScannerRegister</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DaoScannerRegister</span> <span class="keyword">implements</span> <span class="title">ImportBeanDefinitionRegistrar</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerBeanDefinitions</span><span class="params">(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 通过DaoScan注解获取basePackage信息</span></span><br><span class="line">		AnnotationAttributes mapperScanAttrs = AnnotationAttributes</span><br><span class="line">				.fromMap(importingClassMetadata.getAnnotationAttributes(DaoScan.class.getName()));</span><br><span class="line">		String basePackage = mapperScanAttrs.getString(<span class="string">&quot;basePackage&quot;</span>);</span><br><span class="line">        <span class="comment">// 注册DaoScannerConfig类</span></span><br><span class="line">		BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(DaoScannerConfig.class);</span><br><span class="line">		beanDefinitionBuilder.addPropertyValue(<span class="string">&quot;basePackage&quot;</span>,basePackage);</span><br><span class="line">		registry.registerBeanDefinition(<span class="string">&quot;daoScanner&quot;</span>,beanDefinitionBuilder.getBeanDefinition());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>创建扫描配置类<code>DaoScannerConfig</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 实现BeanDefinitionRegistryPostProcessor,注册新的BeanDefination</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DaoScannerConfig</span> <span class="keyword">implements</span> <span class="title">BeanDefinitionRegistryPostProcessor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> SqlSessionFactory sqlSessionFactory;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String basePackage;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DaoScannerConfig</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="comment">// 创建数据域</span></span><br><span class="line">		DriverManagerDataSource driverManagerDataSource = <span class="keyword">new</span> DriverManagerDataSource();</span><br><span class="line">		driverManagerDataSource.setDriverClassName(<span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>);</span><br><span class="line">		driverManagerDataSource.setUrl(<span class="string">&quot;jdbc:mysql://localhost:3306/eesy&quot;</span>);</span><br><span class="line">		driverManagerDataSource.setUsername(<span class="string">&quot;root&quot;</span>);</span><br><span class="line">		driverManagerDataSource.setPassword(<span class="string">&quot;1234&quot;</span>);</span><br><span class="line">		<span class="comment">// 构建事务工厂</span></span><br><span class="line">		TransactionFactory transactionFactory = <span class="keyword">new</span> JdbcTransactionFactory();</span><br><span class="line">		<span class="comment">// 创建环境</span></span><br><span class="line">		Environment environment = <span class="keyword">new</span> Environment(<span class="string">&quot;development&quot;</span>, transactionFactory, driverManagerDataSource);</span><br><span class="line">		<span class="comment">// 构建配置类</span></span><br><span class="line">		Configuration configuration = <span class="keyword">new</span> Configuration(environment);</span><br><span class="line">		<span class="comment">// 获取sqlSession工厂</span></span><br><span class="line">		<span class="keyword">this</span>.sqlSessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(configuration);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBasePackage</span><span class="params">(String basePackage)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.basePackage = basePackage;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanDefinitionRegistry</span><span class="params">(BeanDefinitionRegistry registry)</span> <span class="keyword">throws</span> BeansException 	</span>&#123;</span><br><span class="line">        <span class="comment">// 创建自定义扫描类</span></span><br><span class="line">		DaoScanner daoScanner = <span class="keyword">new</span> DaoScanner(registry);</span><br><span class="line">        <span class="comment">// 增加过滤器 允许SimpleMetadataReader</span></span><br><span class="line">		daoScanner.registerFilters();</span><br><span class="line">        <span class="comment">// 传入sqlSessionFactory</span></span><br><span class="line">		daoScanner.setSqlSessionFactory(<span class="keyword">this</span>.sqlSessionFactory);</span><br><span class="line">        <span class="comment">// 调用spring的扫描方法 然后转到DaoScanner的扫描方法</span></span><br><span class="line">		daoScanner.scan(basePackage);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanFactory</span><span class="params">(ConfigurableListableBeanFactory beanFactory)</span> <span class="keyword">throws</span> BeansException 		</span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>创建自定义扫描类<code>DaoScanner</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DaoScanner</span> <span class="keyword">extends</span> <span class="title">ClassPathBeanDefinitionScanner</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 保持sqlSessionFactory以便传给DaoFactoryBean</span></span><br><span class="line">	<span class="keyword">private</span> SqlSessionFactory sqlSessionFactory;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSqlSessionFactory</span><span class="params">(SqlSessionFactory sqlSessionFactory)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.sqlSessionFactory = sqlSessionFactory;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 添加过滤器 允许SimpleMetadataReader</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerFilters</span><span class="params">()</span></span>&#123;</span><br><span class="line">		addIncludeFilter((metadataReader, metadataReaderFactory) -&gt; <span class="keyword">true</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 重写父类ClassPathBeanDefinitionScanner的判断，允许接口被候选</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">isCandidateComponent</span><span class="params">(AnnotatedBeanDefinition beanDefinition)</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> beanDefinition.getMetadata().isInterface() &amp;&amp; beanDefinition.getMetadata().isIndependent();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 重写父类扫描</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Set&lt;BeanDefinitionHolder&gt; <span class="title">doScan</span><span class="params">(String... basePackages)</span> </span>&#123;</span><br><span class="line">		Set&lt;BeanDefinitionHolder&gt; beanDefinitions = <span class="keyword">super</span>.doScan(basePackages);</span><br><span class="line">		postProcessBeanDefinition(beanDefinitions);</span><br><span class="line">		<span class="keyword">return</span> beanDefinitions;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 后置处理,将mapper接口的beanDefinition转化为DaoFactoryBean，并传入sqlSessionFactory</span></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">postProcessBeanDefinition</span><span class="params">(Set&lt;BeanDefinitionHolder&gt; beanDefinitions)</span></span>&#123;</span><br><span class="line">		GenericBeanDefinition beanDefinition = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">for</span>(BeanDefinitionHolder holder: beanDefinitions)&#123;</span><br><span class="line">			beanDefinition = (GenericBeanDefinition) holder.getBeanDefinition();</span><br><span class="line">			String beanClassName = beanDefinition.getBeanClassName();</span><br><span class="line">			beanDefinition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName);</span><br><span class="line">			beanDefinition.setBeanClass(DaoFactoryBean.class);</span><br><span class="line">			beanDefinition.getPropertyValues().add(<span class="string">&quot;sqlSessionFactory&quot;</span>,<span class="keyword">this</span>.sqlSessionFactory);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DaoScanner</span><span class="params">(BeanDefinitionRegistry registry)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(registry);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DaoScanner</span><span class="params">(BeanDefinitionRegistry registry, <span class="keyword">boolean</span> useDefaultFilters)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(registry, useDefaultFilters);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DaoScanner</span><span class="params">(BeanDefinitionRegistry registry, <span class="keyword">boolean</span> useDefaultFilters, Environment environment)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(registry, useDefaultFilters, environment);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DaoScanner</span><span class="params">(BeanDefinitionRegistry registry, <span class="keyword">boolean</span> useDefaultFilters, Environment environment, ResourceLoader resourceLoader)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(registry, useDefaultFilters, environment, resourceLoader);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>创建<code>DaoFactoryBean</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DaoFactoryBean</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">FactoryBean</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">	<span class="comment">// 要创建的mapper的接口类型</span></span><br><span class="line">	Class&lt;T&gt; daoInterface;</span><br><span class="line">	</span><br><span class="line">	SqlSessionFactory sqlSessionFactory;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSqlSessionFactory</span><span class="params">(SqlSessionFactory sqlSessionFactory)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.sqlSessionFactory = sqlSessionFactory;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DaoFactoryBean</span><span class="params">(Class&lt;T&gt; daoInterface)</span></span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.daoInterface = daoInterface;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">getObject</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 将mapper保存到knowMapper中，以便后续创建代理对象</span></span><br><span class="line">		sqlSessionFactory.getConfiguration().addMapper(daoInterface);</span><br><span class="line">		<span class="keyword">return</span> sqlSessionFactory.openSession().getMapper(daoInterface);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> Class&lt;?&gt; getObjectType() &#123;</span><br><span class="line">        <span class="comment">// 这里一定要返回接口类型，不然无法注入</span></span><br><span class="line">		<span class="keyword">return</span> daoInterface;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/27/spring/mybatis/%E8%87%AA%E5%AE%9A%E4%B9%89mybatis%E6%89%AB%E6%8F%8F/" data-id="ckmuoxf2h0004pwvxhw11csps" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mybatis/" rel="tag">mybatis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/29/spring/beanFactoryAPI/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          beanFactoryAPI
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">mybatis扫描原理</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Blog</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>41</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>7</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>11</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 Slorui<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

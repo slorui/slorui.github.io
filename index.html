@@ -43,7 +43,7 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>41</strong><br>文章</div></a>
       <a href="/categories"><div><strong>7</strong><br>分类</div></a>
       <a href="/tags"><div><strong>11</strong><br>标签</div></a>
     </div>
@@ -70,6 +70,297 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-spring/spring注入" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/29/spring/spring%E6%B3%A8%E5%85%A5/" class="article-date">
+  <time class="post-time" datetime="2021-03-29T13:26:10.615Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">29</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/29/spring/spring%E6%B3%A8%E5%85%A5/">spring注入</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/spring/">spring</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="spring注入"><a class="markdownIt-Anchor" href="#spring注入"></a> spring注入</h3>
+<h4 id="注入方式"><a class="markdownIt-Anchor" href="#注入方式"></a> 注入方式</h4>
+<p>DI（Dependenct Inject）注入一共有两种主要的变体：基于<strong>setter注入</strong>和<strong>基于构造器注入</strong> ，注入都是这两种方式或这两种的变体，例如@autowired，通过Java反射，<code>field.set(val,Object)</code>实现，是一种变体。</p>
+<h5 id="基于setter注入"><a class="markdownIt-Anchor" href="#基于setter注入"></a> 基于setter注入</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">    <span class="comment">// B属性即使没有也可以调用setter方法</span></span><br><span class="line">    B b;</span><br><span class="line">    </span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setXxx</span><span class="params">(B b)</span> </span>&#123;</span><br><span class="line">		System.out.println(<span class="string">&quot;spring 找到符合的setter&quot;</span>);</span><br><span class="line">		System.out.println(<span class="string">&quot;和属性无关，甚至可以不要属性&quot;</span>);</span><br><span class="line">		System.out.println(<span class="string">&quot;可以直接调用，这个A里面就没有任何属性&quot;</span>);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>手动注入</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;a&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.slorui.app.A&quot;</span> &gt;</span></span><br><span class="line">    // name 对应属性名</span><br><span class="line">	<span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;b&quot;</span> <span class="attr">ref</span> <span class="attr">bean</span>=<span class="string">&quot;b&quot;</span>&gt;</span></span><br><span class="line">	<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;b&quot;</span>  <span class="attr">class</span>=<span class="string">&quot;com.slorui.app.B&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>自动注入</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanFactory</span><span class="params">(ConfigurableListableBeanFactory beanFactory)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">		GenericBeanDefinition beanDefinitionA = (GenericBeanDefinition) beanFactory.getBeanDefinition(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">		<span class="comment">// 设置自动注入 也会调用setter</span></span><br><span class="line">        beanDefinitionA.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="基于构造器注入"><a class="markdownIt-Anchor" href="#基于构造器注入"></a> 基于构造器注入</h5>
+<p><strong>基于构造器的注入与setter注入不同，会在创建bean时选择构造器并调用进行创建，因此即使是手动，也无法通过设置实现对类的忽略</strong></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	B b;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">A</span><span class="params">(B b)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.b = b;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<ol>
+<li>手动注入</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">beans</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;a&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.slorui.app.A&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">&quot;b&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">ref</span>=<span class="string">&quot;beanThree&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;b&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.slorui.app.B&quot;</span>/&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>自动注入</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanFactory</span><span class="params">(ConfigurableListableBeanFactory beanFactory)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">	GenericBeanDefinition beanDefinitionA = (GenericBeanDefinition) beanFactory.getBeanDefinition(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">	<span class="comment">// 设置自动注入 也会调用setter</span></span><br><span class="line">       beanDefinitionA.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR);</span><br><span class="line">       <span class="comment">// 此处设置不生效，无法忽略B</span></span><br><span class="line">       beanFactory.ignoreDependencyType(B.class);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="注入模式"><a class="markdownIt-Anchor" href="#注入模式"></a> 注入模式</h4>
+<p>注入模式和注入方式不同，注入方式是注入的手段（如何注入），注入模式是注入时的行为（通过什么注入）</p>
+<ol>
+<li><code>AUTOWIRE_NO</code>：不自动注入，是默认的注入模式，值为0</li>
+<li><code>AUTOWIRE_BY_NAME</code>：通过Bean名字注入，值为1</li>
+<li><code>AUTOWIRE_BY_TYPE</code>：通过Bean类型注入，值为2</li>
+<li><code>AUTOWIRE_CONSTRUCTOR</code>：通过构造器注入，值为3</li>
+<li><code>AUTOWIRE_AUTODETECT</code>：自动检测，值为4，已经被废弃。</li>
+</ol>
+<h5 id="设置注入模式"><a class="markdownIt-Anchor" href="#设置注入模式"></a> 设置注入模式</h5>
+<ol>
+<li>xml</li>
+</ol>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span></span></span><br><span class="line"><span class="tag">       <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans</span></span></span><br><span class="line"><span class="tag"><span class="string">       http://www.springframework.org/schema/beans/spring-beans.xsd&quot;</span></span></span><br><span class="line"><span class="tag">	   <span class="attr">default-autowire</span>=<span class="string">&quot;byType&quot;</span>&gt;</span> // 这里设置全局注入模式，当前xml里的都是这种模式</span><br><span class="line">    </span><br><span class="line">    // 这里设置当前Bean的注入模式，会覆盖全局</span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;a&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.luban.app.A&quot;</span> <span class="attr">autowire</span>=<span class="string">&quot;constructor&quot;</span>&gt;</span></span><br><span class="line">		<span class="tag">&lt;/<span class="name">bean</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>java配置</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanFactory</span><span class="params">(ConfigurableListableBeanFactory beanFactory)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">	GenericBeanDefinition beanDefinitionA = (GenericBeanDefinition) beanFactory.getBeanDefinition(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">	<span class="comment">// 设置自动注入模式</span></span><br><span class="line">       beanDefinitionA.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="实现原理"><a class="markdownIt-Anchor" href="#实现原理"></a> 实现原理</h5>
+<p>sring在<code>populateBean</code>时，会判断注入模式，然后进行对应的注入</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">int</span> resolvedAutowireMode = mbd.getResolvedAutowireMode();</span><br><span class="line"><span class="keyword">if</span> (resolvedAutowireMode == AUTOWIRE_BY_NAME || resolvedAutowireMode == AUTOWIRE_BY_TYPE) &#123;</span><br><span class="line">	MutablePropertyValues newPvs = <span class="keyword">new</span> MutablePropertyValues(pvs);</span><br><span class="line">	<span class="comment">// Add property values based on autowire by name if applicable.</span></span><br><span class="line">	<span class="keyword">if</span> (resolvedAutowireMode == AUTOWIRE_BY_NAME) &#123;</span><br><span class="line">		autowireByName(beanName, mbd, bw, newPvs);</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// Add property values based on autowire by type if applicable.</span></span><br><span class="line">	<span class="keyword">if</span> (resolvedAutowireMode == AUTOWIRE_BY_TYPE) &#123;</span><br><span class="line">		autowireByType(beanName, mbd, bw, newPvs);</span><br><span class="line">	&#125;</span><br><span class="line">	pvs = newPvs;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="autowired"><a class="markdownIt-Anchor" href="#autowired"></a> @Autowired</h4>
+<p><code>@Autowired</code>使用反射进行类的注入，注入时首先通过ByType注入，如果找不到，进行ByName，都找不报错</p>
+<h5 id="原理"><a class="markdownIt-Anchor" href="#原理"></a> 原理</h5>
+<ol>
+<li>spring容器启动时，<code>AutowiredAnnotationBeanPostProcessor</code>被注册到容器</li>
+<li>扫描代码，如果带有@Autowired注解，则将依赖注入信息封装到<code>InjectionMetadata</code>中（见扫描过程）
+<ol>
+<li>扫描当前类中标注@Autowired的属性和方法</li>
+<li>再查找父类中注@Autowired的属性和方法，依次遍历</li>
+</ol>
+</li>
+<li>创建bean时（实例化对象和初始化），会调用各种<code>BeanPostProcessor</code>对bean初始化，<code>AutowiredAnnotationBeanPostProcesso</code>r负责将相关的依赖注入进来</li>
+</ol>
+<h5 id="执行时机"><a class="markdownIt-Anchor" href="#执行时机"></a> 执行时机</h5>
+<ol>
+<li><code>AbstractBeanFactory#doCreateBean</code></li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 调用属性合并后置处理器</span></span><br><span class="line">applyMergedBeanDefinitionPostProcessors(mbd, beanType, beanName);</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>调用<code>AutowiredAnnotationBeanPostProcessor</code>的后置处理器</li>
+<li>``AutowiredAnnotationBeanPostProcessor#findAutowiringMetadata`查找@Autowired元数据</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 创建自动注入元数据</span></span><br><span class="line"><span class="comment">  * 处理被<span class="doctag">@Autowired</span>标记的方法、属性，以及父类被标记的</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line">	metadata = buildAutowiringMetadata(clazz);</span><br></pre></td></tr></table></figure>
+<h4 id="多个候选者的解决方案"><a class="markdownIt-Anchor" href="#多个候选者的解决方案"></a> 多个候选者的解决方案</h4>
+<p>当自动注入时发现多个可匹配的类时，spring会报错，解决方案如下</p>
+<ol>
+<li>设置默认的注入类</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanFactory</span><span class="params">(ConfigurableListableBeanFactory beanFactory)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">		GenericBeanDefinition beanDefinitionA = (GenericBeanDefinition) beanFactory.getBeanDefinition(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">		<span class="comment">// 对于接口C的候选类，默认使用D来注入</span></span><br><span class="line">        beanFactory.registerResolvableDependency(C.class,<span class="keyword">new</span> D());</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<ol start="2">
+<li>设置优先级，使用<code>@primary</code>注解标识要注入的类</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Primary</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Y</span> <span class="keyword">implements</span> <span class="title">X</span></span></span><br></pre></td></tr></table></figure>
+<ol start="3">
+<li>设置优先级，使用<code>@Priority(x)</code>标识类的优先级</li>
+</ol>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Priority(2)</span> <span class="comment">// 优先级从小到大</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Y</span> <span class="keyword">implements</span> <span class="title">X</span></span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/29/spring/spring%E6%B3%A8%E5%85%A5/" data-id="ckmuoxeyt0000pwvx6mok1rwf" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-spring/beanFactoryAPI" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/29/spring/beanFactoryAPI/" class="article-date">
+  <time class="post-time" datetime="2021-03-29T11:40:50.183Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">29</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/29/spring/beanFactoryAPI/">beanFactoryAPI</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/spring/">spring</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="beanfactoryapi"><a class="markdownIt-Anchor" href="#beanfactoryapi"></a> beanFactoryAPI</h3>
+<h4 id="获取beanfacotry"><a class="markdownIt-Anchor" href="#获取beanfacotry"></a> 获取BeanFacotry</h4>
+<p>通过实现<code>BeanFactoryPostProcessor</code>获得<code>ConfigurableListableBeanFactory</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">TestIgnoreDependencyType</span> <span class="keyword">implements</span> <span class="title">BeanFactoryPostProcessor</span> </span>&#123;</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanFactory</span><span class="params">(ConfigurableListableBeanFactory beanFactory)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">        </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="ignoredependencytype"><a class="markdownIt-Anchor" href="#ignoredependencytype"></a> ignoreDependencyType</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * Ignore the given dependency type for autowiring:</span></span><br><span class="line"><span class="comment">	 * for example, String. Default is none.</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> type the dependency type to ignore</span></span><br><span class="line"><span class="comment">	 * 忽略自动装配的类型(byType、byName) （CONSTRUCTOR方式不能忽略，再创建bean还没注入时已经把类注入了）</span></span><br><span class="line"><span class="comment">	 * 如果属性是自动注入会忽略 但是Autowired不属于自动注入，是手动注入 所以不会被忽略</span></span><br><span class="line"><span class="comment">	 * 只能通过修改被注入类的注入模型实现</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">ignoreDependencyType</span><span class="params">(Class&lt;?&gt; type)</span></span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanFactory</span><span class="params">(ConfigurableListableBeanFactory beanFactory)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">	<span class="comment">// 获取类的beanDefinition</span></span><br><span class="line">       GenericBeanDefinition beanDefinitionA = (GenericBeanDefinition) beanFactory.getBeanDefinition(<span class="string">&quot;a&quot;</span>);</span><br><span class="line">	<span class="comment">// 设置自动注入模型</span></span><br><span class="line">       beanDefinitionA.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);</span><br><span class="line">	<span class="comment">// 设置自动注入时忽略的类</span></span><br><span class="line">       beanFactory.ignoreDependencyType(B.class);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">A</span> </span>&#123;</span><br><span class="line">	B b;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setB</span><span class="params">(B b)</span> </span>&#123;</span><br><span class="line">		System.out.println();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">printInfo</span><span class="params">()</span></span>&#123;</span><br><span class="line">		log.debug(<span class="string">&quot;bean-b:&#123;&#125;&quot;</span>,b);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="ignoredependencyinterface"><a class="markdownIt-Anchor" href="#ignoredependencyinterface"></a> ignoreDependencyInterface</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 如果类实现了有setX方法的接口，则在（自动注入）时会忽略该类对应的set方法</span></span><br><span class="line"><span class="comment">	 * 实现了spring的Aware就是在注入时忽略了（自动注入），而是在调用Aware后置处理器时才会执行对应的set方法</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">ignoreDependencyInterface</span><span class="params">(Class&lt;?&gt; ifc)</span></span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Override</span></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanFactory</span><span class="params">(ConfigurableListableBeanFactory beanFactory)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">	GenericBeanDefinition beanDefinitionA = (GenericBeanDefinition) beanFactory.getBeanDefinition(<span class="string">&quot;y&quot;</span>);</span><br><span class="line">	beanDefinitionA.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_BY_TYPE);</span><br><span class="line">       <span class="comment">// 需要在自动注入模式下</span></span><br><span class="line">	beanFactory.ignoreDependencyInterface(X.class);</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">X</span> </span>&#123;</span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">setW</span><span class="params">(W w)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Y</span> <span class="keyword">implements</span> <span class="title">X</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	W w;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setW</span><span class="params">(W w)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 自动注入模式下，通过忽略接口X可以使W不会自动注入</span></span><br><span class="line">		System.out.println();</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="registerresolvabledependency"><a class="markdownIt-Anchor" href="#registerresolvabledependency"></a> registerResolvableDependency</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 给指定类型的依赖注入特定的值（没有说自动注入，非自动注入也可以）</span></span><br><span class="line"><span class="comment">	 * 当有多个注入类型时，这种设置方式可以使得有确定的注入类</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">registerResolvableDependency</span><span class="params">(Class&lt;?&gt; dependencyType, <span class="meta">@Nullable</span> Object autowiredValue)</span></span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanFactory</span><span class="params">(ConfigurableListableBeanFactory beanFactory)</span> <span class="keyword">throws</span> BeansException </span>&#123;</span><br><span class="line">	<span class="comment">// 注入c接口时指定使用D类来注入</span></span><br><span class="line">       beanFactory.registerResolvableDependency(C.class,<span class="keyword">new</span> D());</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="clearmetadatacache"><a class="markdownIt-Anchor" href="#clearmetadatacache"></a> clearMetadataCache</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 清空beanDefinition缓存， 缓存-属性填充时会缓存的bd</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">clearMetadataCache</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<h4 id="freezeconfiguration"><a class="markdownIt-Anchor" href="#freezeconfiguration"></a> freezeConfiguration</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 冻结beanDefinition，可以缓存了</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">freezeConfiguration</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<h4 id="isconfigurationfrozen"><a class="markdownIt-Anchor" href="#isconfigurationfrozen"></a> isConfigurationFrozen</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 判断是否冻结</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">boolean</span> <span class="title">isConfigurationFrozen</span><span class="params">()</span></span>;</span><br></pre></td></tr></table></figure>
+<h4 id="preinstantiatesingletons"><a class="markdownIt-Anchor" href="#preinstantiatesingletons"></a> preInstantiateSingletons</h4>
+<h4 id=""><a class="markdownIt-Anchor" href="#"></a> </h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 实例化所以单例bean</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">void</span> <span class="title">preInstantiateSingletons</span><span class="params">()</span> <span class="keyword">throws</span> BeansException</span>;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/29/spring/beanFactoryAPI/" data-id="ckmuoxf260001pwvx9x3975q7" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-spring/mybatis/自定义mybatis扫描" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/27/spring/mybatis/%E8%87%AA%E5%AE%9A%E4%B9%89mybatis%E6%89%AB%E6%8F%8F/" class="article-date">
+  <time class="post-time" datetime="2021-03-27T13:45:15.527Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">27</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/27/spring/mybatis/%E8%87%AA%E5%AE%9A%E4%B9%89mybatis%E6%89%AB%E6%8F%8F/">自定义mybatis</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/mybatis/">mybatis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="自定义mybatis"><a class="markdownIt-Anchor" href="#自定义mybatis"></a> 自定义mybatis</h3>
+<ol>
+<li>
+<p>创建自定义扫描注解<code>DaoScannerRegister</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="meta">@Import(DaoScannerRegister.class)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> DaoScan &#123;</span><br><span class="line"></span><br><span class="line">	<span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> &quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function">String <span class="title">basePackage</span><span class="params">()</span> </span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>创建扫描注册器<code>DaoScannerRegister</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DaoScannerRegister</span> <span class="keyword">implements</span> <span class="title">ImportBeanDefinitionRegistrar</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerBeanDefinitions</span><span class="params">(AnnotationMetadata importingClassMetadata, BeanDefinitionRegistry registry)</span> </span>&#123;</span><br><span class="line">        <span class="comment">// 通过DaoScan注解获取basePackage信息</span></span><br><span class="line">		AnnotationAttributes mapperScanAttrs = AnnotationAttributes</span><br><span class="line">				.fromMap(importingClassMetadata.getAnnotationAttributes(DaoScan.class.getName()));</span><br><span class="line">		String basePackage = mapperScanAttrs.getString(<span class="string">&quot;basePackage&quot;</span>);</span><br><span class="line">        <span class="comment">// 注册DaoScannerConfig类</span></span><br><span class="line">		BeanDefinitionBuilder beanDefinitionBuilder = BeanDefinitionBuilder.genericBeanDefinition(DaoScannerConfig.class);</span><br><span class="line">		beanDefinitionBuilder.addPropertyValue(<span class="string">&quot;basePackage&quot;</span>,basePackage);</span><br><span class="line">		registry.registerBeanDefinition(<span class="string">&quot;daoScanner&quot;</span>,beanDefinitionBuilder.getBeanDefinition());</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>创建扫描配置类<code>DaoScannerConfig</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 实现BeanDefinitionRegistryPostProcessor,注册新的BeanDefination</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DaoScannerConfig</span> <span class="keyword">implements</span> <span class="title">BeanDefinitionRegistryPostProcessor</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> SqlSessionFactory sqlSessionFactory;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">private</span> String basePackage;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DaoScannerConfig</span><span class="params">()</span></span>&#123;</span><br><span class="line">		<span class="comment">// 创建数据域</span></span><br><span class="line">		DriverManagerDataSource driverManagerDataSource = <span class="keyword">new</span> DriverManagerDataSource();</span><br><span class="line">		driverManagerDataSource.setDriverClassName(<span class="string">&quot;com.mysql.cj.jdbc.Driver&quot;</span>);</span><br><span class="line">		driverManagerDataSource.setUrl(<span class="string">&quot;jdbc:mysql://localhost:3306/eesy&quot;</span>);</span><br><span class="line">		driverManagerDataSource.setUsername(<span class="string">&quot;root&quot;</span>);</span><br><span class="line">		driverManagerDataSource.setPassword(<span class="string">&quot;1234&quot;</span>);</span><br><span class="line">		<span class="comment">// 构建事务工厂</span></span><br><span class="line">		TransactionFactory transactionFactory = <span class="keyword">new</span> JdbcTransactionFactory();</span><br><span class="line">		<span class="comment">// 创建环境</span></span><br><span class="line">		Environment environment = <span class="keyword">new</span> Environment(<span class="string">&quot;development&quot;</span>, transactionFactory, driverManagerDataSource);</span><br><span class="line">		<span class="comment">// 构建配置类</span></span><br><span class="line">		Configuration configuration = <span class="keyword">new</span> Configuration(environment);</span><br><span class="line">		<span class="comment">// 获取sqlSession工厂</span></span><br><span class="line">		<span class="keyword">this</span>.sqlSessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(configuration);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBasePackage</span><span class="params">(String basePackage)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.basePackage = basePackage;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanDefinitionRegistry</span><span class="params">(BeanDefinitionRegistry registry)</span> <span class="keyword">throws</span> BeansException 	</span>&#123;</span><br><span class="line">        <span class="comment">// 创建自定义扫描类</span></span><br><span class="line">		DaoScanner daoScanner = <span class="keyword">new</span> DaoScanner(registry);</span><br><span class="line">        <span class="comment">// 增加过滤器 允许SimpleMetadataReader</span></span><br><span class="line">		daoScanner.registerFilters();</span><br><span class="line">        <span class="comment">// 传入sqlSessionFactory</span></span><br><span class="line">		daoScanner.setSqlSessionFactory(<span class="keyword">this</span>.sqlSessionFactory);</span><br><span class="line">        <span class="comment">// 调用spring的扫描方法 然后转到DaoScanner的扫描方法</span></span><br><span class="line">		daoScanner.scan(basePackage);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">postProcessBeanFactory</span><span class="params">(ConfigurableListableBeanFactory beanFactory)</span> <span class="keyword">throws</span> BeansException 		</span>&#123;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>创建自定义扫描类<code>DaoScanner</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DaoScanner</span> <span class="keyword">extends</span> <span class="title">ClassPathBeanDefinitionScanner</span> </span>&#123;</span><br><span class="line">	<span class="comment">// 保持sqlSessionFactory以便传给DaoFactoryBean</span></span><br><span class="line">	<span class="keyword">private</span> SqlSessionFactory sqlSessionFactory;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSqlSessionFactory</span><span class="params">(SqlSessionFactory sqlSessionFactory)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.sqlSessionFactory = sqlSessionFactory;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 添加过滤器 允许SimpleMetadataReader</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">registerFilters</span><span class="params">()</span></span>&#123;</span><br><span class="line">		addIncludeFilter((metadataReader, metadataReaderFactory) -&gt; <span class="keyword">true</span>);</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 重写父类ClassPathBeanDefinitionScanner的判断，允许接口被候选</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> <span class="keyword">boolean</span> <span class="title">isCandidateComponent</span><span class="params">(AnnotatedBeanDefinition beanDefinition)</span></span>&#123;</span><br><span class="line">		<span class="keyword">return</span> beanDefinition.getMetadata().isInterface() &amp;&amp; beanDefinition.getMetadata().isIndependent();</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">    <span class="comment">// 重写父类扫描</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">protected</span> Set&lt;BeanDefinitionHolder&gt; <span class="title">doScan</span><span class="params">(String... basePackages)</span> </span>&#123;</span><br><span class="line">		Set&lt;BeanDefinitionHolder&gt; beanDefinitions = <span class="keyword">super</span>.doScan(basePackages);</span><br><span class="line">		postProcessBeanDefinition(beanDefinitions);</span><br><span class="line">		<span class="keyword">return</span> beanDefinitions;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// 后置处理,将mapper接口的beanDefinition转化为DaoFactoryBean，并传入sqlSessionFactory</span></span><br><span class="line">	<span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">postProcessBeanDefinition</span><span class="params">(Set&lt;BeanDefinitionHolder&gt; beanDefinitions)</span></span>&#123;</span><br><span class="line">		GenericBeanDefinition beanDefinition = <span class="keyword">null</span>;</span><br><span class="line">		<span class="keyword">for</span>(BeanDefinitionHolder holder: beanDefinitions)&#123;</span><br><span class="line">			beanDefinition = (GenericBeanDefinition) holder.getBeanDefinition();</span><br><span class="line">			String beanClassName = beanDefinition.getBeanClassName();</span><br><span class="line">			beanDefinition.getConstructorArgumentValues().addGenericArgumentValue(beanClassName);</span><br><span class="line">			beanDefinition.setBeanClass(DaoFactoryBean.class);</span><br><span class="line">			beanDefinition.getPropertyValues().add(<span class="string">&quot;sqlSessionFactory&quot;</span>,<span class="keyword">this</span>.sqlSessionFactory);</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DaoScanner</span><span class="params">(BeanDefinitionRegistry registry)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(registry);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DaoScanner</span><span class="params">(BeanDefinitionRegistry registry, <span class="keyword">boolean</span> useDefaultFilters)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(registry, useDefaultFilters);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DaoScanner</span><span class="params">(BeanDefinitionRegistry registry, <span class="keyword">boolean</span> useDefaultFilters, Environment environment)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(registry, useDefaultFilters, environment);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DaoScanner</span><span class="params">(BeanDefinitionRegistry registry, <span class="keyword">boolean</span> useDefaultFilters, Environment environment, ResourceLoader resourceLoader)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">super</span>(registry, useDefaultFilters, environment, resourceLoader);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>创建<code>DaoFactoryBean</code></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">DaoFactoryBean</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">FactoryBean</span>&lt;<span class="title">T</span>&gt; </span>&#123;</span><br><span class="line">	<span class="comment">// 要创建的mapper的接口类型</span></span><br><span class="line">	Class&lt;T&gt; daoInterface;</span><br><span class="line">	</span><br><span class="line">	SqlSessionFactory sqlSessionFactory;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setSqlSessionFactory</span><span class="params">(SqlSessionFactory sqlSessionFactory)</span> </span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.sqlSessionFactory = sqlSessionFactory;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">DaoFactoryBean</span><span class="params">(Class&lt;T&gt; daoInterface)</span></span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.daoInterface = daoInterface;</span><br><span class="line">	&#125;</span><br><span class="line">	</span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> T <span class="title">getObject</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</span><br><span class="line">        <span class="comment">// 将mapper保存到knowMapper中，以便后续创建代理对象</span></span><br><span class="line">		sqlSessionFactory.getConfiguration().addMapper(daoInterface);</span><br><span class="line">		<span class="keyword">return</span> sqlSessionFactory.openSession().getMapper(daoInterface);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="keyword">public</span> Class&lt;?&gt; getObjectType() &#123;</span><br><span class="line">        <span class="comment">// 这里一定要返回接口类型，不然无法注入</span></span><br><span class="line">		<span class="keyword">return</span> daoInterface;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/27/spring/mybatis/%E8%87%AA%E5%AE%9A%E4%B9%89mybatis%E6%89%AB%E6%8F%8F/" data-id="ckmuoxf2h0004pwvxhw11csps" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mybatis/" rel="tag">mybatis</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-spring/mybatis/mybatis扫描原理" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -116,7 +407,7 @@
 </li>
 <li>
 <p><code>MapperScannerRegistrar</code>注册了<code>MapperScannerConfigurer</code>类，该类实现了<code>BeanDefinitionRegistryPostProcessor</code>，在注册<code>beanDefinition</code>后进行了后置处理</p>
-<p><img src="images/image-20210327194057000.png" alt="image-20210327194057000" /></p>
+<p><img src="images/image-20210329091956851.png" alt="image-20210329091956851" /></p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapperScannerConfigurer</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">BeanDefinitionRegistryPostProcessor</span>, <span class="title">InitializingBean</span>, <span class="title">ApplicationContextAware</span>, <span class="title">BeanNameAware</span></span></span><br></pre></td></tr></table></figure>
 </li>
 <li>
@@ -739,228 +1030,10 @@
 
 
   
-    <article id="post-算法/链表" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/%E7%AE%97%E6%B3%95/%E9%93%BE%E8%A1%A8/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.711Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/%E7%AE%97%E6%B3%95/%E9%93%BE%E8%A1%A8/">链表</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/algorithm/">algorithm</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/%E7%AE%97%E6%B3%95/%E9%93%BE%E8%A1%A8/" data-id="ckmk7003o000r4kvxhfat8718" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E9%93%BE%E8%A1%A8/" rel="tag">链表</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-面经/java/集合" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/%E9%9D%A2%E7%BB%8F/java/%E9%9B%86%E5%90%88/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.613Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/%E9%9D%A2%E7%BB%8F/java/%E9%9B%86%E5%90%88/">如何决定使用HashMap还是TreeMap</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/Java/">Java</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="1-如何决定使用hashmap还是treemap"><a class="markdownIt-Anchor" href="#1-如何决定使用hashmap还是treemap"></a> 1、如何决定使用HashMap还是TreeMap</h3>
-<p>TreeMap的key要求实现java.lang.Comparable，迭代是默认按key升序排序。TreeMap基于红黑树，适用于自然顺序或自定义顺序的key。（就是红黑树，没有数组）</p>
-<p>HashMap的key值实现散列hashCode()，分布散列均匀，不支持排序。</p>
-<p>当需要得到有序的结果，就使用TreeMap，除此之外，因为HashMap有更好的性能，使用HashMap</p>
-<ol>
-<li>
-<p>HashMap和TreeMap实现：</p>
-<p>HashMap基于哈希表实现。使用HashMap要求key明确定义了hashCode和equals方法（可以重写），还可以对初始容量和负载因子调优</p>
-<p>TreeMap基于红黑树实现，一直处于平衡状态，不能调优</p>
-</li>
-<li>
-<p>HashMap和TreeMap都是线程不安全</p>
-<p>HashMap继承了AbstractMap抽象类，TreeMap继承了SortedMap接口</p>
-<p><strong>AbstractMap抽象类</strong>：覆盖了hashCode和equals方法，确保两个相等映射返回同样的hashCode。（映射大小相等，key相等并且值相等，就认为映射相等）映射的hashCode是映射的全部元素的hashCode总和。</p>
-<p><strong>SortedMap接口</strong>：原来保证键的有序性。SortedMap为映像的视图（子集），包括两个端点提供了访问方法。除了排序是作用于映射的键外，处理SortedMap和SortedSet一样。添加到SortedMap的元素必须实现Comparable接口，否则必须给他的构造函数提供一个Comparator接口的实现。TreeMap是唯一实现</p>
-</li>
-<li>
-<p>TreeMap默认是升序，如何降序</p>
-<p>通过自定义比较器，实现Comparator接口，重写compare方法，传入TreeMap构造器</p>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/%E9%9D%A2%E7%BB%8F/java/%E9%9B%86%E5%90%88/" data-id="ckmk7004i003n4kvxhkcn4roc" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/HashMap/" rel="tag">HashMap</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/TreeMap/" rel="tag">TreeMap</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-计算机网络/6.应用层" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/6.%E5%BA%94%E7%94%A8%E5%B1%82/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.585Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/6.%E5%BA%94%E7%94%A8%E5%B1%82/">应用层</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="应用层"><a class="markdownIt-Anchor" href="#应用层"></a> 应用层</h3>
-<h4 id="应用层概述"><a class="markdownIt-Anchor" href="#应用层概述"></a> 应用层概述</h4>
-<p><img src="/images/image-20210307160050150.png" alt="image-20210307160050150" /></p>
-<p><img src="/images/image-20210307160203854.png" alt="image-20210307160203854" /></p>
-<p><img src="/images/image-20210307160226061.png" alt="image-20210307160226061" /></p>
-<h4 id="动态主机配置dhcp"><a class="markdownIt-Anchor" href="#动态主机配置dhcp"></a> 动态主机配置DHCP</h4>
-<p><img src="/images/image-20210307161013853.png" alt="image-20210307161013853" /></p>
-<p><img src="/images/image-20210307161037097.png" alt="image-20210307161037097" /></p>
-<h4 id="动态域名系统nds"><a class="markdownIt-Anchor" href="#动态域名系统nds"></a> 动态域名系统NDS</h4>
-<p><img src="/images/image-20210307161156042.png" alt="image-20210307161156042" /></p>
-<p><img src="/images/image-20210307161240542.png" alt="image-20210307161240542" /></p>
-<p><img src="/images/image-20210307161403725.png" alt="image-20210307161403725" /></p>
-<p><img src="/images/image-20210307161436406.png" alt="image-20210307161436406" /></p>
-<p><img src="/images/image-20210307161514348.png" alt="image-20210307161514348" /></p>
-<h4 id="文件传输协议ftp"><a class="markdownIt-Anchor" href="#文件传输协议ftp"></a> 文件传输协议FTP</h4>
-<p><img src="/images/image-20210307161547640.png" alt="image-20210307161547640" /></p>
-<p><img src="/images/image-20210307161819335.png" alt="image-20210307161819335" /></p>
-<p><img src="/images/image-20210307161837795.png" alt="image-20210307161837795" /></p>
-<h4 id="电子邮件"><a class="markdownIt-Anchor" href="#电子邮件"></a> 电子邮件</h4>
-<p><img src="/images/image-20210307161915114.png" alt="image-20210307161915114" /></p>
-<p><img src="/images/image-20210307161938348.png" alt="image-20210307161938348" /></p>
-<p><img src="/images/image-20210307161953057.png" alt="image-20210307161953057" /></p>
-<p><img src="/images/image-20210307162054826.png" alt="image-20210307162054826" /></p>
-<p><img src="/images/image-20210307162105891.png" alt="image-20210307162105891" /></p>
-<p><img src="/images/image-20210307162125205.png" alt="image-20210307162125205" /></p>
-<p><img src="/images/image-20210307162151244.png" alt="image-20210307162151244" /></p>
-<p><img src="/images/image-20210307162225334.png" alt="image-20210307162225334" /></p>
-<h4 id="万维网www"><a class="markdownIt-Anchor" href="#万维网www"></a> 万维网WWW</h4>
-<p><img src="/images/image-20210307162306886.png" alt="image-20210307162306886" /></p>
-<p><img src="/images/image-20210307162320178.png" alt="image-20210307162320178" /></p>
-<p><img src="/images/image-20210307162335404.png" alt="image-20210307162335404" /></p>
-<p><img src="/images/image-20210307162417129.png" alt="image-20210307162417129" /></p>
-<p><img src="/images/image-20210307162435448.png" alt="image-20210307162435448" /></p>
-<p><img src="/images/image-20210307162446992.png" alt="image-20210307162446992" /></p>
-<p><img src="/images/image-20210307162533578.png" alt="image-20210307162533578" /></p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/6.%E5%BA%94%E7%94%A8%E5%B1%82/" data-id="ckmk7003v001f4kvxbszhbn0p" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
 
 
   <nav id="page-nav">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/2/">next &amp;raquo;</a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/2/">next &amp;raquo;</a>
   </nav>
 </section>
         
@@ -1001,7 +1074,7 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>41</strong><br>文章</div></a>
       <a href="/categories"><div><strong>7</strong><br>分类</div></a>
       <a href="/tags"><div><strong>11</strong><br>标签</div></a>
     </div>

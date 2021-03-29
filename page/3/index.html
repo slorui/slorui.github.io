@@ -43,7 +43,7 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>41</strong><br>文章</div></a>
       <a href="/categories"><div><strong>7</strong><br>分类</div></a>
       <a href="/tags"><div><strong>11</strong><br>标签</div></a>
     </div>
@@ -70,6 +70,311 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-mysql/innodb/7.记录" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/mysql/innodb/7.%E8%AE%B0%E5%BD%95/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.444Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/mysql/innodb/7.%E8%AE%B0%E5%BD%95/">记录</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/innodb/">innodb</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="记录"><a class="markdownIt-Anchor" href="#记录"></a> 记录</h3>
+<h4 id="72概述"><a class="markdownIt-Anchor" href="#72概述"></a> 7.2概述</h4>
+<p>InnoDB是一种面向行的存储引擎，每个页以行记录的方式存储。基于行的好处</p>
+<ol>
+<li>记录放在同一页，访问一条记录需要访问的页很少</li>
+<li>符合机械磁盘的访问方式</li>
+<li>容易理解，数据存取就像二维表访问</li>
+</ol>
+<p>通常行和记录是等价的。关系数据库理论中，元组描述记录，字段描述列</p>
+<p>物理记录是数据在物理存储中的格式，逻辑记录就像数组，内部放着一条条记录</p>
+<p>InnoDB引擎是索引组织表(index organized table,IOT)，意味着所有用户数据都是B+树存储。叶子节点存放着每行记录，若没有主键，字段创建一个6字节的隐藏列当作主键。</p>
+<p>InnoDB支持事务和MVCC，每行记录还包含了一个回滚指针以及记录事务ID的列（都是隐藏列）。回滚指针用来构造上一个版本，实现MVCC，事务ID判断当前记录其他事务是否可见，实现事务隔离和ＭＶＣＣ</p>
+<h4 id="73-物理记录"><a class="markdownIt-Anchor" href="#73-物理记录"></a> 7.3 物理记录</h4>
+<h5 id="731-物理记录格式"><a class="markdownIt-Anchor" href="#731-物理记录格式"></a> 7.3.1 物理记录格式</h5>
+<p>物理记录由两部分组成：</p>
+<ol>
+<li>extra info</li>
+<li>实际存储行数据</li>
+</ol>
+<p>extra info由col offset list和record header组成。实际存储的第一个列的位置称为original offset，物理记录总指向这个位置，不是物理记录实际开始的位置</p>
+<p>开始部分col offset list是记录中每个列的偏移量，根据列的顺序逆序。每个offset list除了记录列表的长度，还记录了该列是否为null以及是否包含外部存储属性。</p>
+<p>record header的内容帮助innodb读取完整的一行记录，如果需要，并转化为逻辑记录。存放了info_bits信息（记录删除标记，B+树非叶子节点最小记录标记）、记录序号，记录数量、堆中的序号、下一个记录指针等</p>
+<p>InnoDB记录在页中，但是页的记录并不是按索引规则排序，页更像一个堆，，其中记录无限，但有堆中序号，记录之间通过指针逻辑串联。堆序号主要是为了实现锁</p>
+<p>每个页都有两个虚拟的伪记录，所以heap no（堆号）从2开始</p>
+<h5 id="732-大记录格式"><a class="markdownIt-Anchor" href="#732-大记录格式"></a> 7.3.2 大记录格式</h5>
+<p>大记录是值某些记录的列不进在当前页，也在其他页（溢出页）。大记录类型有BLOB和TEXT。InnoDB不是把BLOB和TEXT都放溢出页，而是当记录总字节数大于空页的一半时，才放溢出页。对于溢出的列，在列的偏移列表中增加标记。InnoDB的处理方式，当前页值存储溢出列的127个字节，剩下20个字节存储溢出页信息</p>
+<p>由于存放于off-page的字节数最大标识最大4个字节，所以BLOB最大4GB</p>
+<p>大记录更新时，先把之前的伪删除，然后插入新的记录，回滚时删除新记录，恢复伪删除的数据。</p>
+<h5 id="733-伪记录"><a class="markdownIt-Anchor" href="#733-伪记录"></a> 7.3.3 伪记录</h5>
+<p>索引页有两个伪记录，分别伪Infimun记录和Supremum记录。用户可以把Infimun当作页中最小记录，Supremun当作最大记录。这里个记录起到了边界的作用。还可以优化锁的性能</p>
+<h4 id="74-逻辑记录"><a class="markdownIt-Anchor" href="#74-逻辑记录"></a> 7.4 逻辑记录</h4>
+<p>逻辑记录存放于内存，每个dtuple_struct逻辑记录包含多个dfield_struct字段，每个列的数据，大小，类型、列号等</p>
+<p>大记录存放在big_rec_struct，每个大记录可能由多个big_rec_field_struct列组成</p>
+<h4 id="75-记录比较"><a class="markdownIt-Anchor" href="#75-记录比较"></a> 7.5 记录比较</h4>
+<p>B+树索引只能定位到所在的记录页，不能直接定位到具体的查询记录，找到页，还需通过二叉查找算法进行搜索。</p>
+<p>记录比较分为逻辑记录比较和物理记录比较。通常都是通过逻辑记录和物理记录比较。对于插入，本身不存在插入的物理记录，要先构建逻辑记录。对于update，delete操作，先通过select定位，这时就转化为逻辑记录</p>
+<p>InnoDB使用mtype和prtype分别代表列的类型和列的属性。通过将数据类型转化为mtype和prtype</p>
+<p>通过mtype和prtype就可以进行比较</p>
+<h4 id="76-行记录版本"><a class="markdownIt-Anchor" href="#76-行记录版本"></a> 7.6 行记录版本</h4>
+<p>多版本是指行记录可能一时存在多个版本。记录版本号通过隐藏的事务id列表示，由于事务id自增，所以版本号id也自增</p>
+<p>InnoDB通过回滚指针保存前一个版本的undo日志，通过undo日志可以构造出记录的前一个版本，从而实现统一记录的多版本。当没有事务引用这些记录版本，就可以回收这部分undo日志空间。</p>
+<p>通过数据结构read_view_struct控制事务应该读取记录的哪个版本</p>
+<p>read_view_struct有low_limit_id和up_limit_id保存当前的可见-不可见范围</p>
+<p>在事务之前提交的事务，当前事务应当可见，当前事务之后的事务，当前事务不可见。<strong>之间的事务，能否看见取决于创建事务时，事务是否以及提交。对于为提交的事务，不可见。</strong></p>
+<p>通过判断当前事务是否可以读取记录当前版本号，若不可以则构建前一个行版本。判断某个事务的版本号是否可见，从小事务开始判断。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/mysql/innodb/7.%E8%AE%B0%E5%BD%95/" data-id="ckmk7004g003i4kvxb5n1eu2h" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-mysql/innodb/6.存储管理" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/mysql/innodb/6.%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.429Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/mysql/innodb/6.%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/">存储管理</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/innodb/">innodb</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="存储管理"><a class="markdownIt-Anchor" href="#存储管理"></a> 存储管理</h3>
+<h4 id="62-物理存储"><a class="markdownIt-Anchor" href="#62-物理存储"></a> 6.2 物理存储</h4>
+<p>数据库不直接使用操作系统的文件系统，而是在之上封装了一层自己对于存储设备的管理，保证数据库数据库的完整性。</p>
+<p>InnoDB最小的存储单位是页，默认16KB</p>
+<p>物理磁盘一个扇区512B（固态4KB），文件系统把扇区映射成块，一个块4KB。</p>
+<p>为了性能，InnoDB每次申请一个区1MB，64个页，提高空间申请效率和数据存放的顺序性。</p>
+<h5 id="621-页"><a class="markdownIt-Anchor" href="#621-页"></a> 6.2.1 页</h5>
+<p>页是InnoDB访问的最小I/O单元，物理上连续的64页组成一个区。去除页头尾的46个字节开销，剩下空间原来存储数据。</p>
+<p>每个页都有头（38字节）和尾（8字节）</p>
+<p>页有页所在表空间的编号和在表空间的偏移量（a,b）。FIL_PAGE_OFFSET长度4个字节，一个表空间可存4GB*16kb 的数据</p>
+<p>还有两个指针保存了前后页的偏移量</p>
+<p>尾部8个字节和头部一个相同，原来判断页是否完整</p>
+<h5 id="622-区"><a class="markdownIt-Anchor" href="#622-区"></a> 6.2.2 区</h5>
+<p>区的大小为1MB，区的申请由（space header）空间头部信息进行管理。space header不是一个完整的页，信息保存在页（0，0）（偏移），用于区管理和分配，站112个字节</p>
+<p>区分为区和碎片区。区通过链表链接，用于分配给段。碎片区是InnoDB一个特殊区，通过区保存数据前，先将数据保存在32个碎片页中。这样是为了节省空间。碎片区不属于任何段</p>
+<p>每次申请区，若空间足够，申请4个，若包含碎片区，申请5个</p>
+<p>每个区描述符站40个字节，追踪64个页的使用状态。</p>
+<p>头部包含区id，在区链表的位置，区中页的使用情况</p>
+<p>InnoDB规定一个页可放256个区描述符，而且偏移都是整数倍</p>
+<p>若一个区的页含有区描述符，就称为碎片区</p>
+<h5 id="623-段"><a class="markdownIt-Anchor" href="#623-段"></a> 6.2.3 段</h5>
+<p>段原来保存特定的对象。表是最常见的对象。</p>
+<p>InnoDB中，每个用户表最少两个段，聚簇索引的叶子节点段和非叶子节点段</p>
+<p>段根据区的形式组织存储空间</p>
+<p>由于有点对象很小，不需要完整的区保存数据，例如undo段，因此给每个段设计了32个碎片页，段的空间首先保存在32个碎片页中，超出后申请空间。碎片页从碎片区申请，碎片区保存在space header中，不能分配给段</p>
+<p>InnoDB的设计初衷：创建表开始，随着表的增大，每次从表空间获取一个页，超过32个页后，任务数据很大，每次获取一个区。</p>
+<p>segment inode用于保存段的信息，但是位置不固定。一个新的索引就有2个新的段，会有新的segment inode，索引还有一个segment header指向segment inode，每个segment header存放在索引的root页（不一定，可放在单独的页 如insertbuffer）</p>
+<h5 id="624-表空间"><a class="markdownIt-Anchor" href="#624-表空间"></a> 6.2.4 表空间</h5>
+<p>表空间是一个逻辑概念，由页区段组成。一个表空间可用由多个文件组成。</p>
+<h4 id="63-数据结构"><a class="markdownIt-Anchor" href="#63-数据结构"></a> 6.3 数据结构</h4>
+<h4 id="64-文件操作"><a class="markdownIt-Anchor" href="#64-文件操作"></a> 6.4 文件操作</h4>
+<h5 id="641-异步io和同步io"><a class="markdownIt-Anchor" href="#641-异步io和同步io"></a> 6.4.1 异步I/O和同步I/O</h5>
+<p>同步I/O需要阻塞等待其他完成，异步I/O可合并多次I/O。</p>
+<p>数据库读操作几乎都是同步I/O，为了提高性能，还支持预读，这部分是异步I/O完成的。对于写操作，特别是脏页刷回磁盘都是异步。</p>
+<h4 id="65-异步io"><a class="markdownIt-Anchor" href="#65-异步io"></a> 6.5 异步I/O</h4>
+<h5 id="651-异步io数据结构"><a class="markdownIt-Anchor" href="#651-异步io数据结构"></a> 6.5.1 异步I/O数据结构</h5>
+<p>由4个异步I/O线程。分别处理异步读I/O，异步写I/O，插入缓存I/O，重做日志I/O</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/mysql/innodb/6.%E5%AD%98%E5%82%A8%E7%AE%A1%E7%90%86/" data-id="ckmk7004500294kvx7u40gpn3" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-mysql/innodb/5.mini-transaction" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/mysql/innodb/5.mini-transaction/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.411Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/mysql/innodb/5.mini-transaction/">mini-transaction</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/innodb/">innodb</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="mini-transaction"><a class="markdownIt-Anchor" href="#mini-transaction"></a> mini-transaction</h3>
+<h4 id="52-mini-transaction"><a class="markdownIt-Anchor" href="#52-mini-transaction"></a> 5.2 mini-transaction</h4>
+<h5 id="521-基本概念"><a class="markdownIt-Anchor" href="#521-基本概念"></a> 5.2.1 基本概念</h5>
+<p>mini-transaction模块，是用来实现InnoDB存储引擎物理逻辑日志的写入，通过mini-transaction保证并发事务操作下数据库异常时页数据的一致性。</p>
+<p>mini-transaction仅仅用来保证页的一致性，而事务可能需要保证多个页操作数据的一致性和持久性。或者说，事务的一致性和持久性需要通过mini-transaction实现</p>
+<p>当用户修改页时，通过类似的mini-transaction形式：</p>
+<ol>
+<li>lock专享的页</li>
+<li>修改页</li>
+<li>生成undo log和redo log</li>
+<li>unlock页</li>
+</ol>
+<p>为了保证页的一致性，需要遵循：</p>
+<ol>
+<li>FIX Rules</li>
+<li>Write-Ahead Log</li>
+<li>Force-log-at-commit</li>
+</ol>
+<h5 id="522-fix-rules"><a class="markdownIt-Anchor" href="#522-fix-rules"></a> 5.2.2 FIX Rules</h5>
+<p>当数据库访问或修改一个页时，需要持有该页的latch，保证并发的数据一致性。将这个latch称为fixing the page。获得latch后，称这个页已经fixed，</p>
+<p>规则如下：</p>
+<ol>
+<li>修改一个页需要获得x-latch</li>
+<li>访问一个页获得x-latch或s-latch</li>
+<li>持有latch到修改或访问完数据</li>
+</ol>
+<p>如果要一次性修改多个页，需要持有多个页的latch，操作完成再释放</p>
+<p>每个页struct的lock变量实现对页latch的操作。一个事务读取该页，变量就+1.当LRU替换时，必须保证为0才能替换。</p>
+<p>InnoDB对FIX Rules进行了调整，若操作的页是B+树的非叶子节点，非页节点通过B+树的索引的latch维护，因此操作这些页不需要持有页的latch。</p>
+<p>因此，再InnoDB判断页是否被fix的标准是lock变量是否为0</p>
+<h5 id="523-write-ahead-log"><a class="markdownIt-Anchor" href="#523-write-ahead-log"></a> 5.2.3 Write-Ahead-Log</h5>
+<p>WAL要求一个页操作再写入到持久存储设备时，首先必须将内存中的日志写入到持久存储</p>
+<ol>
+<li>每个页要有一个LSN</li>
+<li>每次页的修改操作需要维护该LSN</li>
+<li>当一个页刷新到持久存储设备时，要求将所有内存小于该页LSN的日志都持久化</li>
+<li>当日志持久化后，将内存中的页持久化</li>
+<li>页持久化时，需要fiexd保证页的一致性</li>
+</ol>
+<h5 id="524-force-log-at-commit"><a class="markdownIt-Anchor" href="#524-force-log-at-commit"></a> 5.2.4 Force-log-at-commit</h5>
+<p>仅仅靠WAL无法保证事务的持久性，还需要force-log-at-commit</p>
+<p>当事务提交时，所有mini-transaction产生的日志都必须刷新到持久存储设备</p>
+<p>innodb_flush_log _at_trx_commit=0表示关闭</p>
+<h4 id="53-具体实现"><a class="markdownIt-Anchor" href="#53-具体实现"></a> 5.3 具体实现</h4>
+<h5 id="531-数据结构"><a class="markdownIt-Anchor" href="#531-数据结构"></a> 5.3.1 数据结构</h5>
+<p>mtr_struct实现mini-transaction</p>
+<h5 id="532-物理逻辑日志的实现"><a class="markdownIt-Anchor" href="#532-物理逻辑日志的实现"></a> 5.3.2 物理逻辑日志的实现</h5>
+<p>InnoDB的redo log是物理逻辑的，所以需要记录每种重做日志的”逻辑“（每种重做日志的类型）</p>
+<p>恢复时，根据类型对对应的也进行”逻辑“恢复</p>
+<p>重做日志的开始信息由重做日志类型type、表空间ID space、页在表空间的偏移组成offset</p>
+<p>type占1个字节，space和offset都通过压缩的方式存储。body体的根据日志类型不同内容不同</p>
+<p>例如插入记录：记录的时插入记录的前一个记录的位置和插入记录与前一个记录的差异，所以如果一个页corrupt，无法恢复。</p>
+<p>如果一个mini-transaction涉及多个页的变化，会有多个页的redo-log，会在结束时加入一个结束标志表示记录了多个页的日志</p>
+<h5 id="533-mini-transaction的使用"><a class="markdownIt-Anchor" href="#533-mini-transaction的使用"></a> 5.3.3 mini-transaction的使用</h5>
+<ol>
+<li>每个mini-transaction拥有自己的redo log entity</li>
+<li>mini-transaction持有mutex互斥量写入redo log buffer</li>
+<li>redo log buffer进行缓存写，写入操作系统内存，然后写入磁盘</li>
+<li>由于redo log进行fsync时已经释放了mutex，所以可以进行组提交，当一个事务进行fsync时，其他事务可以获得mutex对象，将重做日志写入重做日志缓存，下一次事务提交时，可以将多个事务的重做日志一次性写入重做日志文件</li>
+</ol>
+<p>当一个事务没有对页修改也要使用mini-transaction，访问数据要符合FIX Rules规则，而mini-transaction包含次功能。当提交时，仅仅对页进行unfix操作</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/mysql/innodb/5.mini-transaction/" data-id="ckmk7004400264kvx1n3h3k66" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-mysql/innodb/4.重做日志" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -1051,271 +1356,10 @@
 
 
   
-    <article id="post-mysql/innodb/1.innodb历史" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/mysql/innodb/1.innodb%E5%8E%86%E5%8F%B2/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.286Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/mysql/innodb/1.innodb%E5%8E%86%E5%8F%B2/">innodb历史</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/innodb/">innodb</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="模块划分"><a class="markdownIt-Anchor" href="#模块划分"></a> 模块划分</h4>
-<p><img src="/images/image-20210309135527897.png" alt="image-20210309135527897" /></p>
-<p>File Manager：封装了InnoDB对文件的各类操作，读、写、异步I/O</p>
-<p>Concurrency Manager：主要封装了引擎内部使用的各类mutex和latch</p>
-<p>Common Utility：封装了基本的 数据结构和算法定义，如链表，哈希表</p>
-<p>虚线部分是InnoDB的内核实现部分，是InnoDB存储引擎事务、锁、缓存、日志、存储、索引的实现模块</p>
-<p>上面两层是接口层，实现与上层与存储引擎的内部互动。InnoDB可以不依赖MySQL数据库，作为一个嵌入式数据库，所有还有嵌入式接口。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/mysql/innodb/1.innodb%E5%8E%86%E5%8F%B2/" data-id="ckmk7003w001h4kvxdnjmhjvd" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/innodb/" rel="tag">innodb</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-kernal/9.内核同步介绍" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/kernal/9.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E4%BB%8B%E7%BB%8D/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.241Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/kernal/9.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E4%BB%8B%E7%BB%8D/">内核同步介绍</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/linux/">linux</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="内核同步介绍"><a class="markdownIt-Anchor" href="#内核同步介绍"></a> 内核同步介绍</h3>
-<p>单一处理器时，只有中断发送时或内核代码明确请求重新调度、执行另一个任务的时候才能并发访问数据</p>
-<p>linux现在是抢占式内核，调度程序可以再任意时间抢占内核，很多代码都会同步执行</p>
-<h4 id="91-临界区和竞争条件"><a class="markdownIt-Anchor" href="#91-临界区和竞争条件"></a> 9.1 临界区和竞争条件</h4>
-<p>临界区就是访问和操作共享数据的代码段。</p>
-<p>为了避免临界区发送并发访问，必须保证这些代码的原子性。</p>
-<p>如果两个线程同时处于一个临界区，就称它为竞争条件。</p>
-<p>避免并发和防止竞争条件称为同步。</p>
-<h5 id="911-为什么要保护"><a class="markdownIt-Anchor" href="#911-为什么要保护"></a> 9.1.1 为什么要保护</h5>
-<h5 id="912-单个变量"><a class="markdownIt-Anchor" href="#912-单个变量"></a> 9.1.2 单个变量</h5>
-<h4 id="92-加锁"><a class="markdownIt-Anchor" href="#92-加锁"></a> 9.2 加锁</h4>
-<p>例如队列，如果访问队列时正在操作队列，队列会处于不一致的状态</p>
-<p>当共享资源是一个复杂数据结构时，竞争条件往往会破坏数据结构</p>
-<p>linux实现了几种不同的锁机制，主要区别在于：当锁已经被其他线程持有而不可用时的行为表现——一些锁简单的执行忙等待，一些锁会使当前任务睡眠直到锁可用。</p>
-<h5 id="921-造成并发执行的原因"><a class="markdownIt-Anchor" href="#921-造成并发执行的原因"></a> 9.2.1 造成并发执行的原因</h5>
-<p>用户空间需要同步，是因为用户程序会被调度程序抢占和重新调度。</p>
-<p>因为信号处理是异步发送的，单线程的多个进程共享文件，或再一个程序内部处理信号，也可能产生竞争。这种类型的并发操作——并不是真的同时发送，但交叉执行，也可以称作伪并发执行。</p>
-<p>对称多处理器的机器，就是真并发。</p>
-<p>内核也可能产生并发：</p>
-<ol>
-<li>中断——中断几乎可以再任何时候异步发生，也就可能随时打断正在执行的代码</li>
-<li>软中断和taslklt——内核能在任何时候唤醒或调度软中断和tasklet，打断正在执行的代码</li>
-<li>内核抢占——内核具有抢占性，内核任务可能被另一个任务抢占</li>
-<li>睡眠及用户空间的同步：内核执行的进程可能睡眠，会唤醒调度程序，调度另一个新的用户进程执行</li>
-<li>对称多处理——两个或多个处理器同时执行代码</li>
-</ol>
-<p>中断处理程序中能避免并发访问的代码叫中断安全代码interrupt-safe</p>
-<p>对称多处理的机器上能避免并发访问的代码叫SMP安全代码SMP-safe</p>
-<p>内核抢占能避免并发访问的代码叫抢占安全代码preempt-safe</p>
-<h5 id="922-保护些什么"><a class="markdownIt-Anchor" href="#922-保护些什么"></a> 9.2.2 保护些什么</h5>
-<h4 id="93-死锁"><a class="markdownIt-Anchor" href="#93-死锁"></a> 9.3 死锁</h4>
-<p>死锁产生的条件：</p>
-<ol>
-<li>
-<p>一个或多个执行线程和一个或多个资源，每个线程都在等待其中一个资源，但所有资源都被占用</p>
-</li>
-<li>
-<p>所有线程都互相等待，但不会释放已经占用的资源</p>
-</li>
-<li>
-<p>互斥条件：进程要求对所分配的资源进行排它性控制，即在一段时间内某资源仅为一进程所占用。</p>
-</li>
-<li>
-<p>请求和保持条件：当进程因请求资源而阻塞时，对已获得的资源保持不放。</p>
-</li>
-<li>
-<p>不剥夺条件：进程已获得的资源在未使用完之前，不能剥夺，只能在使用完时由自己释放。</p>
-</li>
-<li>
-<p>环路等待条件：在发生死锁时，必然存在一个进程–资源的环形链。</p>
-</li>
-</ol>
-<p>自死锁：如果一个执行线程试图去获取一个自己已经持有的锁，它将不得不等待锁释放，但是忙于等待锁，没机会释放锁</p>
-<p>避免死锁的代码规则：</p>
-<ol>
-<li>按顺序加锁。使用嵌套的锁时必须保证相同的顺序获取锁</li>
-<li>防止发生饥饿，代码的执行是否一定会结束</li>
-<li>不要重复请求同一把锁</li>
-<li>设计力求简答，越复杂的加锁方案越任意造成死锁</li>
-<li><strong>如果两个或多个锁再同一时间被请求，以后其他函数请求他们也必须按照前次加锁的顺序进行</strong></li>
-</ol>
-<h4 id="94-争用和扩展性"><a class="markdownIt-Anchor" href="#94-争用和扩展性"></a> 9.4 争用和扩展性</h4>
-<p>争用：当锁被占用时，有其他线程试图获得该锁。高度争用，多个线程等待获得该锁。</p>
-<p>锁会降低性能，高度争用的锁会称为系统瓶颈。</p>
-<p>扩展性：对系统可扩展程度的度量。</p>
-<p>加锁粒度：描述加锁保护的数据规模</p>
-<p>一般来说，提高可扩展性是好事，会提供大小linux系统的性能，但小型系统锁太细会降低性能。如链表加锁和链表节点加锁</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/kernal/9.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E4%BB%8B%E7%BB%8D/" data-id="ckmk7003j000c4kvxb7phbc1k" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernal/" rel="tag">kernal</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-kernal/8.中断下部" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/21/kernal/8.%E4%B8%AD%E6%96%AD%E4%B8%8B%E9%83%A8/" class="article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.225Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/21/kernal/8.%E4%B8%AD%E6%96%AD%E4%B8%8B%E9%83%A8/">中断下部</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/linux/">linux</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="中断下部"><a class="markdownIt-Anchor" href="#中断下部"></a> 中断下部</h3>
-<p>中断处理程序由于一些限制，只能完成整个上部：</p>
-<ol>
-<li>中断处理程序以异步的方式执行，并且可能打断其他重要代码（包括其他中断），因此要越快越好</li>
-<li>中断处理程序执行时，最好的情况只屏蔽同级以下字段，最坏的情况屏蔽所有中断，所有执行的越快越好</li>
-<li>中断处理程序往往要对硬件操作，通常由很高的时限要求</li>
-<li>中断处理程序不能再进程上下文运行，不允许阻塞，限制了所能做的事情</li>
-</ol>
-<h4 id="81-下半部"><a class="markdownIt-Anchor" href="#81-下半部"></a> 8.1 下半部</h4>
-<p>下半部的任务就是执行中断处理密切相关但中断处理程序本身不执行的工作。</p>
-<p>中断处理程序注定要完成一部分工作：操作硬件对中断到达确认，从硬件拷贝数据。</p>
-<h5 id="811-为什么使用下部"><a class="markdownIt-Anchor" href="#811-为什么使用下部"></a> 8.1.1 为什么使用下部</h5>
-<p>希望尽量减少中断处理程序需要完成的工作量。减少中断程序对中断线的屏蔽，以及其他任务的阻塞。</p>
-<h5 id="812-下半部的环境"><a class="markdownIt-Anchor" href="#812-下半部的环境"></a> 8.1.2 下半部的环境</h5>
-<ol>
-<li>BH机制（已丢弃）</li>
-<li>任务队列</li>
-<li>软中断和tasklet</li>
-</ol>
-<h4 id="82-软中断"><a class="markdownIt-Anchor" href="#82-软中断"></a> 8.2 软中断</h4>
-<h4 id="83-taskelt"><a class="markdownIt-Anchor" href="#83-taskelt"></a> 8.3 taskelt</h4>
-<h4 id="84-工作队列"><a class="markdownIt-Anchor" href="#84-工作队列"></a> 8.4 工作队列</h4>
-<h4 id="85-下半部机制的选择"><a class="markdownIt-Anchor" href="#85-下半部机制的选择"></a> 8.5 下半部机制的选择</h4>
-<h4 id="86-下半部之间加锁"><a class="markdownIt-Anchor" href="#86-下半部之间加锁"></a> 8.6 下半部之间加锁</h4>
-<h4 id="87-禁止下半部"><a class="markdownIt-Anchor" href="#87-禁止下半部"></a> 8.7 禁止下半部</h4>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/21/kernal/8.%E4%B8%AD%E6%96%AD%E4%B8%8B%E9%83%A8/" data-id="ckmk7003k000e4kvxflezd5mx" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernal/" rel="tag">kernal</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
 
 
   <nav id="page-nav">
-    <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; pre</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/4/">next &amp;raquo;</a>
+    <a class="extend prev" rel="prev" href="/page/2/">&amp;laquo; pre</a><a class="page-number" href="/">1</a><a class="page-number" href="/page/2/">2</a><span class="page-number current">3</span><a class="page-number" href="/page/4/">4</a><a class="page-number" href="/page/5/">5</a><a class="extend next" rel="next" href="/page/4/">next &amp;raquo;</a>
   </nav>
 </section>
         
@@ -1356,7 +1400,7 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>38</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>41</strong><br>文章</div></a>
       <a href="/categories"><div><strong>7</strong><br>分类</div></a>
       <a href="/tags"><div><strong>11</strong><br>标签</div></a>
     </div>
