@@ -15,7 +15,7 @@
 <meta property="og:image" content="http://example.com/images/image-20210406172512678.png">
 <meta property="og:image" content="http://example.com/images/image-20210406173904049.png">
 <meta property="article:published_time" content="2021-04-06T09:20:15.220Z">
-<meta property="article:modified_time" content="2021-04-06T14:05:38.795Z">
+<meta property="article:modified_time" content="2021-04-06T14:22:47.390Z">
 <meta property="article:author" content="Slorui">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
@@ -138,6 +138,42 @@
 </ol>
 <p><img src="/images/image-20210406173904049.png" alt="image-20210406173904049" /></p>
 <h4 id="时间事件"><a class="markdownIt-Anchor" href="#时间事件"></a> 时间事件</h4>
+<p>redis时间时间分为：</p>
+<ol>
+<li>定时事件：程序指定时间之后执行一次，删除事件</li>
+<li>周期性事件：程序每隔一段时间执行一次，之后再次到达</li>
+</ol>
+<p>一个时间时间包括：</p>
+<ol>
+<li>id：时间事件的全局id，递增</li>
+<li>when：时间事件到达时间</li>
+<li>timeProc：时间事件处理器</li>
+</ol>
+<p>实现：</p>
+<p>所有时间事件都放在无序链表里，时间事件执行器执行时，遍历整个链表，查询所有到期事件并执行</p>
+<p><font color='red'>无序是指不按事件when排序</font></p>
+<p>时间事件实例：</p>
+<p>serverCron函数：持续运行的redis需要定期对自身的资源和状态检查调整。</p>
+<ol>
+<li>更新服务器统计信息</li>
+<li>清理过期键值对</li>
+<li>关闭和清理失效客户端</li>
+<li>尝试aof和rdb持久化</li>
+<li>如果是主服务器，对从服务器定期同步</li>
+<li>如果处于集群模式，对集群定期同步和连接测试</li>
+</ol>
+<p>默认每秒10次，每100毫秒一次</p>
+<h4 id="事件的调度和执行"><a class="markdownIt-Anchor" href="#事件的调度和执行"></a> 事件的调度和执行</h4>
+<p>服务器同时存在文件事件和时间事件，所以服务器必须对这两件事调度，有asProcessEvents执行</p>
+<ol>
+<li>查询距离当前事件最近的时间函数，计算相差时间remaind</li>
+<li>进行阻塞等待文件事件，阻塞时间为remaind</li>
+<li>处理文件事件</li>
+<li>处理时间事件</li>
+</ol>
+<p>阻塞最近时间可以防止服务器频繁轮询时间事件</p>
+<p>先执行文件事件，再执行时间事件。如果文件事件或者时间事件占用时间较长，例如写入字节数超过预设值，会跳出写循环，等待下次再写入。时间事件耗时久的持久化也会再子线程执行</p>
+<p>时间事件可能会比预设时间晚一点。</p>
 
       
     </div>
