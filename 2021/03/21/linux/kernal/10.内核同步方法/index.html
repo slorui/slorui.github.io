@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>内核同步方法 | Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="内核同步方法  10.1 原子操作 原子操作可以保证指令以原子的方式执行——过程不被打断。 内核通过了两组原子接口——针对整数进行操作和针对单独的位进行操作。 大多体系结构都提供了支持原子操作的简单算数指令，少部分缺少的也为单步执行提供了锁内存总线的指令，保证了其他改变内存的操作不能同时发生  10.1.1 原子整数操作 atomic_t变量代替原始变量  10.1.2 64位原子操作 引入at">
+<meta property="og:type" content="article">
+<meta property="og:title" content="内核同步方法">
+<meta property="og:url" content="http://example.com/2021/03/21/linux/kernal/10.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="内核同步方法  10.1 原子操作 原子操作可以保证指令以原子的方式执行——过程不被打断。 内核通过了两组原子接口——针对整数进行操作和针对单独的位进行操作。 大多体系结构都提供了支持原子操作的简单算数指令，少部分缺少的也为单步执行提供了锁内存总线的指令，保证了其他改变内存的操作不能同时发生  10.1.1 原子整数操作 atomic_t变量代替原始变量  10.1.2 64位原子操作 引入at">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200549750.png">
+<meta property="og:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200649195.png">
+<meta property="article:published_time" content="2021-03-21T08:53:05.136Z">
+<meta property="article:modified_time" content="2021-03-22T03:10:31.362Z">
+<meta property="article:author" content="Slorui">
+<meta property="article:tag" content="kernal">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="c:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200549750.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>54</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>8</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>13</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-linux/kernal/10.内核同步方法" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/linux/kernal/10.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.136Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      内核同步方法
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="内核同步方法"><a class="markdownIt-Anchor" href="#内核同步方法"></a> 内核同步方法</h3>
+<h4 id="101-原子操作"><a class="markdownIt-Anchor" href="#101-原子操作"></a> 10.1 原子操作</h4>
+<p>原子操作可以保证指令以原子的方式执行——过程不被打断。</p>
+<p>内核通过了两组原子接口——针对整数进行操作和针对单独的位进行操作。</p>
+<p>大多体系结构都提供了支持原子操作的简单算数指令，少部分缺少的也为单步执行提供了锁内存总线的指令，保证了其他改变内存的操作不能同时发生</p>
+<h5 id="1011-原子整数操作"><a class="markdownIt-Anchor" href="#1011-原子整数操作"></a> 10.1.1 原子整数操作</h5>
+<p>atomic_t变量代替原始变量</p>
+<h5 id="1012-64位原子操作"><a class="markdownIt-Anchor" href="#1012-64位原子操作"></a> 10.1.2 64位原子操作</h5>
+<p>引入atomic64_t适应64位机器</p>
+<h5 id="1013-原子位操作"><a class="markdownIt-Anchor" href="#1013-原子位操作"></a> 10.1.3 原子位操作</h5>
+<p>使用指针和位号访问内存。0位号是最低有效位，31是最高有效位</p>
+<h4 id="102-自旋锁"><a class="markdownIt-Anchor" href="#102-自旋锁"></a> 10.2 自旋锁</h4>
+<p>linux内核最常见的锁是自旋锁。自旋锁最多只能被一个可执行线程持有。如果一个可执行线程试图获得一个已被持有的自旋锁，该线程会一直执行循环旋转等待锁可用。自旋锁可用防止多于一个线程同时进入临界区</p>
+<p>自旋很浪费处理器时间，所以自旋锁不应该被长时间持有。</p>
+<p>初衷：短期内进行轻量级加锁。</p>
+<p>还有其他方法：让等待的线程睡眠，可用时唤醒。会产生两次上下文切换。</p>
+<p>linux内核自旋锁是不可递归的，如果要获得已持有的锁，就会自旋，然后产生死锁。</p>
+<p>自旋锁可用再中断处理程序（不能使用信号量，会导致睡眠）。中断处理程序使用自旋锁时，要再获得锁之前禁用本地中断，否则新的中断处理程序会自旋，导致双重请求死锁。</p>
+<p>锁保护的是数据不是代码。</p>
+<h4 id="103-读-写锁"><a class="markdownIt-Anchor" href="#103-读-写锁"></a> 10.3 读-写锁</h4>
+<p>linux提供了专门的读-写自旋锁。（共享/排斥锁）</p>
+<p>read_lock(&amp;mr_rwlock)</p>
+<p>write_lock(&amp;mr_rwlock)</p>
+<p>通常情况，读写锁位于完全分割的代码，再一起出现读写锁，会产生锁升级，导致自旋</p>
+<h4 id="104-信号量"><a class="markdownIt-Anchor" href="#104-信号量"></a> 10.4 信号量</h4>
+<p>Linux里是信号量是一种睡眠锁。如果一个任务试图获得一个不可用（已被占用）的信号量，信号量会将其推进到等待队列，让其睡眠。当信号量被释放，唤醒等待队列的任务获得信号量。</p>
+<ol>
+<li>由于争用信号量的进程等待锁会睡眠，所以信号量适用于被锁长时间持有的情况</li>
+<li>锁短时间被持有，信号量不合适。因为睡眠、维护队列、唤醒等开销很大</li>
+<li>由于线程争用信号量会睡眠，所以只有再进程上下文才能获取信号量，中断不可用获取信号量</li>
+<li>你可用再持有信号量时去睡眠，因为其他线程不会死锁</li>
+<li>占用信号量时不能占用自旋锁，因为自旋锁不允许睡眠</li>
+</ol>
+<h5 id="1041-计数信号量和二值信号量"><a class="markdownIt-Anchor" href="#1041-计数信号量和二值信号量"></a> 10.4.1 计数信号量和二值信号量</h5>
+<p>信号量同时允许的持有者可用再声明信号量时指定。称为使用者数量。</p>
+<p>通常情况，自旋锁和信号量都只允许有一个持有者，计数等于1，叫二值信号量或互斥信号量。</p>
+<p>计数信号量数量大于1时，不能用来互斥，正在信号量用来给特定的代码加限制</p>
+<p>信号量有两个操作down()和up()，down()通过对信号量计数减1来获得一个信号量，如果结果大于等于0，获得信号量锁，任务可进入临界区。如果是负数，放入等待队列。up()用来释放信号量，增加信号量的计数值，如果等待队列不为空，唤醒一个任务并获得信号量。</p>
+<h5 id="1042-创建和初始化信号量"><a class="markdownIt-Anchor" href="#1042-创建和初始化信号量"></a> 10.4.2 创建和初始化信号量</h5>
+<h5 id="1043-使用信号量"><a class="markdownIt-Anchor" href="#1043-使用信号量"></a> 10.4.3 使用信号量</h5>
+<h4 id="105-读-写信号量"><a class="markdownIt-Anchor" href="#105-读-写信号量"></a> 10.5 读-写信号量</h4>
+<p>读写信号量都是互斥信号量，计数值是1。只对写互斥。</p>
+<h4 id="106-互斥体mutex"><a class="markdownIt-Anchor" href="#106-互斥体mutex"></a> 10.6 互斥体(mutex)</h4>
+<p>目前只有信号量可以睡眠，但是一般都使用互斥信号量实现互斥，类似允许睡眠的自旋锁。但是信号量很复杂。</p>
+<p>指任何强制睡眠的互斥锁</p>
+<p>linux的互斥体mutex是一种实现互斥的特定睡眠锁。</p>
+<p>mutex行为和使用计数值1的信号量很像。</p>
+<ol>
+<li>任何时候只有一个任务持有mutex</li>
+<li>给mutex上锁必须负责解锁</li>
+<li>递归的上锁和解锁不允许</li>
+<li>持有一个mutex时，进程不能退出</li>
+<li>mutex不能再中断中使用</li>
+<li>mutex只能通过官方API管理，不能手动初始化，拷贝等</li>
+</ol>
+<h5 id="1061-信号量和互斥体"><a class="markdownIt-Anchor" href="#1061-信号量和互斥体"></a> 10.6.1 信号量和互斥体</h5>
+<h5 id="1062-自旋锁和互斥体"><a class="markdownIt-Anchor" href="#1062-自旋锁和互斥体"></a> 10.6.2 自旋锁和互斥体</h5>
+<h4 id="107-完成变量"><a class="markdownIt-Anchor" href="#107-完成变量"></a> 10.7 完成变量</h4>
+<p>如果内核一个任务需要发出信号通知另一个任务发生了某个特定事件，利用完成变量</p>
+<p>一个任务执行时，另一个任务再完成变量上等待，当任务完成时通过完成变量唤醒等待的任务</p>
+<p>完成变量提供了代替信号量的一种简单解决方法</p>
+<h4 id="108-bkl大内核锁"><a class="markdownIt-Anchor" href="#108-bkl大内核锁"></a> 10.8 BKL大内核锁</h4>
+<p>BKL是一个全局自旋锁</p>
+<ol>
+<li>持有BKL的任务仍可用睡眠。任务无法被调度时，所有加锁会被自动放弃，当任务被调度时，锁会被重新获得。不会造成死锁</li>
+<li>BKL是递归锁，可用多次请求一个锁</li>
+<li>BKL只可以再进程上下文使用</li>
+<li>新用户不可用使用BKL</li>
+</ol>
+<h4 id="109-顺序锁"><a class="markdownIt-Anchor" href="#109-顺序锁"></a> 10.9 顺序锁</h4>
+<p>seq锁，提供了一种简单的机制用于读写共享数据，实现这种锁依靠一个序列计数器，当有疑义的数据写入时，会得到一个锁，序列号增加，再读取数据前后都会读取序列号。如果序列号相同，说明没有被写打断过，如果读取的是偶数，说明没有发生写操作。从0开始，写会变成计数，释放也会增加变成偶数</p>
+<p>被挂起的写者会不断的使得读操作循环，知道没有写者</p>
+<ol>
+<li>你的数据存在很多读者</li>
+<li>数据写者很少</li>
+<li>虽然写者少，但是希望写优先读，不然写饥饿</li>
+<li>数据简单</li>
+</ol>
+<p>例如：jiffies存储了linux启动到现在的时间</p>
+<h4 id="1010-禁止抢占"><a class="markdownIt-Anchor" href="#1010-禁止抢占"></a> 10.10 禁止抢占</h4>
+<p>内核是抢占性的，内核的进程可能再任何时刻停下来执行高优先级进程。可用使用自旋锁防止抢占</p>
+<p>当不需要自旋锁也要关闭内核抢占时，可用使用preempt_disable()禁止内核抢占，可用嵌套使用，调用多次，必须使用多个preempt_enable()打开</p>
+<p>抢占计数存放在持有锁的数量和preempt_disable()的调用次数</p>
+<h4 id="1011-顺序和屏障"><a class="markdownIt-Anchor" href="#1011-顺序和屏障"></a> 10.11 顺序和屏障</h4>
+<p>当多处理器之间或硬件设备之间的同步出现问题时，需要再自己的代码中以指定的顺序发出内存读写指令</p>
+<p>和硬件交互时，需要确保一个给定的读操作发生再其他读或写之前</p>
+<p>但是编译器可能为了处理效率对读和写重排序</p>
+<p>所有可能重排序和写的处理器提供了机器指令确保顺序要求，也可用指示编译器不要指令重排序。这些确保顺序的指令叫屏障</p>
+<p>rmb()提供一个读内存屏障，确保跨域rmb()的载入动作不会发生重排序，也就是说再rmb前后的指令不会相互跨越</p>
+<p>wmb()提供了一个写内存屏障，同rmb()</p>
+<p>mb()既提供了读也提供了写屏障，都不会跨越屏障</p>
+<p>重排序的发生时现代处理器为了优化传送管道（pipeline），打乱了分派和提交指令的顺序</p>
+<h4 id="1012-管程"><a class="markdownIt-Anchor" href="#1012-管程"></a> 10.12 管程</h4>
+<p>虽然<a target="_blank" rel="noopener" href="http://c.biancheng.net/view/1232.html">信号量</a>提供了一种方便且有效的进程同步机制，但是它们的使用错误可能导致难以检测的时序错误，因为这些错误只有在特定执行顺序时才会出现，而这些顺序并不总是出现。</p>
+<p>为了处理这种错误，研究人员开发了一些高级语言工具，一种重要的、高级的同步工具，即<strong>管程（monitor）</strong>。</p>
+<p>管程类型的表示不能直接由各种进程所使用。因此，只有管程内定义的函数才能访问管程内的局部声明的变量和形式参数。类似地，管程的局部变量只能为局部函数所访问。</p>
+<p>管程结构确保每次只有一个进程在管程内处于活动状态。因此，程序员不需要明确编写同步约束（图 1)。</p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200549750.png" alt="image-20210309200549750" /></p>
+<p>然而，如到目前为止所定义的管程结构，在处理某些同步问题时，还不够强大。为此，我们需要定义附加的同步机制；这些可由条件（condition)结构来提供。 当程序员需要编写定制的同步方案时，他可定义一个或多个类型为 condition 的变量：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">condition x, y;</span><br></pre></td></tr></table></figure>
+<p>对于条件变量，只有操作 wait() 和 signal() 可以调用。操作 <code>x.wait();</code> 意味着调用这一操作的进程会被挂起，直到另一进程调用 <code>x.signal();</code></p>
+<p><img src="C:%5CUsers%5Cslorui%5CAppData%5CRoaming%5CTypora%5Ctypora-user-images%5Cimage-20210309200649195.png" alt="image-20210309200649195" /></p>
+<p>现在，假设当操作 <code>x.signal()</code> 被一个进程 P 调用时，在条件变量 x 上有一个挂起进程 Q。显然，如果挂起进程 Q 允许重执行，那么进程 P 必须等待。否则，管程内有两个进程 P 和 Q 可能同时执行。</p>
+<p>注意，从概念上说两个进程都可以继续执行。有两种可能性存在：</p>
+<ol>
+<li>唤醒并等待：进程 P 等待直到 Q 离开管程，或者等待另一个条件。</li>
+<li>唤醒并继续：进程 Q 等待直到 P 离开管程或者等待另一个条件。</li>
+</ol>
+<p>对于任一选项，都有赞同理由。一方面，由于 P 已经在管程中执行，唤醒并继续的方法似乎更为合理。另一方面，如果我们允许线程 P 继续，那么 Q 等待的逻辑条件在 Q 重新启动时可能已不再成立。Concurrent Pascal 语言采用这两种选择的折中。当进程 P 执行操作 signal 时，它立即离开管程。因此，进程 Q 立即重新执行。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/linux/kernal/10.%E5%86%85%E6%A0%B8%E5%90%8C%E6%AD%A5%E6%96%B9%E6%B3%95/" data-id="ckn63k6rp000v4wvxg2ls3f02" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/kernal/" rel="tag">kernal</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/03/21/linux/kernal/4.%E8%BF%9B%E7%A8%8B%E8%B0%83%E5%BA%A6/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          进程调度
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/03/21/java/%E8%AF%AD%E6%B3%95%E7%B3%96/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">语法糖</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Blog</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>54</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>8</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>13</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 Slorui<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
