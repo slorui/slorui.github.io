@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>AnnotationBeanDefinitionReader | Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="AnnotationBeanDefinitionReader 作用：注册beanDefinition  实例化 在AnnotationConfigApplicationContext容器构造方法中实例化 1this.reader &#x3D; new AnnotatedBeanDefinitionReader(this);  supplier spring提高了一种替代工厂方法（包括静态工厂）或构造器创建">
+<meta property="og:type" content="article">
+<meta property="og:title" content="AnnotationBeanDefinitionReader">
+<meta property="og:url" content="http://example.com/2021/04/08/spring/AnnotationBeanDefinitionReader/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="AnnotationBeanDefinitionReader 作用：注册beanDefinition  实例化 在AnnotationConfigApplicationContext容器构造方法中实例化 1this.reader &#x3D; new AnnotatedBeanDefinitionReader(this);  supplier spring提高了一种替代工厂方法（包括静态工厂）或构造器创建">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2021-04-08T04:44:28.997Z">
+<meta property="article:modified_time" content="2021-04-08T06:12:33.580Z">
+<meta property="article:author" content="Slorui">
+<meta property="article:tag" content="spring">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-spring/AnnotationBeanDefinitionReader" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/08/spring/AnnotationBeanDefinitionReader/" class="article-date">
+  <time class="post-time" datetime="2021-04-08T04:44:28.997Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">08</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      AnnotationBeanDefinitionReader
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/spring/">spring</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="annotationbeandefinitionreader"><a class="markdownIt-Anchor" href="#annotationbeandefinitionreader"></a> AnnotationBeanDefinitionReader</h3>
+<p>作用：注册beanDefinition</p>
+<h4 id="实例化"><a class="markdownIt-Anchor" href="#实例化"></a> 实例化</h4>
+<p>在<code>AnnotationConfigApplicationContext</code>容器构造方法中实例化</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.reader = <span class="keyword">new</span> AnnotatedBeanDefinitionReader(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="supplier"><a class="markdownIt-Anchor" href="#supplier"></a> supplier</h4>
+<p>spring提高了一种替代工厂方法（包括静态工厂）或构造器创建对象的方法，通过函数式编程接口supplier，可以提供一个自定义的supplier替代spring的创建方式</p>
+<h5 id="spring创建bean的三种方式"><a class="markdownIt-Anchor" href="#spring创建bean的三种方式"></a> spring创建bean的三种方式</h5>
+<ol>
+<li>
+<p>通过构造器创建</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    <span class="comment">&lt;!-- 指定class属性，通过构造方法创建Bean实例 --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;person&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.gouzao.Person&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 通过构造方法赋值 --&gt;</span>  </span><br><span class="line">     <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;魔术师&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span> </span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>通过静态工厂创建</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">        <span class="comment">&lt;!-- 定义chinese Bean 由PersonFactory工厂的getPerson方法创建 --&gt;</span>  </span><br><span class="line">    	<span class="comment">&lt;!-- 不会实例化工厂，直接通过工厂创建该bean --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;chinese&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.staticFactory.PersonFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 为静态工厂的getPerson()方法传参 --&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;chinese&quot;</span>/&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 调用setMsg()方法为msg属性注入参数值 --&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;msg&quot;</span> <span class="attr">value</span>=<span class="string">&quot;我是中国人&quot;</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>     </span><br><span class="line">    <span class="comment">&lt;!-- 创建american Bean --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;american&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.staticFactory.PersonFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;american&quot;</span>/&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;msg&quot;</span> <span class="attr">value</span>=<span class="string">&quot;我是美国人&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </span><br><span class="line">       <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span>  </span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>通过工厂方法创建</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">        <span class="comment">&lt;!-- 配置工厂Bean，class指定该工厂的实现类，该Bean负责产生其他Bean实例 --&gt;</span>  </span><br><span class="line">    	<span class="comment">&lt;!-- 工厂会被创建，然后通过工厂创建bean --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;personFactory&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.instanceFactory.PersonFactory&quot;</span>/&gt;</span> </span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- 由实例工厂Bean的getPerson()方法，创建Chinese Bean， --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;ch&quot;</span> <span class="attr">factory-bean</span>=<span class="string">&quot;personFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 为该方法传入参数为chinese --&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;chinese&quot;</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line">    <span class="comment">&lt;!-- 由实例工厂Bean的getPerson()方法，创建American Bean， --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;usa&quot;</span> <span class="attr">factory-bean</span>=<span class="string">&quot;personFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;american&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span>  </span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>区别和联系：</p>
+<blockquote>
+<p>第一种，通过默认的无参构造方式创建，其本质就是把类交给Spring自带的工厂（BeanFactory）管理、由Spring自带的工厂模式帮我们维护和创建这个类。如果是有参的构造方法，也可以通过XML配置传入相应的初始化参数，这种也是开发中用的最多的。</p>
+<p>第二种，通过静态工厂创建，其本质就是把类交给我们自己的静态工厂管理，Spring只是帮我们调用了静态工厂创建实例的方法，而创建实例的这个过程是由我们自己的静态工厂实现的，在实际开发的过程中，很多时候我们需要使用到第三方jar包提供给我们的类,而这个类没有构造方法，而是通过第三方包提供的静态工厂创建的，这是时候，如果我们想把第三方jar里面的这个类交由spring来管理的话，就可以使用Spring提供的静态工厂创建实例的配置。</p>
+<p>第三种，通过实例工厂创建，其本质就是把创建实例的工厂类交由Spring管理，同时把调用工厂类的方法创建实例的这个过程也交由Spring管理，看创建实例的这个过程也是有我们自己配置的实例工厂内部实现的。在实际开发的过程中，如Spring整合Hibernate就是通过这种方式实现的。但对于没有与Spring整合过的工厂类，我们一般都是自己用代码来管理的。</p>
+<p>不管是静态工厂还是工厂方法，都需要通过反射调用目标方法创建对象，反射或多或少影响性能，如果不使用反射呢？</p>
+</blockquote>
+<h5 id="supplier创建方式"><a class="markdownIt-Anchor" href="#supplier创建方式"></a> supplier创建方式</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GenericBeanDefinition beanDefinition = <span class="keyword">new</span> GenericBeanDefinition();</span><br><span class="line">beanDefinition.setBeanClass(User.class);</span><br><span class="line">beanDefinition.setInstanceSupplier(SupplierBean::createUser);	<span class="comment">// 这样写craeteUser必须是静态方法</span></span><br></pre></td></tr></table></figure>
+<p>beanDefinition就会使用<code>SupplierBean::createUser</code>方法创建</p>
+<h4 id="beannamegenerator"><a class="markdownIt-Anchor" href="#beannamegenerator"></a> beanNameGenerator</h4>
+<p>spring默认的beanNameGenerator</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> BeanNameGenerator beanNameGenerator = AnnotationBeanNameGenerator.INSTANCE;</span><br></pre></td></tr></table></figure>
+<h5 id="自定义beannamegenerator"><a class="markdownIt-Anchor" href="#自定义beannamegenerator"></a> 自定义beanNameGenerator</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">ac.setBeanNameGenerator(<span class="keyword">new</span> SloruiBeanNameGenerator());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBeanNameGenerator</span><span class="params">(BeanNameGenerator beanNameGenerator)</span> </span>&#123;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 给reader一个自定义的beanNameGenerator</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">this</span>.reader.setBeanNameGenerator(beanNameGenerator);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 给外部scanner一个自定义的beanNameGenerator</span></span><br><span class="line"><span class="comment">	 * spring内生成的scanner不适应这种beanNameGenerator</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">this</span>.scanner.setBeanNameGenerator(beanNameGenerator);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 注册一个beanNameGenerator到单例池</span></span><br><span class="line"><span class="comment">	 * 方便内部生成的scanner使用</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	getBeanFactory().registerSingleton(</span><br><span class="line">			AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR, beanNameGenerator);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以在@Component上单独指定beanNameGenerator类，spring会判断是否配置，如果没配置，会取默认的名字生成器（看前面有没有设置全局的名字生成器，如果有就使用，否则使用默认的名字生成器）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ComponentScan(value = &quot;com.slorui&quot;,nameGenerator = SloruiBeanNameGenerator1.class)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 如果没有在<span class="doctag">@componentScan</span>内配置nameGenerator，默认就是BeanNameGenerator.class</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">Class&lt;? extends BeanNameGenerator&gt; generatorClass = componentScan.getClass(<span class="string">&quot;nameGenerator&quot;</span>);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 默认情况是true，如果是false，使用自定义的命名策略</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">boolean</span> useInheritedGenerator = (BeanNameGenerator.class == generatorClass);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 添加beanNameGenerator，默认的beanNameGenerator是创建ComponentScanAnnotationParser</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">scanner.setBeanNameGenerator(useInheritedGenerator ? <span class="keyword">this</span>.beanNameGenerator :</span><br><span class="line">		BeanUtils.instantiateClass(generatorClass));</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/08/spring/AnnotationBeanDefinitionReader/" data-id="cknd877zi00080kvx6megcs90" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/08/redis/redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          redis客户端
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/04/06/redis/redis%E4%BA%8B%E4%BB%B6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">redis事件</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Blog</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 Slorui<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

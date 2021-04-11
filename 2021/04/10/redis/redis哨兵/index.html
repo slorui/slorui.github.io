@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>redis哨兵 | Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="redis哨兵 Sentinel是redis高可用性的解决方案。由一个或多个Sentinel实例组成的Sentinel系统可以监视多个主服务器以及它们的从服务器。当主服务器下线时，自动从从服务器选择一个变成主服务器。  当主服务器下线时长超过设定时长，Sentinel会选择一个从服务器变成主服务器 Sentinel会像所有从服务器发送复制命令，让他们成为新的主服务器的从服务器 监视旧主服务器，上">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis哨兵">
+<meta property="og:url" content="http://example.com/2021/04/10/redis/redis%E5%93%A8%E5%85%B5/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="redis哨兵 Sentinel是redis高可用性的解决方案。由一个或多个Sentinel实例组成的Sentinel系统可以监视多个主服务器以及它们的从服务器。当主服务器下线时，自动从从服务器选择一个变成主服务器。  当主服务器下线时长超过设定时长，Sentinel会选择一个从服务器变成主服务器 Sentinel会像所有从服务器发送复制命令，让他们成为新的主服务器的从服务器 监视旧主服务器，上">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/image-20210410130744619.png">
+<meta property="og:image" content="http://example.com/images/image-20210410131037537.png">
+<meta property="og:image" content="http://example.com/images/image-20210410131522600.png">
+<meta property="og:image" content="http://example.com/images/image-20210410132452539.png">
+<meta property="og:image" content="http://example.com/images/image-20210410132627921.png">
+<meta property="article:published_time" content="2021-04-10T04:58:23.308Z">
+<meta property="article:modified_time" content="2021-04-10T05:47:24.488Z">
+<meta property="article:author" content="Slorui">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/image-20210410130744619.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-redis/redis哨兵" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/10/redis/redis%E5%93%A8%E5%85%B5/" class="article-date">
+  <time class="post-time" datetime="2021-04-10T04:58:23.308Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">10</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      redis哨兵
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="redis哨兵"><a class="markdownIt-Anchor" href="#redis哨兵"></a> redis哨兵</h3>
+<p>Sentinel是redis高可用性的解决方案。由一个或多个Sentinel实例组成的Sentinel系统可以监视多个主服务器以及它们的从服务器。当主服务器下线时，自动从从服务器选择一个变成主服务器。</p>
+<ol>
+<li>当主服务器下线时长超过设定时长，Sentinel会选择一个从服务器变成主服务器</li>
+<li>Sentinel会像所有从服务器发送复制命令，让他们成为新的主服务器的从服务器</li>
+<li>监视旧主服务器，上线后变成从服务器</li>
+</ol>
+<h4 id="初始化sentinel"><a class="markdownIt-Anchor" href="#初始化sentinel"></a> 初始化Sentinel</h4>
+<p><code>redis-sentinel /path/sentinel.conf</code></p>
+<p><code>redis-server --sentinel /path/sentinel.conf</code></p>
+<ol>
+<li>
+<p>初始化服务器</p>
+</li>
+<li>
+<p>将普通服务器代码转化为sentinel代码</p>
+</li>
+<li>
+<p>初始化sentinel</p>
+</li>
+<li>
+<p>根据配置文件，初始化监控主服务器列表，master字段存放监视的主服务器，value是对应的监视实例（sentinel、server、client）</p>
+<p>​	<img src="/images/image-20210410130744619.png" alt="image-20210410130744619" /></p>
+</li>
+<li>
+<p>创建与主服务器连接，成为主服务器的客户端，创建两个异步网络连接（redis订阅发布的消息不会被保存，如果客户端不在线，就会丢失数据，所以sentinel必须订阅）</p>
+<ol>
+<li>
+<p>命令连接，向主服务器发送命令</p>
+</li>
+<li>
+<p>订阅连接，订阅主服务器的__sentinel_ _:hello频道</p>
+</li>
+</ol>
+</li>
+</ol>
+<p><img src="/images/image-20210410131037537.png" alt="image-20210410131037537" /></p>
+<h4 id="获取主服务器信息"><a class="markdownIt-Anchor" href="#获取主服务器信息"></a> 获取主服务器信息</h4>
+<p>sentinel默认10秒一次向主服务器发送INFO命令，得到的回复信息包含</p>
+<ol>
+<li>主服务器本身信息，服务器id，角色等，然后更新主服务器实例信息</li>
+<li>从服务器的信息，地址端口等，无须用户配置即可自己发现从服务器信息，更新主服务器实例slaves字典，key是ip:port，val是从服务器实例结构</li>
+</ol>
+<h4 id="获取从服务器信息"><a class="markdownIt-Anchor" href="#获取从服务器信息"></a> 获取从服务器信息</h4>
+<p>当sentinel发现有新的从服务器时，还会建立和从服务器的命令连接和订阅连接，然后10发发送一次INFO命令。</p>
+<p><img src="/images/image-20210410131522600.png" alt="image-20210410131522600" /></p>
+<h4 id="向主从服务器发送命令"><a class="markdownIt-Anchor" href="#向主从服务器发送命令"></a> 向主从服务器发送命令</h4>
+<p>sentinel默认每2秒向主从服务器发送一条publish命令<code>PUBLISH __SENTINEL__:HELLO s_ip s_port s_id s_epoch m_name m_ip m_prot m_epoch</code>,包含sentinel信息和主服务器信息</p>
+<p><font color='red'>为了更新其他sentinel对当前sentinel的认知，也更新了其他sentinel对被监控服务器的认值</font></p>
+<h4 id="接收主从服务器信息"><a class="markdownIt-Anchor" href="#接收主从服务器信息"></a> 接收主从服务器信息</h4>
+<p>对于每个和sentinel连接的服务器，sentinel既可以向__sentinel_:hello发送信息，也可以通过订阅接收消息</p>
+<p>对于监视同一个主服务器的sentinel可以接收到对方发布的消息</p>
+<ol>
+<li>如果sentinel接收到消息，发现sentinel的id和自己相同，丢弃该消息</li>
+<li>如果id不同，根据信息更新主从实例结构</li>
+</ol>
+<p>sentinel创建的主服务器结构中的sentinels字典保存了监视该主服务器的其他sentinel信息，key是ip:prot,val是sentinel实例结构</p>
+<p><img src="/images/image-20210410132452539.png" alt="image-20210410132452539" /></p>
+<p>当sentinel发现一个新的sentinel时，会创建和它的命令连接，不会创建订阅连接</p>
+<p><img src="/images/image-20210410132627921.png" alt="image-20210410132627921" /></p>
+<h4 id="检测主观下线状态"><a class="markdownIt-Anchor" href="#检测主观下线状态"></a> 检测主观下线状态</h4>
+<p>sentinel默认1秒向它所有创建了命令连接的实例发送ping命令，判断实例是否在线。</p>
+<p>sentinel配置文件的<code>down-after-milliseconds</code>配置了下线时间，超过这个时间连续返回无效回复，标记为主观下线。</p>
+<p>多个sentinel的<code>down-after-milliseconds</code>可能不同，不同sentinel的下线标记不同</p>
+<h4 id="检测客观下线状态"><a class="markdownIt-Anchor" href="#检测客观下线状态"></a> 检测客观下线状态</h4>
+<p>当sentinel判断主服务器为主观下线，会向监视这个主服务器的其他sentinel询问，当接收到足够的下线判断（配置文件设置的<code>quorum</code>），判定主服务器客观下线，执行故障转移操作。</p>
+<h4 id="选举领头的sentinel"><a class="markdownIt-Anchor" href="#选举领头的sentinel"></a> 选举领头的sentinel</h4>
+<p>当一个主服务器客观下线，监视主服务器的各个sentinel进行选举（RAFT算法），选举出领头的sentinel，执行故障转移操作。</p>
+<ol>
+<li>当主服务器客观下线，sentinel发送命令要求其他sentinel将自己设置为领头sentinel</li>
+<li>收到命令的sentinel判断自己是否设定了领头服务器，没有就设定发送方sentinle为领头sentinel，有就拒绝</li>
+<li>发送sentinel检测将自己设为领头sentinel的数量，超过半数就为领头服务器</li>
+</ol>
+<h4 id="故障转移"><a class="markdownIt-Anchor" href="#故障转移"></a> 故障转移</h4>
+<ol>
+<li>在下线的主服务器的从服务器里挑选一个转化为主服务器（发送<code>SLAVEOF NO ONE</code>）
+<ol>
+<li>过滤下线从服务器</li>
+<li>过滤五秒内没有回复INFO命令的从服务器</li>
+<li>过滤所有与下线主服务器断开超过10 * <code>down-after-milliseconds</code>的从服务器</li>
+<li>选择复制偏移量最大的从服务器</li>
+</ol>
+</li>
+<li>修改从服务器的复制目标，向其他从服务器发送<code>SLAVEOF</code>命令</li>
+<li>将旧主服务器变成从服务器（当上线时，发送SLAVEOF命令）</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/10/redis/redis%E5%93%A8%E5%85%B5/" data-id="cknd877z700000kvx6l490axg" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/11/netty/Netty01-nio/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          nio基础
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/04/10/redis/redis%E5%A4%8D%E5%88%B6/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">redis复制</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Blog</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 Slorui<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

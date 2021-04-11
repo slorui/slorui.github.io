@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>redis复制 | Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="复制 redis用户可以通过SLAVEOF命令让一个服务器复制另一个服务器，变成另一个服务器的从服务器 复制分为同步和命令传播： 同步：将从服务器数据库状态更新至主服务器数据库状态  从服务器发送sync命令 主服务器进行BGSAVE生成RDB文件，在缓冲区记录当前执行的所有命令 将RDB文件和缓冲区文件发送给从数据库，使主从数据库一致  命令传播：主服务器数据库修改，将修改命令发布，使主从数据">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis复制">
+<meta property="og:url" content="http://example.com/2021/04/10/redis/redis%E5%A4%8D%E5%88%B6/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="复制 redis用户可以通过SLAVEOF命令让一个服务器复制另一个服务器，变成另一个服务器的从服务器 复制分为同步和命令传播： 同步：将从服务器数据库状态更新至主服务器数据库状态  从服务器发送sync命令 主服务器进行BGSAVE生成RDB文件，在缓冲区记录当前执行的所有命令 将RDB文件和缓冲区文件发送给从数据库，使主从数据库一致  命令传播：主服务器数据库修改，将修改命令发布，使主从数据">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/image-20210410105848279.png">
+<meta property="og:image" content="http://example.com/images/image-20210410105937258.png">
+<meta property="og:image" content="http://example.com/images/image-20210410110409778.png">
+<meta property="og:image" content="http://example.com/images/image-20210410110918413.png">
+<meta property="og:image" content="http://example.com/images/image-20210410111045405.png">
+<meta property="article:published_time" content="2021-04-10T02:40:42.538Z">
+<meta property="article:modified_time" content="2021-04-10T03:17:48.594Z">
+<meta property="article:author" content="Slorui">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/image-20210410105848279.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-redis/redis复制" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/10/redis/redis%E5%A4%8D%E5%88%B6/" class="article-date">
+  <time class="post-time" datetime="2021-04-10T02:40:42.538Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">10</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      redis复制
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="复制"><a class="markdownIt-Anchor" href="#复制"></a> 复制</h3>
+<p>redis用户可以通过<code>SLAVEOF</code>命令让一个服务器复制另一个服务器，变成另一个服务器的从服务器</p>
+<p>复制分为同步和命令传播：</p>
+<p>同步：将从服务器数据库状态更新至主服务器数据库状态</p>
+<ol>
+<li>从服务器发送sync命令</li>
+<li>主服务器进行BGSAVE生成RDB文件，在缓冲区记录当前执行的所有命令</li>
+<li>将RDB文件和缓冲区文件发送给从数据库，使主从数据库一致</li>
+</ol>
+<p>命令传播：主服务器数据库修改，将修改命令发布，使主从数据库一致</p>
+<h4 id="旧版复制和新版复制"><a class="markdownIt-Anchor" href="#旧版复制和新版复制"></a> 旧版复制和新版复制</h4>
+<p>2.8前旧版：主从断线后，重新执行一次同步，会消耗大量cpu、内存、io和网络资源</p>
+<p>新版：使用了<code>PSYNC</code>代替<code>SYNC</code>。分为完整重同步和部分重同步。</p>
+<p>完整重同步：同初次同步，完整复制</p>
+<p>部分重同步：主从断线重连后，主服务器发送短线期间写命令进行同步</p>
+<h5 id="部分重同步"><a class="markdownIt-Anchor" href="#部分重同步"></a> 部分重同步</h5>
+<ol>
+<li>
+<p>复制偏移量：主从服务器都会维护一个复制偏移量，每次发送n个字节就加n</p>
+<p><img src="/images/image-20210410105848279.png" alt="image-20210410105848279" /></p>
+</li>
+<li>
+<p>复制积压缓冲区：一个固定大小1M的FIFO队列，缓存发送的字节。从服务器重连后，判断从服务器偏移量是否仍在缓冲区，在就进行部分重同步，否则执行完整重同步</p>
+<p><img src="/images/image-20210410105937258.png" alt="image-20210410105937258" /></p>
+</li>
+<li>
+<p>服务器运行id，主从服务器都又一个运行id，从服务器初次复制时获取主服务器id，断线后重连发现主服务器id不同，执行完整重同步（说明断线期间主服务器断线）</p>
+</li>
+</ol>
+<p><code>PSYNC</code>执行流程</p>
+<p><img src="/images/image-20210410110409778.png" alt="image-20210410110409778" /></p>
+<h4 id="复制的实现"><a class="markdownIt-Anchor" href="#复制的实现"></a> 复制的实现</h4>
+<p>客户端发送<code>SLAVEOF master_ip master_port</code>给服务器，服务器进行复制</p>
+<ol>
+<li>
+<p>从服务器设置主服务器地址和端口，然后返回OK，之后开始执行复制</p>
+</li>
+<li>
+<p>建立套接字连接，从服务器建立套接字处理主服务器的写命令等，主服务器建立套接字，把从服务器当作客户端</p>
+</li>
+<li>
+<p>从服务器发送ping命令，检测主从服务器当前状态和网络状况</p>
+<p><img src="/images/image-20210410110918413.png" alt="image-20210410110918413" /></p>
+</li>
+<li>
+<p>身份验证</p>
+<p><img src="/images/image-20210410111045405.png" alt="image-20210410111045405" /></p>
+</li>
+<li>
+<p>发送端口信息，从服务器向主服务器发送端口信息</p>
+</li>
+<li>
+<p>同步，发送<code>PSYNC</code></p>
+</li>
+<li>
+<p>命令传播</p>
+</li>
+</ol>
+<h4 id="心跳检测"><a class="markdownIt-Anchor" href="#心跳检测"></a> 心跳检测</h4>
+<p>从服务器默认1秒发送一次心跳检测<code>REPLCONF ACK offset</code>，主要有三个作用</p>
+<ol>
+<li>
+<p>检测网络状态，超过1秒就认为出现故障。<code>INFO replication</code>查看复制信息</p>
+</li>
+<li>
+<p>辅助实现min-slaves，防止主从服务器不安全的情况下执行写命令</p>
+<blockquote>
+<p>min-slaves-to-write 3   最少需要3个从服务器才执行写</p>
+<p>min-slaves-max-log 10 从服务器延迟都小于10才执行写</p>
+</blockquote>
+</li>
+<li>
+<p>检测命令丢失，通过心跳的offset，可以得知从服务器有无丢失命令，然后重新发送</p>
+</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/10/redis/redis%E5%A4%8D%E5%88%B6/" data-id="cknd877ze00010kvxbzpw3eq1" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/10/redis/redis%E5%93%A8%E5%85%B5/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          redis哨兵
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/04/08/redis/redis%E6%9C%8D%E5%8A%A1%E5%99%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">redis服务器</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Blog</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 Slorui<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>redis服务器 | Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="redis服务器 redis服务器负责与多个客户端建立网络连接，处理客户端命令请求，在数据库保存客户端执行命令产生的数据，进行资源管理维护服务器运转。  命令请求执行过程  发送命令请求，客户端将用户输入的命令转成协议格式，然后通过socket发送给服务器 读取命令请求，  当socket可读时，读入到客户端缓冲区 进行命令解析，去redisCommand选取对应的函数   然后调用命令执行器执">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis服务器">
+<meta property="og:url" content="http://example.com/2021/04/08/redis/redis%E6%9C%8D%E5%8A%A1%E5%99%A8/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="redis服务器 redis服务器负责与多个客户端建立网络连接，处理客户端命令请求，在数据库保存客户端执行命令产生的数据，进行资源管理维护服务器运转。  命令请求执行过程  发送命令请求，客户端将用户输入的命令转成协议格式，然后通过socket发送给服务器 读取命令请求，  当socket可读时，读入到客户端缓冲区 进行命令解析，去redisCommand选取对应的函数   然后调用命令执行器执">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/image-20210408173536506.png">
+<meta property="article:published_time" content="2021-04-08T08:53:54.421Z">
+<meta property="article:modified_time" content="2021-04-10T03:18:10.083Z">
+<meta property="article:author" content="Slorui">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/image-20210408173536506.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-redis/redis服务器" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/08/redis/redis%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="article-date">
+  <time class="post-time" datetime="2021-04-08T08:53:54.421Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">08</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      redis服务器
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="redis服务器"><a class="markdownIt-Anchor" href="#redis服务器"></a> redis服务器</h3>
+<p>redis服务器负责与多个客户端建立网络连接，处理客户端命令请求，在数据库保存客户端执行命令产生的数据，进行资源管理维护服务器运转。</p>
+<h4 id="命令请求执行过程"><a class="markdownIt-Anchor" href="#命令请求执行过程"></a> 命令请求执行过程</h4>
+<ol>
+<li>发送命令请求，客户端将用户输入的命令转成协议格式，然后通过socket发送给服务器</li>
+<li>读取命令请求，
+<ol>
+<li>当socket可读时，读入到客户端缓冲区</li>
+<li>进行命令解析，去redisCommand选取对应的函数</li>
+</ol>
+</li>
+<li>然后调用命令执行器执行
+<ol>
+<li>预检，检测cmd指针是否为空，判断参数是否匹配cmd，判断是否授权，是否需要内存回收，客户端是否正在发布订阅，服务器是否阻塞（执行lua脚本阻塞），客户端是否执行事务（是的话命令放入事务队列），是否打开监视器（将信息发送给监视器）</li>
+<li>执行命令</li>
+<li>写入发送缓冲区</li>
+</ol>
+</li>
+<li>执行后续工作，是否写入慢查询日志，更新redisCommand计数器，aof持久化，发送命令给从服务器</li>
+<li>命令发送给客户端，客户端解析并打印</li>
+</ol>
+<h4 id="servercron函数"><a class="markdownIt-Anchor" href="#servercron函数"></a> serverCron函数</h4>
+<p>默认每100ms执行一次，负责管理服务器资源</p>
+<ol>
+<li>
+<p>更新服务器时间缓存，redis不会每次发起系统调用获取系统时间，而是每次+100ms估算时间，只有键过期时间、慢查询日志等才会去调用系统调用获取时间</p>
+</li>
+<li>
+<p>更新LRU时钟，每10秒更新一次lruclock的值，键的空转时间=lurclock-键的lru时间</p>
+</li>
+<li>
+<p>更新服务器每秒执行次数</p>
+</li>
+<li>
+<p>更新服务器内存峰值</p>
+</li>
+<li>
+<p>处理sigterm信号，每次判断是否关闭服务器</p>
+</li>
+<li>
+<p>管理客户端资源，对一定量客户端检测，如果超时（长时间不互动），如果客户端缓冲区超过一定长度，会释放缓冲区，重新创建</p>
+</li>
+<li>
+<p>调用databaseCron，对一部分数据库检查，删除过期键，对字典收缩</p>
+</li>
+<li>
+<p>执行延迟的BGREWRITEAOF，如果BGWRITEAOF被BGSAVE阻塞，则现在执行</p>
+</li>
+<li>
+<p>检查持久化运行状态，查看rdb_child_pid和aof_child_pid，-1表示没用子进程，不为-1，要判断是否有持久化完成信号，完成执行后续替换文件操作，否则不操作，如果没用子进程，进行后续判断</p>
+<p><img src="/images/image-20210408173536506.png" alt="image-20210408173536506" /></p>
+<ol start="10">
+<li>将aof缓冲区内容写入aof文件</li>
+<li>关闭异步客户端，关闭超出缓冲区限制的客户端</li>
+<li>增加cronloops计数</li>
+</ol>
+</li>
+</ol>
+<h4 id="初始化服务器"><a class="markdownIt-Anchor" href="#初始化服务器"></a> 初始化服务器</h4>
+<ol>
+<li>初始化服务器状态结构
+<ol>
+<li>设置服务器运行id</li>
+<li>设置服务器运行频率</li>
+<li>设置默认配置文件路径</li>
+<li>设置服务器运行架构</li>
+<li>设置服务器默认端口号</li>
+<li>设置默认rdb和aof条件</li>
+<li>初始化lru时钟</li>
+<li>创建命令表</li>
+</ol>
+</li>
+<li>载入配置文件</li>
+<li>初始化服务器数据结构，
+<ol>
+<li>初始化clietns链表</li>
+<li>初始db数组</li>
+<li>初始化pubsub链表</li>
+<li>初始化lua脚本环境</li>
+<li>初始化慢查询日志等</li>
+<li>为服务器设则进程信号处理器</li>
+<li>创建共享对象，常用的ERR，OK等回复对象，以及0-9999字符串对象</li>
+<li>打开服务器监听端口，设则套接字监听</li>
+<li>为serverCron创建时间事件</li>
+<li>如果开启了aof持久化，打开或创建aof文件</li>
+<li>初始化服务器后台io模块(bio)</li>
+</ol>
+</li>
+<li>还原数据库状态，根据aof或rdb还原数据库，如果启用aof，使用aof还原，因为aof数据更全</li>
+<li>开始执行事件循环</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/08/redis/redis%E6%9C%8D%E5%8A%A1%E5%99%A8/" data-id="cknd877zh00050kvxcjkdhftc" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/10/redis/redis%E5%A4%8D%E5%88%B6/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          redis复制
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/04/08/redis/redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">redis客户端</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Blog</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 Slorui<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

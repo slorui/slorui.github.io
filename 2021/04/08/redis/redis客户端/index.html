@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>redis客户端 | Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="redis客户端 redisServer的clinets属性保存了连接的每个客户端的状态   客户端属性 套接字描述符：  -1，表示是伪客户端，负责执行aof文件还原或者lua脚本 大于-1的整数，描述普通客户端  名字name：  默认没用名字 客户端使用client setname之后可以设定名字  标志flag：  输入缓冲区querybuffer： 会根据输入内容动态的缩小或扩大，最大">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis客户端">
+<meta property="og:url" content="http://example.com/2021/04/08/redis/redis%E5%AE%A2%E6%88%B7%E7%AB%AF/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="redis客户端 redisServer的clinets属性保存了连接的每个客户端的状态   客户端属性 套接字描述符：  -1，表示是伪客户端，负责执行aof文件还原或者lua脚本 大于-1的整数，描述普通客户端  名字name：  默认没用名字 客户端使用client setname之后可以设定名字  标志flag：  输入缓冲区querybuffer： 会根据输入内容动态的缩小或扩大，最大">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/image-20210408162633071.png">
+<meta property="og:image" content="http://example.com/images/image-20210408163250869.png">
+<meta property="article:published_time" content="2021-04-08T08:24:15.080Z">
+<meta property="article:modified_time" content="2021-04-10T03:18:27.814Z">
+<meta property="article:author" content="Slorui">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/image-20210408162633071.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-redis/redis客户端" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/08/redis/redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="article-date">
+  <time class="post-time" datetime="2021-04-08T08:24:15.080Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">08</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      redis客户端
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="redis客户端"><a class="markdownIt-Anchor" href="#redis客户端"></a> redis客户端</h3>
+<p>redisServer的clinets属性保存了连接的每个客户端的状态</p>
+<p><img src="/images/image-20210408162633071.png" alt="image-20210408162633071" /></p>
+<h4 id="客户端属性"><a class="markdownIt-Anchor" href="#客户端属性"></a> 客户端属性</h4>
+<p>套接字描述符：</p>
+<ol>
+<li>-1，表示是伪客户端，负责执行aof文件还原或者lua脚本</li>
+<li>大于-1的整数，描述普通客户端</li>
+</ol>
+<p>名字name：</p>
+<ul>
+<li>默认没用名字</li>
+<li>客户端使用<code>client setname</code>之后可以设定名字</li>
+</ul>
+<p>标志flag：</p>
+<p><img src="/images/image-20210408163250869.png" alt="image-20210408163250869" /></p>
+<p>输入缓冲区querybuffer：</p>
+<p>会根据输入内容动态的缩小或扩大，最大不能超过1G，否则服务器关闭客户端</p>
+<p>保存到服务器的客户端链表的querybuffer</p>
+<p>命令和参数：</p>
+<p>服务器会对querybuffer的内容分析，得出命令参数以及命令参数的个数，保存到客户端属性的argv和argc</p>
+<p>argv：字符串对象数组，0存放命令，后面的存放参数</p>
+<p>argc：记录argv的长度</p>
+<p>命令的实现函数：</p>
+<p>服务器根据命令查找命令表，得到命令对于的redisCommand结构，客户端使用指针指向它，然后服务器通过指针调用函数指向</p>
+<p>输出缓冲区：</p>
+<p>命令回复会放入redis缓冲区。每个客户端有两个缓冲区，一个固定，一个可变大小。</p>
+<p>固定的用于保存长度较小的回复，可变大小的保存长度较大的回复</p>
+<p>固定大小buf能使用16KB</p>
+<p>可变大小reply用链表连接多个字符串对象</p>
+<p>身份验证authenticated：<br />
+0表示没有通过验证，1表示通过验证。</p>
+<p>为0的客户端，只能被指向auth命令，其他都被拒绝。</p>
+<p>authenticated只有开启身份验证才能使用，如果没用启用，0也可以指向其他命令</p>
+<p>时间：</p>
+<p>ctime：记录和服务器连接的时间</p>
+<p>lastinteraction：最后一次交互时间</p>
+<p>obuf_soft_limit_reached_time：缓冲区第一次达到软性限制时间</p>
+<h4 id="客户端的开启和关闭"><a class="markdownIt-Anchor" href="#客户端的开启和关闭"></a> 客户端的开启和关闭</h4>
+<h5 id="创建普通客户端"><a class="markdownIt-Anchor" href="#创建普通客户端"></a> 创建普通客户端</h5>
+<p>通过connect函数连接服务器，服务器调用连接事件处理器，创建客户端对象并加入链表</p>
+<h5 id="关闭普通客户端"><a class="markdownIt-Anchor" href="#关闭普通客户端"></a> 关闭普通客户端</h5>
+<p>可能因为多种原因关闭：</p>
+<ul>
+<li>客户端进程退出或杀死</li>
+<li>客户端发送不符合协议的命令</li>
+<li>客户端变成了clinet kill目标</li>
+<li>服务器设置了timeout。例外：主从、BLPOP阻塞、监听发布订阅，不会关闭</li>
+<li>超过输入缓冲区大小（1G）</li>
+<li>超过了输出缓冲区，理论上任意长都可以，服务器做了限制
+<ul>
+<li>硬性限制：超过硬性限制大小就关闭</li>
+<li>软性限制：联系超过一段时间就关闭（obuf_soft_limit_reached_time）</li>
+</ul>
+</li>
+</ul>
+<h5 id="lua脚本伪客户端"><a class="markdownIt-Anchor" href="#lua脚本伪客户端"></a> Lua脚本伪客户端</h5>
+<p>服务器创建时就会创建，整个服务器生命周期一直存在</p>
+<h5 id="aof文件伪客户端"><a class="markdownIt-Anchor" href="#aof文件伪客户端"></a> AOF文件伪客户端</h5>
+<p>服务器载入AOF文件时，创建伪客户端，载入成功后关闭</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/08/redis/redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" data-id="cknd877zg00030kvx4fea7kfp" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/08/redis/redis%E6%9C%8D%E5%8A%A1%E5%99%A8/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          redis服务器
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/04/08/spring/AnnotationBeanDefinitionReader/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">AnnotationBeanDefinitionReader</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Blog</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 Slorui<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
