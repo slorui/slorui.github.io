@@ -43,9 +43,9 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+      <a href="/archives"><div><strong>65</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>15</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -70,6 +70,214 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-spring/AnnotationBeanDefinitionReader" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/08/spring/AnnotationBeanDefinitionReader/" class="article-date">
+  <time class="post-time" datetime="2021-04-08T04:44:28.997Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">08</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/08/spring/AnnotationBeanDefinitionReader/">AnnotationBeanDefinitionReader</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/spring/">spring</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="annotationbeandefinitionreader"><a class="markdownIt-Anchor" href="#annotationbeandefinitionreader"></a> AnnotationBeanDefinitionReader</h3>
+<p>作用：注册beanDefinition</p>
+<h4 id="实例化"><a class="markdownIt-Anchor" href="#实例化"></a> 实例化</h4>
+<p>在<code>AnnotationConfigApplicationContext</code>容器构造方法中实例化</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.reader = <span class="keyword">new</span> AnnotatedBeanDefinitionReader(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="supplier"><a class="markdownIt-Anchor" href="#supplier"></a> supplier</h4>
+<p>spring提高了一种替代工厂方法（包括静态工厂）或构造器创建对象的方法，通过函数式编程接口supplier，可以提供一个自定义的supplier替代spring的创建方式</p>
+<h5 id="spring创建bean的三种方式"><a class="markdownIt-Anchor" href="#spring创建bean的三种方式"></a> spring创建bean的三种方式</h5>
+<ol>
+<li>
+<p>通过构造器创建</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    <span class="comment">&lt;!-- 指定class属性，通过构造方法创建Bean实例 --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;person&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.gouzao.Person&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 通过构造方法赋值 --&gt;</span>  </span><br><span class="line">     <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;魔术师&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span> </span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>通过静态工厂创建</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">        <span class="comment">&lt;!-- 定义chinese Bean 由PersonFactory工厂的getPerson方法创建 --&gt;</span>  </span><br><span class="line">    	<span class="comment">&lt;!-- 不会实例化工厂，直接通过工厂创建该bean --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;chinese&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.staticFactory.PersonFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 为静态工厂的getPerson()方法传参 --&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;chinese&quot;</span>/&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 调用setMsg()方法为msg属性注入参数值 --&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;msg&quot;</span> <span class="attr">value</span>=<span class="string">&quot;我是中国人&quot;</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>     </span><br><span class="line">    <span class="comment">&lt;!-- 创建american Bean --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;american&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.staticFactory.PersonFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;american&quot;</span>/&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;msg&quot;</span> <span class="attr">value</span>=<span class="string">&quot;我是美国人&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </span><br><span class="line">       <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span>  </span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>通过工厂方法创建</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">        <span class="comment">&lt;!-- 配置工厂Bean，class指定该工厂的实现类，该Bean负责产生其他Bean实例 --&gt;</span>  </span><br><span class="line">    	<span class="comment">&lt;!-- 工厂会被创建，然后通过工厂创建bean --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;personFactory&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.instanceFactory.PersonFactory&quot;</span>/&gt;</span> </span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- 由实例工厂Bean的getPerson()方法，创建Chinese Bean， --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;ch&quot;</span> <span class="attr">factory-bean</span>=<span class="string">&quot;personFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 为该方法传入参数为chinese --&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;chinese&quot;</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line">    <span class="comment">&lt;!-- 由实例工厂Bean的getPerson()方法，创建American Bean， --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;usa&quot;</span> <span class="attr">factory-bean</span>=<span class="string">&quot;personFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;american&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span>  </span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>区别和联系：</p>
+<blockquote>
+<p>第一种，通过默认的无参构造方式创建，其本质就是把类交给Spring自带的工厂（BeanFactory）管理、由Spring自带的工厂模式帮我们维护和创建这个类。如果是有参的构造方法，也可以通过XML配置传入相应的初始化参数，这种也是开发中用的最多的。</p>
+<p>第二种，通过静态工厂创建，其本质就是把类交给我们自己的静态工厂管理，Spring只是帮我们调用了静态工厂创建实例的方法，而创建实例的这个过程是由我们自己的静态工厂实现的，在实际开发的过程中，很多时候我们需要使用到第三方jar包提供给我们的类,而这个类没有构造方法，而是通过第三方包提供的静态工厂创建的，这是时候，如果我们想把第三方jar里面的这个类交由spring来管理的话，就可以使用Spring提供的静态工厂创建实例的配置。</p>
+<p>第三种，通过实例工厂创建，其本质就是把创建实例的工厂类交由Spring管理，同时把调用工厂类的方法创建实例的这个过程也交由Spring管理，看创建实例的这个过程也是有我们自己配置的实例工厂内部实现的。在实际开发的过程中，如Spring整合Hibernate就是通过这种方式实现的。但对于没有与Spring整合过的工厂类，我们一般都是自己用代码来管理的。</p>
+<p>不管是静态工厂还是工厂方法，都需要通过反射调用目标方法创建对象，反射或多或少影响性能，如果不使用反射呢？</p>
+</blockquote>
+<h5 id="supplier创建方式"><a class="markdownIt-Anchor" href="#supplier创建方式"></a> supplier创建方式</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GenericBeanDefinition beanDefinition = <span class="keyword">new</span> GenericBeanDefinition();</span><br><span class="line">beanDefinition.setBeanClass(User.class);</span><br><span class="line">beanDefinition.setInstanceSupplier(SupplierBean::createUser);	<span class="comment">// 这样写craeteUser必须是静态方法</span></span><br></pre></td></tr></table></figure>
+<p>beanDefinition就会使用<code>SupplierBean::createUser</code>方法创建</p>
+<h4 id="beannamegenerator"><a class="markdownIt-Anchor" href="#beannamegenerator"></a> beanNameGenerator</h4>
+<p>spring默认的beanNameGenerator</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> BeanNameGenerator beanNameGenerator = AnnotationBeanNameGenerator.INSTANCE;</span><br></pre></td></tr></table></figure>
+<h5 id="自定义beannamegenerator"><a class="markdownIt-Anchor" href="#自定义beannamegenerator"></a> 自定义beanNameGenerator</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">ac.setBeanNameGenerator(<span class="keyword">new</span> SloruiBeanNameGenerator());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBeanNameGenerator</span><span class="params">(BeanNameGenerator beanNameGenerator)</span> </span>&#123;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 给reader一个自定义的beanNameGenerator</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">this</span>.reader.setBeanNameGenerator(beanNameGenerator);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 给外部scanner一个自定义的beanNameGenerator</span></span><br><span class="line"><span class="comment">	 * spring内生成的scanner不适应这种beanNameGenerator</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">this</span>.scanner.setBeanNameGenerator(beanNameGenerator);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 注册一个beanNameGenerator到单例池</span></span><br><span class="line"><span class="comment">	 * 方便内部生成的scanner使用</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	getBeanFactory().registerSingleton(</span><br><span class="line">			AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR, beanNameGenerator);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以在@Component上单独指定beanNameGenerator类，spring会判断是否配置，如果没配置，会取默认的名字生成器（看前面有没有设置全局的名字生成器，如果有就使用，否则使用默认的名字生成器）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ComponentScan(value = &quot;com.slorui&quot;,nameGenerator = SloruiBeanNameGenerator1.class)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 如果没有在<span class="doctag">@componentScan</span>内配置nameGenerator，默认就是BeanNameGenerator.class</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">Class&lt;? extends BeanNameGenerator&gt; generatorClass = componentScan.getClass(<span class="string">&quot;nameGenerator&quot;</span>);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 默认情况是true，如果是false，使用自定义的命名策略</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">boolean</span> useInheritedGenerator = (BeanNameGenerator.class == generatorClass);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 添加beanNameGenerator，默认的beanNameGenerator是创建ComponentScanAnnotationParser</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">scanner.setBeanNameGenerator(useInheritedGenerator ? <span class="keyword">this</span>.beanNameGenerator :</span><br><span class="line">		BeanUtils.instantiateClass(generatorClass));</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/08/spring/AnnotationBeanDefinitionReader/" data-id="cknd877zi00080kvx6megcs90" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-redis/redis事件" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/06/redis/redis%E4%BA%8B%E4%BB%B6/" class="article-date">
+  <time class="post-time" datetime="2021-04-06T09:20:15.220Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">06</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/06/redis/redis%E4%BA%8B%E4%BB%B6/">redis事件</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="redis事件"><a class="markdownIt-Anchor" href="#redis事件"></a> redis事件</h3>
+<h4 id="文件事件"><a class="markdownIt-Anchor" href="#文件事件"></a> 文件事件</h4>
+<p>redis基于reactor模式开发了自己的网络事件处理器，被称为：文件事件处理器</p>
+<ol>
+<li>文件事件处理器使用I/O多路复用监听多个套接字，根据套接字目前执行的任务为套接字关联不同的事件处理器</li>
+<li>当被监听的套接字准备好执行连接应答accept、read、write、close等操作时，与操作对于的文件事件就会产生，调用之前准备好的事件处理器处理事件</li>
+</ol>
+<p>文件事件处理器有套接字、I/O多路复用程序、文件事件分配器、事件处理器组成</p>
+<p><img src="/images/image-20210406172512678.png" alt="image-20210406172512678" /></p>
+<p>I/O多路复用产生的套接字被放入一个队列，然后一个一个发给分配器，分配器根据不同的套接字调用不同的事件处理器</p>
+<p>redis在编译时选择系统中性能最优的I/O多路复用技术</p>
+<p>redis包括两种事件类型：读事件和写事件。</p>
+<ol>
+<li>当套接字变得可读（客户端执行了write或者close），或新的可accept套接字出现，产生读事件</li>
+<li>当套接字变得可写（客户端对套接字执行read操作），套接字产生写事件</li>
+</ol>
+<p>如果一个套接字同时产生读写事件，先读后写。</p>
+<p>事件处理器：</p>
+<ol>
+<li>连接处理器：处理对连接服务器监听套接字的应答，客户端执行connect连接服务器监听套接字，连接处理器执行并应答</li>
+<li>命令处理器：当客户端发送命令请求时，套接字产生读事件，命令处理器执行</li>
+<li>命令回复处理器：当服务器有命令回复客户端时，客户端将套接字的写事件和命令回复处理器关联，当客户端准备好读后，执行命令回复处理器</li>
+</ol>
+<p><img src="/images/image-20210406173904049.png" alt="image-20210406173904049" /></p>
+<h4 id="时间事件"><a class="markdownIt-Anchor" href="#时间事件"></a> 时间事件</h4>
+<p>redis时间时间分为：</p>
+<ol>
+<li>定时事件：程序指定时间之后执行一次，删除事件</li>
+<li>周期性事件：程序每隔一段时间执行一次，之后再次到达</li>
+</ol>
+<p>一个时间时间包括：</p>
+<ol>
+<li>id：时间事件的全局id，递增</li>
+<li>when：时间事件到达时间</li>
+<li>timeProc：时间事件处理器</li>
+</ol>
+<p>实现：</p>
+<p>所有时间事件都放在无序链表里，时间事件执行器执行时，遍历整个链表，查询所有到期事件并执行</p>
+<p><font color='red'>无序是指不按事件when排序</font></p>
+<p>时间事件实例：</p>
+<p>serverCron函数：持续运行的redis需要定期对自身的资源和状态检查调整。</p>
+<ol>
+<li>更新服务器统计信息</li>
+<li>清理过期键值对</li>
+<li>关闭和清理失效客户端</li>
+<li>尝试aof和rdb持久化</li>
+<li>如果是主服务器，对从服务器定期同步</li>
+<li>如果处于集群模式，对集群定期同步和连接测试</li>
+</ol>
+<p>默认每秒10次，每100毫秒一次</p>
+<h4 id="事件的调度和执行"><a class="markdownIt-Anchor" href="#事件的调度和执行"></a> 事件的调度和执行</h4>
+<p>服务器同时存在文件事件和时间事件，所以服务器必须对这两件事调度，有asProcessEvents执行</p>
+<ol>
+<li>查询距离当前事件最近的时间函数，计算相差时间remaind</li>
+<li>进行阻塞等待文件事件，阻塞时间为remaind</li>
+<li>处理文件事件</li>
+<li>处理时间事件</li>
+</ol>
+<p>阻塞最近时间可以防止服务器频繁轮询时间事件</p>
+<p>先执行文件事件，再执行时间事件。如果文件事件或者时间事件占用时间较长，例如写入字节数超过预设值，会跳出写循环，等待下次再写入。时间事件耗时久的持久化也会再子线程执行</p>
+<p>时间事件可能会比预设时间晚一点。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/06/redis/redis%E4%BA%8B%E4%BB%B6/" data-id="ckn63k6qp00014wvx1e7004e4" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-redis/redis持久化" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -951,148 +1159,6 @@ Nginx 要保证它的高可用 高可靠性, 如果Nginx 使用了多线程的�
 
 
   
-    <article id="post-redis/新建文件夹/redis发布订阅" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/" class="article-date">
-  <time class="post-time" datetime="2021-04-02T06:22:50.062Z" itemprop="datePublished">
-    <span class="post-month">4月</span><br/>
-    <span class="post-day">02</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">redis发布订阅</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="redis发布订阅"><a class="markdownIt-Anchor" href="#redis发布订阅"></a> redis发布订阅</h3>
-<p>redis发布订阅(pub/sub)是一种消息通信模式：发送者(pub)发生信息，订阅者(sub)接收消息。</p>
-<p>redis客户端可以订阅任意数量的频道</p>
-<p><code>subscribe channel</code>  订阅一个频道（如果没有，频道会自动创建），每次等待接收三条信息（消息，频道、内容）</p>
-<p><code>publish cahnnel message</code> 向频道发送一个信息</p>
-<p><code>psubcribe pattern</code> 订阅多个满足pattern的频道</p>
-<p><code>unsubscribe channel</code> 取消订阅</p>
-<p><code>punsubscribe pattern</code>取消满足pattern的频道</p>
-<p>当订阅一个频道后，redis维护一个字典，key就是channel，值是一个链表，维护了订阅频道的客户端</p>
-<p>subscribe就是将客户端添加到channel的链表</p>
-<p>publish向对应的channel链表所有客户端发送消息</p>
-<p>场景：</p>
-<ol>
-<li>实时消息系统</li>
-<li>实时聊天（频道当作聊天室）</li>
-<li>订阅、关注系统都可以</li>
-</ol>
-<p>稍微复杂的场景使用消息中间件MQ做</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/" data-id="cknd877zn000k0kvxd9f5fn85" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-redis/新建文件夹/redis事务" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E4%BA%8B%E5%8A%A1/" class="article-date">
-  <time class="post-time" datetime="2021-04-02T06:02:03.208Z" itemprop="datePublished">
-    <span class="post-month">4月</span><br/>
-    <span class="post-day">02</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E4%BA%8B%E5%8A%A1/">redis事务</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="redis事务"><a class="markdownIt-Anchor" href="#redis事务"></a> redis事务</h3>
-<p>redis事务的本质：一直命令的集合。一个事务中所有命令被序列化，事务执行过程种，按顺序执行。</p>
-<p>一次性、顺序写、排他性执行一些里列的命令</p>
-<p><font color='red'> redis单条命令保存原子性，但事务不保证原子性</font></p>
-<p><font color='red'>redis事务没有隔离级别的概念，命令会进入队列，只有发起执行时才执行</font></p>
-<p>reids的事务：</p>
-<ul>
-<li>开启事务（multi）</li>
-<li>命令入队（使用命令）</li>
-<li>执行事务（exec）</li>
-<li>取消事务(discard)</li>
-</ul>
-<p><font color='red'> redis事务编译时异常，事务会取消</font></p>
-<p><font color='red'> redis事务运行时异常，错误命令会报错，不会影响其他命令的执行</font>（需要加锁监控）</p>
-<p><code>watch key</code>对key加监视，乐观锁，当执行事务时发现key被修改，事务执行失败</p>
-<p><code>unwatch</code>放弃监视</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E4%BA%8B%E5%8A%A1/" data-id="cknd877zk000b0kvx8lme2pgy" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -1137,9 +1203,9 @@ Nginx 要保证它的高可用 高可靠性, 如果Nginx 使用了多线程的�
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+      <a href="/archives"><div><strong>65</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>15</strong><br>标签</div></a>
     </div>
 
 

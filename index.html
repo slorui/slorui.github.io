@@ -43,9 +43,9 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+      <a href="/archives"><div><strong>65</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>15</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -70,6 +70,233 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-java/并发基础" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/15/java/%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80/" class="article-date">
+  <time class="post-time" datetime="2021-04-15T14:12:20.222Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">15</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/15/java/%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80/">并发编程基础</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/java/">java</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="并发编程基础"><a class="markdownIt-Anchor" href="#并发编程基础"></a> 并发编程基础</h3>
+<meta http-equiv="Content-Security-Policy" content="script-src 'self'; object-src 'none'; style-src cdn.example.org third-party.org; child-src https:">    
+<object data="../../files/concurrent_01.pdf" type="application/pdf" width="700px" height="700px"> 
+    <embed src="../../files/concurrent_01.pdf"> 
+    	<a href="../../files/concurrent_01.pdf">Download PDF</a>.</p> 
+    </embed> 
+</object> 
+<h3 id=""><a class="markdownIt-Anchor" href="#"></a> </h3>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/15/java/%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80/" data-id="ckniyuhoa0000esvxfwt2blj5" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91/" rel="tag">并发</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-redis/redis集群" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/14/redis/redis%E9%9B%86%E7%BE%A4/" class="article-date">
+  <time class="post-time" datetime="2021-04-14T04:30:06.390Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">14</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/14/redis/redis%E9%9B%86%E7%BE%A4/">redis集群</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="redis集群"><a class="markdownIt-Anchor" href="#redis集群"></a> redis集群</h3>
+<p>redis集群是redis通过的分布式数据库方案，通过分片来进行数据共享，并提供复制和故障转移</p>
+<h4 id="节点"><a class="markdownIt-Anchor" href="#节点"></a> 节点</h4>
+<p>一个redis集群有多个节点组成，开始时每个节点相互独立，处于自己的集群。组建集群时，将各个独立的节点连起来。</p>
+<p><code>CLUSTER MEET ip port</code>向一个ip的节点发送握手handshake，握手成功，就将ip节点添加到当前集群</p>
+<h5 id="启动节点"><a class="markdownIt-Anchor" href="#启动节点"></a> 启动节点</h5>
+<p>一个节点就是一个集群模式下的redis服务器，服务器启动时根据<code>cluster-enabled</code>是否yes判断是否开启集群模式</p>
+<h5 id="集群数据结构"><a class="markdownIt-Anchor" href="#集群数据结构"></a> 集群数据结构</h5>
+<p>每个节点保存着一个clusterState结构，记录了当前节点视角下集群的状态，其中的dict字典记录了集群节点名单</p>
+<p>每个节点对应一个clusterNode结构，记录了节点的状态，其中的clusterLink记录了连接节点的有关信息，包括socket描述符，输入输出缓冲区等。</p>
+<p><img src="/images/image-20210414124534175.png" alt="image-20210414124534175" /></p>
+<h5 id="cluster-meet"><a class="markdownIt-Anchor" href="#cluster-meet"></a> CLUSTER MEET</h5>
+<p>向节点A发送<code>CLUSTER MEET</code>,客户端让节点A将另一个节点B添加到A的集群</p>
+<ol>
+<li>A为B创建clusterNode结构，添加到dict字典</li>
+<li>A向ip的B发送MEET消息</li>
+<li>B为A创建clusterNode结构，添加到dict字典</li>
+<li>B向A返回一条PONG消息</li>
+<li>A向B发送一个PING消息，完成三次握手</li>
+</ol>
+<h4 id="槽指派"><a class="markdownIt-Anchor" href="#槽指派"></a> 槽指派</h4>
+<p>redis通过分片保存数据库的键值对，集群的数据库被分为16384个槽，每个键属于其他的一个槽，每个节点可以处理0-16384个槽</p>
+<p>如果16384个槽都在处理，集群处于上线状态，如果有一个没有得到处理，集群处于下线状态</p>
+<p><code>CLUSTER ADDSLOTS</code> 可以将一个或多个槽指派给某个节点</p>
+<h5 id="记录节点的槽指派信息"><a class="markdownIt-Anchor" href="#记录节点的槽指派信息"></a> 记录节点的槽指派信息</h5>
+<p>clusterNode的slots属性和numslot记录了节点复制处理的槽</p>
+<p>slots是一个二进制位数组，长度位16384/8=2048个字节  numslot记录了槽位1的个数</p>
+<h5 id="传播节点的槽指派信息"><a class="markdownIt-Anchor" href="#传播节点的槽指派信息"></a> 传播节点的槽指派信息</h5>
+<p>节点记录了槽指派信息后，会向集群的节点发送自己的slots信息，收到的节点更新对应节点的slots数组</p>
+<h5 id="记录集群的槽指派信息"><a class="markdownIt-Anchor" href="#记录集群的槽指派信息"></a> 记录集群的槽指派信息</h5>
+<p>clusterState的slots数组记录的是每个槽对应的节点</p>
+<p>为什么两处保存：</p>
+<ol>
+<li>如果只使用clusterNode的slots，想知道某个槽是否指派时，需要遍历所有节点</li>
+<li>程序需要将某个节点的槽指派信息发送时，直接发送clusterNode的slots即可</li>
+</ol>
+<p>clusterState的slots数组记录了所有槽的指派信息，ClusterNode的slots记录了节点的槽指派信息</p>
+<h4 id="集群中执行命令"><a class="markdownIt-Anchor" href="#集群中执行命令"></a> 集群中执行命令</h4>
+<p>集群的槽都被指派后，集群上线</p>
+<p>客户端命令的处理流程：<br />
+<img src="/images/image-20210414130445389.png" alt="image-20210414130445389" /></p>
+<p>客户端接收到MOVED错误后，会转型到对应的节点，重新发送命令</p>
+<h5 id="计算属于哪个槽"><a class="markdownIt-Anchor" href="#计算属于哪个槽"></a> 计算属于哪个槽</h5>
+<p>CRC16(key) &amp; 16383</p>
+<p>计算槽后，判断ClusterState的slots[i]是不是当前节点，是就处理，不是就将对应节点的ip和port发送给客户端</p>
+<p>节点给客户端发送<code>MOVED slot ip port</code></p>
+<p>集群客户端不会打印MOVED错误，会根据MOVED信息进行转向，打印转向信息</p>
+<p>单机模式会报MOVED错误，因为单机模式无法处理MOVED错误</p>
+<h5 id="节点数据库的实现"><a class="markdownIt-Anchor" href="#节点数据库的实现"></a> 节点数据库的实现</h5>
+<p>节点数据库使用和单机数据库使用一样，但是节点数据库只能使用0号数据库</p>
+<p>节点的clusterState的slots_to_keys跳表记录了每个槽对应的key，得分socre是槽号</p>
+<p>通过slots_to_keys记录各个数据库键所属的槽，节点可以很方把的对属于某个或某些槽的键批量操作</p>
+<h4 id="重新分片"><a class="markdownIt-Anchor" href="#重新分片"></a> 重新分片</h4>
+<p>redis重新分片可以把任意数量的槽从某个节点指派到另一个节点，槽的键值对也会被移到对应的节点</p>
+<p>重新分配可以在上线期间操作。</p>
+<p>重新分片由redis集群管理软件redis-trib执行</p>
+<ol>
+<li>redsi-trib对目标节点发送importing命令，让目标节点准备号从源节点导入属于slot的键值对</li>
+<li>redis-tirb对源节点发送migrating命令，让源节点准备好将属于slot的键值对迁移到目标节点</li>
+<li>redis-trib对源节点发送getkeysinslot，获得最多count个key</li>
+<li>对每个key，redis-trib向源节点发送migrate命令，将该键值对迁移到目标节点</li>
+<li>当全部迁移完成，redis-trib向集群任意节点发送setslot命令，将槽指派给目标节点，这一指派信息会发送到整个集群</li>
+</ol>
+<p><img src="/images/image-20210414140312133.png" alt="image-20210414140312133" /></p>
+<p>importing_slot_from数组表示当前节点导入对应的节点的槽i</p>
+<p>migrating_slot_to数组表示当前节点将槽i迁移到对应的节点</p>
+<p>当迁移期间客户端请求数据，源服务器如果找到数据就返回，找不到就返回一个ASK错误，指引客户端向目标服务器发起请求查找数据</p>
+<p>同MOVED错误</p>
+<p><img src="/images/image-20210414140905595.png" alt="image-20210414140905595" /></p>
+<p>ASK和MOVED区别：</p>
+<p>MOVED错误代表槽的负责权已经从一个节点转移到另一个节点，之后客户端就会把该槽的命令发送到新节点</p>
+<p>ASK错误是节点迁移过程中的一种临时措施，不会转移客户端的命令，只是临时下一次命令发送到新节点</p>
+<h4 id="负责和故障转移"><a class="markdownIt-Anchor" href="#负责和故障转移"></a> 负责和故障转移</h4>
+<p>redis集群分为主从节点，主节点处理槽，从节点复制主节点数据，主节点下线时代替主节点</p>
+<h5 id="设置从节点"><a class="markdownIt-Anchor" href="#设置从节点"></a> 设置从节点</h5>
+<p><code>CLUSTER REPLICATE node_id</code>让接收命令的节点变成node_id节点的从节点，并开始进行复制</p>
+<ol>
+<li>从节点会将自己clusterNode的从节点指针指向主节点</li>
+<li>从节点修改clusterState的自我标识，变为从节点标识</li>
+<li>调用复制代码，根据主节点指针的ip和端口号进行复制</li>
+</ol>
+<h5 id="故障检测"><a class="markdownIt-Anchor" href="#故障检测"></a> 故障检测</h5>
+<p>集群的每个节点都会定期向集群其他节点发送ping命令。检测对方是否在线，如果没有在规定时间返回pong命令，就会将该节点标记为疑似下线</p>
+<p>如果集群内半数以上的主节点都将某个节点标记疑似下线，该主节点标记为已下线，标记节点下线的节点会发送消息，通知该节点下线</p>
+<h5 id="故障转移"><a class="markdownIt-Anchor" href="#故障转移"></a> 故障转移</h5>
+<p>从节点发现主节点下线，开始执行故障转移</p>
+<ol>
+<li>复制下线节点的所有从节点里，会有一个节点被选中</li>
+<li>选择节点执行slave no one命令，成为主节点</li>
+<li>主节点撤销所有已下线节点的槽指派，全部指派给自己</li>
+<li>广播一条pong消息，通知该节点变成了主节点，并且已经接管了槽</li>
+</ol>
+<h5 id="选举新节点"><a class="markdownIt-Anchor" href="#选举新节点"></a> 选举新节点</h5>
+<ol>
+<li>集群的配置纪元是自增计数器，初始为0</li>
+<li>每进行一次故障转移，进去配置纪元+1</li>
+<li>每个配置纪元，集群中主节点有一次投票机会，第一个要求投票的从节点获得投票</li>
+<li>从节点广播投票，主节点返回支持</li>
+<li>超过半数的投票节点成为主节点，如果没有节点收集到半数票，配置纪元+1，重新选举</li>
+</ol>
+<h4 id="消息"><a class="markdownIt-Anchor" href="#消息"></a> 消息</h4>
+<p>集群中节点发送和接收消息来通信。</p>
+<p>消息主要是5中：</p>
+<ol>
+<li>MEET消息：接收者加入到发送者的集群</li>
+<li>PING消息，每个节点默认1秒从所有节点选取5个节点， 然后选择最长时间没发ping的节点发送ping命令，除此之外，如果节点返回pong消息的时间到当前时刻超过预设的timeout的一半，也会发送ping命令</li>
+<li>PONG消息：当接受者接收到MEET、PING消息时，发送PONG消息确认接收。节点可以向集群广播PONG消息让集群更新节点的认识</li>
+<li>FAIL消息：节点A判断节点B下线，广播一条B的FAIL消息，标记B下线</li>
+<li>PUBLISH消息：节点接收到PUBLISH消息，执行这个命令，并向集群广播一条PUBLISH消息，所有接收到该命令的节点也执行PUBLISH消息</li>
+</ol>
+<p>一条消息由消息头和正文组成</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/14/redis/redis%E9%9B%86%E7%BE%A4/" data-id="ckniyuhqe0001esvx43e743lh" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-netty/Netty04-优化与源码" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -2622,214 +2849,6 @@
 
 
   
-    <article id="post-spring/AnnotationBeanDefinitionReader" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/04/08/spring/AnnotationBeanDefinitionReader/" class="article-date">
-  <time class="post-time" datetime="2021-04-08T04:44:28.997Z" itemprop="datePublished">
-    <span class="post-month">4月</span><br/>
-    <span class="post-day">08</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/04/08/spring/AnnotationBeanDefinitionReader/">AnnotationBeanDefinitionReader</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/spring/">spring</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="annotationbeandefinitionreader"><a class="markdownIt-Anchor" href="#annotationbeandefinitionreader"></a> AnnotationBeanDefinitionReader</h3>
-<p>作用：注册beanDefinition</p>
-<h4 id="实例化"><a class="markdownIt-Anchor" href="#实例化"></a> 实例化</h4>
-<p>在<code>AnnotationConfigApplicationContext</code>容器构造方法中实例化</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.reader = <span class="keyword">new</span> AnnotatedBeanDefinitionReader(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure>
-<h4 id="supplier"><a class="markdownIt-Anchor" href="#supplier"></a> supplier</h4>
-<p>spring提高了一种替代工厂方法（包括静态工厂）或构造器创建对象的方法，通过函数式编程接口supplier，可以提供一个自定义的supplier替代spring的创建方式</p>
-<h5 id="spring创建bean的三种方式"><a class="markdownIt-Anchor" href="#spring创建bean的三种方式"></a> spring创建bean的三种方式</h5>
-<ol>
-<li>
-<p>通过构造器创建</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    <span class="comment">&lt;!-- 指定class属性，通过构造方法创建Bean实例 --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;person&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.gouzao.Person&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 通过构造方法赋值 --&gt;</span>  </span><br><span class="line">     <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;魔术师&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span> </span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>通过静态工厂创建</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">        <span class="comment">&lt;!-- 定义chinese Bean 由PersonFactory工厂的getPerson方法创建 --&gt;</span>  </span><br><span class="line">    	<span class="comment">&lt;!-- 不会实例化工厂，直接通过工厂创建该bean --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;chinese&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.staticFactory.PersonFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 为静态工厂的getPerson()方法传参 --&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;chinese&quot;</span>/&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 调用setMsg()方法为msg属性注入参数值 --&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;msg&quot;</span> <span class="attr">value</span>=<span class="string">&quot;我是中国人&quot;</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>     </span><br><span class="line">    <span class="comment">&lt;!-- 创建american Bean --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;american&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.staticFactory.PersonFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;american&quot;</span>/&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;msg&quot;</span> <span class="attr">value</span>=<span class="string">&quot;我是美国人&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </span><br><span class="line">       <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span>  </span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p>通过工厂方法创建</p>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">        <span class="comment">&lt;!-- 配置工厂Bean，class指定该工厂的实现类，该Bean负责产生其他Bean实例 --&gt;</span>  </span><br><span class="line">    	<span class="comment">&lt;!-- 工厂会被创建，然后通过工厂创建bean --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;personFactory&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.instanceFactory.PersonFactory&quot;</span>/&gt;</span> </span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- 由实例工厂Bean的getPerson()方法，创建Chinese Bean， --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;ch&quot;</span> <span class="attr">factory-bean</span>=<span class="string">&quot;personFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 为该方法传入参数为chinese --&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;chinese&quot;</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line">    <span class="comment">&lt;!-- 由实例工厂Bean的getPerson()方法，创建American Bean， --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;usa&quot;</span> <span class="attr">factory-bean</span>=<span class="string">&quot;personFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;american&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span>  </span><br></pre></td></tr></table></figure>
-</li>
-</ol>
-<p>区别和联系：</p>
-<blockquote>
-<p>第一种，通过默认的无参构造方式创建，其本质就是把类交给Spring自带的工厂（BeanFactory）管理、由Spring自带的工厂模式帮我们维护和创建这个类。如果是有参的构造方法，也可以通过XML配置传入相应的初始化参数，这种也是开发中用的最多的。</p>
-<p>第二种，通过静态工厂创建，其本质就是把类交给我们自己的静态工厂管理，Spring只是帮我们调用了静态工厂创建实例的方法，而创建实例的这个过程是由我们自己的静态工厂实现的，在实际开发的过程中，很多时候我们需要使用到第三方jar包提供给我们的类,而这个类没有构造方法，而是通过第三方包提供的静态工厂创建的，这是时候，如果我们想把第三方jar里面的这个类交由spring来管理的话，就可以使用Spring提供的静态工厂创建实例的配置。</p>
-<p>第三种，通过实例工厂创建，其本质就是把创建实例的工厂类交由Spring管理，同时把调用工厂类的方法创建实例的这个过程也交由Spring管理，看创建实例的这个过程也是有我们自己配置的实例工厂内部实现的。在实际开发的过程中，如Spring整合Hibernate就是通过这种方式实现的。但对于没有与Spring整合过的工厂类，我们一般都是自己用代码来管理的。</p>
-<p>不管是静态工厂还是工厂方法，都需要通过反射调用目标方法创建对象，反射或多或少影响性能，如果不使用反射呢？</p>
-</blockquote>
-<h5 id="supplier创建方式"><a class="markdownIt-Anchor" href="#supplier创建方式"></a> supplier创建方式</h5>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GenericBeanDefinition beanDefinition = <span class="keyword">new</span> GenericBeanDefinition();</span><br><span class="line">beanDefinition.setBeanClass(User.class);</span><br><span class="line">beanDefinition.setInstanceSupplier(SupplierBean::createUser);	<span class="comment">// 这样写craeteUser必须是静态方法</span></span><br></pre></td></tr></table></figure>
-<p>beanDefinition就会使用<code>SupplierBean::createUser</code>方法创建</p>
-<h4 id="beannamegenerator"><a class="markdownIt-Anchor" href="#beannamegenerator"></a> beanNameGenerator</h4>
-<p>spring默认的beanNameGenerator</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> BeanNameGenerator beanNameGenerator = AnnotationBeanNameGenerator.INSTANCE;</span><br></pre></td></tr></table></figure>
-<h5 id="自定义beannamegenerator"><a class="markdownIt-Anchor" href="#自定义beannamegenerator"></a> 自定义beanNameGenerator</h5>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">ac.setBeanNameGenerator(<span class="keyword">new</span> SloruiBeanNameGenerator());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBeanNameGenerator</span><span class="params">(BeanNameGenerator beanNameGenerator)</span> </span>&#123;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 给reader一个自定义的beanNameGenerator</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">this</span>.reader.setBeanNameGenerator(beanNameGenerator);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 给外部scanner一个自定义的beanNameGenerator</span></span><br><span class="line"><span class="comment">	 * spring内生成的scanner不适应这种beanNameGenerator</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">this</span>.scanner.setBeanNameGenerator(beanNameGenerator);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 注册一个beanNameGenerator到单例池</span></span><br><span class="line"><span class="comment">	 * 方便内部生成的scanner使用</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	getBeanFactory().registerSingleton(</span><br><span class="line">			AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR, beanNameGenerator);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>可以在@Component上单独指定beanNameGenerator类，spring会判断是否配置，如果没配置，会取默认的名字生成器（看前面有没有设置全局的名字生成器，如果有就使用，否则使用默认的名字生成器）</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ComponentScan(value = &quot;com.slorui&quot;,nameGenerator = SloruiBeanNameGenerator1.class)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 如果没有在<span class="doctag">@componentScan</span>内配置nameGenerator，默认就是BeanNameGenerator.class</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">Class&lt;? extends BeanNameGenerator&gt; generatorClass = componentScan.getClass(<span class="string">&quot;nameGenerator&quot;</span>);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 默认情况是true，如果是false，使用自定义的命名策略</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">boolean</span> useInheritedGenerator = (BeanNameGenerator.class == generatorClass);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 添加beanNameGenerator，默认的beanNameGenerator是创建ComponentScanAnnotationParser</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">scanner.setBeanNameGenerator(useInheritedGenerator ? <span class="keyword">this</span>.beanNameGenerator :</span><br><span class="line">		BeanUtils.instantiateClass(generatorClass));</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/04/08/spring/AnnotationBeanDefinitionReader/" data-id="cknd877zi00080kvx6megcs90" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-redis/redis事件" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/04/06/redis/redis%E4%BA%8B%E4%BB%B6/" class="article-date">
-  <time class="post-time" datetime="2021-04-06T09:20:15.220Z" itemprop="datePublished">
-    <span class="post-month">4月</span><br/>
-    <span class="post-day">06</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/04/06/redis/redis%E4%BA%8B%E4%BB%B6/">redis事件</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="redis事件"><a class="markdownIt-Anchor" href="#redis事件"></a> redis事件</h3>
-<h4 id="文件事件"><a class="markdownIt-Anchor" href="#文件事件"></a> 文件事件</h4>
-<p>redis基于reactor模式开发了自己的网络事件处理器，被称为：文件事件处理器</p>
-<ol>
-<li>文件事件处理器使用I/O多路复用监听多个套接字，根据套接字目前执行的任务为套接字关联不同的事件处理器</li>
-<li>当被监听的套接字准备好执行连接应答accept、read、write、close等操作时，与操作对于的文件事件就会产生，调用之前准备好的事件处理器处理事件</li>
-</ol>
-<p>文件事件处理器有套接字、I/O多路复用程序、文件事件分配器、事件处理器组成</p>
-<p><img src="/images/image-20210406172512678.png" alt="image-20210406172512678" /></p>
-<p>I/O多路复用产生的套接字被放入一个队列，然后一个一个发给分配器，分配器根据不同的套接字调用不同的事件处理器</p>
-<p>redis在编译时选择系统中性能最优的I/O多路复用技术</p>
-<p>redis包括两种事件类型：读事件和写事件。</p>
-<ol>
-<li>当套接字变得可读（客户端执行了write或者close），或新的可accept套接字出现，产生读事件</li>
-<li>当套接字变得可写（客户端对套接字执行read操作），套接字产生写事件</li>
-</ol>
-<p>如果一个套接字同时产生读写事件，先读后写。</p>
-<p>事件处理器：</p>
-<ol>
-<li>连接处理器：处理对连接服务器监听套接字的应答，客户端执行connect连接服务器监听套接字，连接处理器执行并应答</li>
-<li>命令处理器：当客户端发送命令请求时，套接字产生读事件，命令处理器执行</li>
-<li>命令回复处理器：当服务器有命令回复客户端时，客户端将套接字的写事件和命令回复处理器关联，当客户端准备好读后，执行命令回复处理器</li>
-</ol>
-<p><img src="/images/image-20210406173904049.png" alt="image-20210406173904049" /></p>
-<h4 id="时间事件"><a class="markdownIt-Anchor" href="#时间事件"></a> 时间事件</h4>
-<p>redis时间时间分为：</p>
-<ol>
-<li>定时事件：程序指定时间之后执行一次，删除事件</li>
-<li>周期性事件：程序每隔一段时间执行一次，之后再次到达</li>
-</ol>
-<p>一个时间时间包括：</p>
-<ol>
-<li>id：时间事件的全局id，递增</li>
-<li>when：时间事件到达时间</li>
-<li>timeProc：时间事件处理器</li>
-</ol>
-<p>实现：</p>
-<p>所有时间事件都放在无序链表里，时间事件执行器执行时，遍历整个链表，查询所有到期事件并执行</p>
-<p><font color='red'>无序是指不按事件when排序</font></p>
-<p>时间事件实例：</p>
-<p>serverCron函数：持续运行的redis需要定期对自身的资源和状态检查调整。</p>
-<ol>
-<li>更新服务器统计信息</li>
-<li>清理过期键值对</li>
-<li>关闭和清理失效客户端</li>
-<li>尝试aof和rdb持久化</li>
-<li>如果是主服务器，对从服务器定期同步</li>
-<li>如果处于集群模式，对集群定期同步和连接测试</li>
-</ol>
-<p>默认每秒10次，每100毫秒一次</p>
-<h4 id="事件的调度和执行"><a class="markdownIt-Anchor" href="#事件的调度和执行"></a> 事件的调度和执行</h4>
-<p>服务器同时存在文件事件和时间事件，所以服务器必须对这两件事调度，有asProcessEvents执行</p>
-<ol>
-<li>查询距离当前事件最近的时间函数，计算相差时间remaind</li>
-<li>进行阻塞等待文件事件，阻塞时间为remaind</li>
-<li>处理文件事件</li>
-<li>处理时间事件</li>
-</ol>
-<p>阻塞最近时间可以防止服务器频繁轮询时间事件</p>
-<p>先执行文件事件，再执行时间事件。如果文件事件或者时间事件占用时间较长，例如写入字节数超过预设值，会跳出写循环，等待下次再写入。时间事件耗时久的持久化也会再子线程执行</p>
-<p>时间事件可能会比预设时间晚一点。</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/04/06/redis/redis%E4%BA%8B%E4%BB%B6/" data-id="ckn63k6qp00014wvx1e7004e4" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -2874,9 +2893,9 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>63</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>14</strong><br>标签</div></a>
+      <a href="/archives"><div><strong>65</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>15</strong><br>标签</div></a>
     </div>
 
 
