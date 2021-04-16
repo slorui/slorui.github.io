@@ -2,12 +2,13 @@
 <html>
 <head>
   <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="object-src 'self';">   
   
-  <title>Category: Java | Blog</title>
+  <title>Category: java | Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta property="og:type" content="website">
 <meta property="og:title" content="Blog">
-<meta property="og:url" content="http://example.com/categories/Java/index.html">
+<meta property="og:url" content="http://example.com/categories/java/index.html">
 <meta property="og:site_name" content="Blog">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="Slorui">
@@ -85,82 +86,16 @@
     <article class="archive-article archive-type-post">
   <div class="archive-article-inner">
     <header class="archive-article-header">
-      <a href="/2021/03/21/%E9%9D%A2%E7%BB%8F/java/%E9%9B%86%E5%90%88/" class="archive-article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.613Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
+      <a href="/2021/04/15/java/%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80/" class="archive-article-date">
+  <time class="post-time" datetime="2021-04-15T14:12:20.222Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">15</span>
   </time>
 </a>
       
   
     <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/21/%E9%9D%A2%E7%BB%8F/java/%E9%9B%86%E5%90%88/">如何决定使用HashMap还是TreeMap</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/03/21/java/%E8%AF%AD%E6%B3%95%E7%B3%96/" class="archive-article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:05.071Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/21/java/%E8%AF%AD%E6%B3%95%E7%B3%96/">语法糖</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/03/21/java/%E6%B3%9B%E5%9E%8B/" class="archive-article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:04.991Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/21/java/%E6%B3%9B%E5%9E%8B/">泛型</a>
-    </h1>
-  
-
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-      <a href="/2021/03/21/java/%E5%8F%8D%E5%B0%84/" class="archive-article-date">
-  <time class="post-time" datetime="2021-03-21T08:53:04.807Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">21</span>
-  </time>
-</a>
-      
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/2021/03/21/java/%E5%8F%8D%E5%B0%84/">反射</a>
+      <a class="archive-article-title" href="/2021/04/15/java/%E5%B9%B6%E5%8F%91%E5%9F%BA%E7%A1%80/">并发编程基础</a>
     </h1>
   
 
@@ -266,6 +201,75 @@ new WOW().init();
 
   
 <link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>ancybox/jquery.fancybox.css">
 
   
 <script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
