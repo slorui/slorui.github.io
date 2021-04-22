@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="object-src 'self';">   
+  
+  <title>redis对象 | Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="对象 redis基于数据结构创建了对象系统，每个对象使用了至少一种数据结构。可以根据不同的场景使用不同的对象实现，优化使用效率 redis对象系统还实现了基于引用计数的内存回收机制，当程序不在使用某个对象，内存就会被释放。 redis通过引用计数实现了对象共享机制，在适当条件下让多个键共享同一个对象节约内存 redi锁对象带有访问时间信息，可以用于计算数据库键的空转时长，空转时长较大的键可能会优">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis对象">
+<meta property="og:url" content="http://example.com/2021/04/20/redis/redis%E5%AF%B9%E8%B1%A1/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="对象 redis基于数据结构创建了对象系统，每个对象使用了至少一种数据结构。可以根据不同的场景使用不同的对象实现，优化使用效率 redis对象系统还实现了基于引用计数的内存回收机制，当程序不在使用某个对象，内存就会被释放。 redis通过引用计数实现了对象共享机制，在适当条件下让多个键共享同一个对象节约内存 redi锁对象带有访问时间信息，可以用于计算数据库键的空转时长，空转时长较大的键可能会优">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/image-20210420150701435.png">
+<meta property="og:image" content="http://example.com/images/image-20210420151401056.png">
+<meta property="article:published_time" content="2021-04-20T06:31:44.660Z">
+<meta property="article:modified_time" content="2021-04-22T08:01:39.711Z">
+<meta property="article:author" content="Slorui">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/image-20210420150701435.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>64</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>15</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-redis/redis对象" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/20/redis/redis%E5%AF%B9%E8%B1%A1/" class="article-date">
+  <time class="post-time" datetime="2021-04-20T06:31:44.660Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">20</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      redis对象
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="对象"><a class="markdownIt-Anchor" href="#对象"></a> 对象</h3>
+<p>redis基于数据结构创建了对象系统，每个对象使用了至少一种数据结构。可以根据不同的场景使用不同的对象实现，优化使用效率</p>
+<p>redis对象系统还实现了基于引用计数的内存回收机制，当程序不在使用某个对象，内存就会被释放。</p>
+<p>redis通过引用计数实现了对象共享机制，在适当条件下让多个键共享同一个对象节约内存</p>
+<p>redi锁对象带有访问时间信息，可以用于计算数据库键的空转时长，空转时长较大的键可能会优先删除</p>
+<h4 id="对象类型和编码"><a class="markdownIt-Anchor" href="#对象类型和编码"></a> 对象类型和编码</h4>
+<p>redis的每个对象对应一个redisObject结构，包含type、编码和指向实现的指针。</p>
+<p>type：字符串对象、R列表对象、H哈希对象、S集合对象、Z有序集合对象。</p>
+<p>redis键总是字符串对象。</p>
+<p><code>TYPE key</code>返回key对应的val的类型</p>
+<p><code>OBJECT ENCODING</code>返回key对应的val的编码</p>
+<p><img src="/images/image-20210420150701435.png" alt="image-20210420150701435" /></p>
+<ol>
+<li>压缩列表比双端链表节约内存，并且元素少时，内存中连续存储，可以更块载入缓存</li>
+<li>随着列表对象元素增多，压缩列表的优适消失，转化为双端链表</li>
+</ol>
+<h4 id="字符串对象"><a class="markdownIt-Anchor" href="#字符串对象"></a> 字符串对象</h4>
+<p>字符串对象的编码可以是int、raw或者embstr</p>
+<p>如果字符串对象保存整数，并且可以用long类型表示，则保存为int编码</p>
+<p>如果是一个字符串值，并且长度大于32字节，使用raw编码，SDS来保存字符串</p>
+<p>如果是一个小于32字节的字符串，使用embstr编码保存字符串</p>
+<p>embstr是专门保存短字符串的一种优化编码方式，这种编码和raw编码一样，但是raw编码会调用两次内存分配创建redisObject结构和sdshdr结构，embstr通过一次内存分配连续的空间保存字符串。</p>
+<p><img src="/images/image-20210420151401056.png" alt="image-20210420151401056" /></p>
+<ol>
+<li>内存分配和内存释放都只需要调用一次</li>
+<li>可以更好的利用缓存优适</li>
+</ol>
+<p>double等类型也是字符串存储，先将double变成字符串然后存储</p>
+<h5 id="编码转化"><a class="markdownIt-Anchor" href="#编码转化"></a> 编码转化</h5>
+<ol>
+<li>对于int编码的字符串对象，如果从整数变成了字符串，编码变为raw</li>
+<li>embstr没有任何修改命令，对embstr修改会变为raw再修改</li>
+</ol>
+<h4 id="列表对象"><a class="markdownIt-Anchor" href="#列表对象"></a> 列表对象</h4>
+<p>列表对象的编码可以是ziplist或者linkedlist</p>
+<p>ziplist编码的列表对象使用压缩列表作为底层实现，每个压缩列表节点保存一个列表元素。</p>
+<p>linkedlist编码的列表对象使用双端队列作为底层实现。每个节点都保存了一个字符串对象，每个字符串对象保存了一个列表元素。（只有字符串对象会被其他四种类型队列嵌套）</p>
+<h5 id="编码转换"><a class="markdownIt-Anchor" href="#编码转换"></a> 编码转换</h5>
+<p>当满足以下两个条件时，列表对象使用ziplist编码（可以修改list-max-ziplist-value|list-max-ziplist-entries）</p>
+<ul>
+<li>列表所有字符串元素长度小于64字节</li>
+<li>列表对象保存的元素数量小于512个</li>
+</ul>
+<h4 id="哈希对象"><a class="markdownIt-Anchor" href="#哈希对象"></a> 哈希对象</h4>
+<p>哈希对象的编码可以是ziplist或者hashtable</p>
+<p>ziplist编码的哈希对象使用压缩列表作为底层实现，每当有新的键值对加入哈希对象时，先把键压入列表尾部，然后将value压入列表的尾部</p>
+<p>hashtable编码的哈希对象使用字典作为底层实现，哈希对象中每个键的值都使用一个字典键值对来保存</p>
+<h5 id="编码转化-2"><a class="markdownIt-Anchor" href="#编码转化-2"></a> 编码转化</h5>
+<p>当满足下面两个条件时，哈希对象使用ziplist编码（可以修改hash-max-ziplist-value|hash-max-ziplist-entries）</p>
+<ul>
+<li>哈希对象的键和值长度都小于64字节</li>
+<li>哈希对象保存的键值对数量小于512个</li>
+</ul>
+<h4 id="集合对象"><a class="markdownIt-Anchor" href="#集合对象"></a> 集合对象</h4>
+<p>集合对象的编码可以是intset和hashtable</p>
+<p>intset编码的集合对象使用整数集合作为底层实现，集合对象包含的所有元素都被保存再整数集合中</p>
+<p>hashtable编码的集合对象使用字典作为底层实现，字典的键是字符串对象，value是null</p>
+<h5 id="编码转化-3"><a class="markdownIt-Anchor" href="#编码转化-3"></a> 编码转化</h5>
+<p>当满足下面两个条件时，使用intset编码（可以i需改set-max-intset-entries）</p>
+<ul>
+<li>集合对象保存的都是整数</li>
+<li>集合对象保存的元素数量不超过512个</li>
+</ul>
+<h4 id="有序集合对象"><a class="markdownIt-Anchor" href="#有序集合对象"></a> 有序集合对象</h4>
+<p>有序集合的编码是ziplist或者skiplist</p>
+<p>ziplist编码的有序集合对象使用压缩列表作为底层实现，每个机会元素使用两个紧挨着的压缩列表节点保存，第一个节点保存元素的成员，第二个节点保存元素的分值。压缩列表元素按分支大小排序。</p>
+<p>zet结构中中的dict字典为有序集合创建了从成员到分值的映射，可以O(1)查找分值</p>
+<p>skiplist编码的有序集合对象使用跳表作为底层实现</p>
+<h5 id="编码转换-2"><a class="markdownIt-Anchor" href="#编码转换-2"></a> 编码转换</h5>
+<p>当满足下面两个条件，使用ziplist编码（可以修改zset-max-ziplist-value|zet-max-ziplist-entries）</p>
+<ul>
+<li>有序集合所有元素长度小于64字节</li>
+<li>有序集合保存的元素数量小于128</li>
+</ul>
+<h4 id="命令检测与命令多态"><a class="markdownIt-Anchor" href="#命令检测与命令多态"></a> 命令检测与命令多态</h4>
+<p>redis操作键的命令基本分为两种，可以对任何键使用的命令和对特定键使用的命令</p>
+<h5 id="类型检查实现"><a class="markdownIt-Anchor" href="#类型检查实现"></a> 类型检查实现</h5>
+<p>类型特定命令的检查通过redisObject的type实现：命令执行前，数据库检查键对应的值对象是不是执行命令的类型，是就执行，否则返回错误类型</p>
+<h5 id="多态命令的实现"><a class="markdownIt-Anchor" href="#多态命令的实现"></a> 多态命令的实现</h5>
+<p>redis还会根据对象的编码方式判断命令，一个redisObject可能有多种底层实现，需要执行时判断使用哪种实现的api</p>
+<h4 id="内存回收"><a class="markdownIt-Anchor" href="#内存回收"></a> 内存回收</h4>
+<p>c语言没有内存回收功能，redis在对象系统构建了一个引用计数refcount，当计数变为0时， 对象所占内存会被释放</p>
+<h4 id="对象共享"><a class="markdownIt-Anchor" href="#对象共享"></a> 对象共享</h4>
+<p>对象的引用计数还带有对象共享的作用，redis初始化时，会创建一万个字符串对象，0-0000，当需要用到这些值时，就使用共享对象</p>
+<h4 id="对象空转时长"><a class="markdownIt-Anchor" href="#对象空转时长"></a> 对象空转时长</h4>
+<p>redisObject还有一个lru属性，记录对象最后一次被访问的时间。<code>OBJECT IDLETIME msg</code>查看。</p>
+<p>当服务器打开maxmemory选项，并且内存回收算法为lru，redis会优先释放空转时间较长的 键</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/20/redis/redis%E5%AF%B9%E8%B1%A1/" data-id="cknslnnyj00051svx7k8celx8" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+  
+    <a href="/2021/04/20/redis/redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">redis数据结构</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Blog</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>64</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>15</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 Slorui<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

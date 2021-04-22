@@ -4,17 +4,17 @@
   <meta charset="utf-8">
   <meta http-equiv="Content-Security-Policy" content="object-src 'self';">   
   
-  <title>redis跳表 | Blog</title>
+  <title>redis监视器 | Blog</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="redis跳表  结构 zskiplist：跳表  header：头指针 tail：尾指针 length：长度 level：当前最高的层  zskiplistNode：跳表节点  sds：字符串值 score：分值，排序zskiplistNode，可以相同 backword：zskiplistNode指针 zkiplistLevel[]：level数组，层高随机  forward：zskipli">
+  <meta name="description" content="监视器 通过执行MONITOR命令，客户端将自己变成一个监视器，实时的接收并打印服务器当前处理的命令请求的相关信息 每当一个客户端向服务器发送命令，服务器处理后，还会向所有监视器发送命令信息 当客户端发送MONITOR命令时，客户端的REDIS_MONITOR标志会被打开，并且客户端对象被添加到monitors链表尾部 服务器处理命令前，会调用函数将命令发送给各个监视器">
 <meta property="og:type" content="article">
-<meta property="og:title" content="redis跳表">
-<meta property="og:url" content="http://example.com/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E8%B7%B3%E8%A1%A8/index.html">
+<meta property="og:title" content="redis监视器">
+<meta property="og:url" content="http://example.com/2021/04/20/redis/redis%E7%9B%91%E8%A7%86%E5%99%A8/index.html">
 <meta property="og:site_name" content="Blog">
-<meta property="og:description" content="redis跳表  结构 zskiplist：跳表  header：头指针 tail：尾指针 length：长度 level：当前最高的层  zskiplistNode：跳表节点  sds：字符串值 score：分值，排序zskiplistNode，可以相同 backword：zskiplistNode指针 zkiplistLevel[]：level数组，层高随机  forward：zskipli">
+<meta property="og:description" content="监视器 通过执行MONITOR命令，客户端将自己变成一个监视器，实时的接收并打印服务器当前处理的命令请求的相关信息 每当一个客户端向服务器发送命令，服务器处理后，还会向所有监视器发送命令信息 当客户端发送MONITOR命令时，客户端的REDIS_MONITOR标志会被打开，并且客户端对象被添加到monitors链表尾部 服务器处理命令前，会调用函数将命令发送给各个监视器">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2021-04-02T08:43:19.477Z">
-<meta property="article:modified_time" content="2021-04-02T09:09:36.860Z">
+<meta property="article:published_time" content="2021-04-20T02:54:59.989Z">
+<meta property="article:modified_time" content="2021-04-20T03:02:12.218Z">
 <meta property="article:author" content="Slorui">
 <meta property="article:tag" content="redis">
 <meta name="twitter:card" content="summary">
@@ -49,7 +49,7 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>65</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>64</strong><br>文章</div></a>
       <a href="/categories"><div><strong>10</strong><br>分类</div></a>
       <a href="/tags"><div><strong>15</strong><br>标签</div></a>
     </div>
@@ -75,12 +75,12 @@
   </div>
 </div>
 
-        <section id="main"><article id="post-redis/新建文件夹/redis跳表" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+        <section id="main"><article id="post-redis/redis监视器" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E8%B7%B3%E8%A1%A8/" class="article-date">
-  <time class="post-time" datetime="2021-04-02T08:43:19.477Z" itemprop="datePublished">
+    <a href="/2021/04/20/redis/redis%E7%9B%91%E8%A7%86%E5%99%A8/" class="article-date">
+  <time class="post-time" datetime="2021-04-20T02:54:59.989Z" itemprop="datePublished">
     <span class="post-month">4月</span><br/>
-    <span class="post-day">02</span>
+    <span class="post-day">20</span>
   </time>
 </a>
    
@@ -92,7 +92,7 @@
         
   
     <h1 class="article-title" itemprop="name">
-      redis跳表
+      redis监视器
     </h1>
   
 
@@ -111,46 +111,16 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="redis跳表"><a class="markdownIt-Anchor" href="#redis跳表"></a> redis跳表</h3>
-<h4 id="结构"><a class="markdownIt-Anchor" href="#结构"></a> 结构</h4>
-<p>zskiplist：跳表</p>
-<ul>
-<li>header：头指针</li>
-<li>tail：尾指针</li>
-<li>length：长度</li>
-<li>level：当前最高的层</li>
-</ul>
-<p>zskiplistNode：跳表节点</p>
-<ul>
-<li>sds：字符串值</li>
-<li>score：分值，排序zskiplistNode，可以相同</li>
-<li>backword：zskiplistNode指针</li>
-<li>zkiplistLevel[]：level数组，层高随机
-<ul>
-<li>forward：zskiplistNode指针，指向下一个同层</li>
-<li>span：到一个节点中间跳过了几个节点，没跳就是1</li>
-</ul>
-</li>
-</ul>
-<h4 id="逻辑"><a class="markdownIt-Anchor" href="#逻辑"></a> 逻辑</h4>
-<p>zslCreate：创建zskipList</p>
-<ol>
-<li>初始化空间，level=1，初始化头节点，level是32</li>
-</ol>
-<p>zslRandmomLevel：随机产生层数，最大是32层</p>
-<p>zslInsert：插入节点，传入string和分数</p>
-<ol>
-<li>从头节点的最高处开始查找，每层的rank表示上一层跳表的个数</li>
-<li>在每一次一直找到大于score或者score和string都相同的节点时退出</li>
-<li>创建新的节点，如果高度高于当前跳表高度，跳表头进行链接</li>
-<li>插入节点，修改跳表并计算跳表距离</li>
-<li>设置后退指针</li>
-</ol>
+        <h3 id="监视器"><a class="markdownIt-Anchor" href="#监视器"></a> 监视器</h3>
+<p>通过执行<code>MONITOR</code>命令，客户端将自己变成一个监视器，实时的接收并打印服务器当前处理的命令请求的相关信息</p>
+<p>每当一个客户端向服务器发送命令，服务器处理后，还会向所有监视器发送命令信息</p>
+<p>当客户端发送<code>MONITOR</code>命令时，客户端的REDIS_MONITOR标志会被打开，并且客户端对象被添加到monitors链表尾部</p>
+<p>服务器处理命令前，会调用函数将命令发送给各个监视器</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E8%B7%B3%E8%A1%A8/" data-id="cknd877zo000n0kvx3c1z5ulh" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/04/20/redis/redis%E7%9B%91%E8%A7%86%E5%99%A8/" data-id="cknslnnyv000h1svx3lnu731l" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
@@ -161,19 +131,19 @@
     
 <nav id="article-nav">
   
-    <a href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E5%AF%B9%E8%B1%A1%E7%B1%BB%E5%9E%8B%E5%92%8C%E7%BC%96%E7%A0%81/" id="article-nav-newer" class="article-nav-link-wrap">
+    <a href="/2021/04/20/redis/redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" id="article-nav-newer" class="article-nav-link-wrap">
       <strong class="article-nav-caption">上一篇</strong>
       <div class="article-nav-title">
         
-          redis对象类型和编码
+          redis数据结构
         
       </div>
     </a>
   
   
-    <a href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E5%AD%97%E5%85%B8/" id="article-nav-older" class="article-nav-link-wrap">
+    <a href="/2021/04/20/redis/redis%E6%85%A2%E6%9F%A5%E8%AF%A2%E6%97%A5%E5%BF%97/" id="article-nav-older" class="article-nav-link-wrap">
       <strong class="article-nav-caption">下一篇</strong>
-      <div class="article-nav-title">redis字典</div>
+      <div class="article-nav-title">redis慢查询日志</div>
     </a>
   
 </nav>
@@ -222,7 +192,7 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>65</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>64</strong><br>文章</div></a>
       <a href="/categories"><div><strong>10</strong><br>分类</div></a>
       <a href="/tags"><div><strong>15</strong><br>标签</div></a>
     </div>

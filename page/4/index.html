@@ -44,7 +44,7 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>65</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>64</strong><br>文章</div></a>
       <a href="/categories"><div><strong>10</strong><br>分类</div></a>
       <a href="/tags"><div><strong>15</strong><br>标签</div></a>
     </div>
@@ -71,62 +71,6 @@
 </div>
 
         <section id="main">
-  
-    <article id="post-spring/自定义注解" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/26/spring/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/" class="article-date">
-  <time class="post-time" datetime="2021-03-26T06:25:40.999Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">26</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/26/spring/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/">自定义注解</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/spring/">spring</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="自定义注解"><a class="markdownIt-Anchor" href="#自定义注解"></a> 自定义注解</h4>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设定声明周期 SOURCE:源代码java期  CLASS:class类期间  RUNTIME:运行期</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="comment">// 指定注解位置TYEP FIELD METHOD PARAMETER CONSTRUCTOR LOCAL_VARIABLE ANNOTATION_TYPE PACKAGE TYPE_PARAMETER TYPE_USE</span></span><br><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Slorui &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 不填default 必须@Slorui(&quot;XX&quot;) value不用显示写出来</span></span><br><span class="line">	<span class="comment">// 如果多个属性，value必须写出来</span></span><br><span class="line">	<span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> &quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">age</span><span class="params">()</span> <span class="keyword">default</span> 2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/26/spring/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/" data-id="ckmromksh0005awvxdli57uk1" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
   
     <article id="post-spring/源码编译" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -1148,6 +1092,97 @@
 
 
   
+    <article id="post-计算机网络/2.物理层" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2.%E7%89%A9%E7%90%86%E5%B1%82/" class="article-date">
+  <time class="post-time" datetime="2021-03-21T08:53:05.521Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">21</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2.%E7%89%A9%E7%90%86%E5%B1%82/">物理层</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/">计算机网络</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id=""><a class="markdownIt-Anchor" href="#"></a> </h3>
+<h3 id="物理层"><a class="markdownIt-Anchor" href="#物理层"></a> 物理层</h3>
+<h4 id="传输媒体"><a class="markdownIt-Anchor" href="#传输媒体"></a> 传输媒体</h4>
+<p>导引型传输媒体：双绞线、同轴电缆、光纤</p>
+<p>非导引型传输媒体：微波通信(2-40GHZ)、无线电波、红外线、可见光</p>
+<h4 id="协议任务"><a class="markdownIt-Anchor" href="#协议任务"></a> 协议任务</h4>
+<p><img src="/images/image-20210305143849954.png" alt="image-20210305143849954" /></p>
+<p>物理层考虑的是怎样才能再连接计算机的传输媒体上传输数据比特流</p>
+<h4 id="传输方式"><a class="markdownIt-Anchor" href="#传输方式"></a> 传输方式</h4>
+<p>串行传输：数据一个比特一个比特的发   远距离传输采用串行传输</p>
+<p>并行传输：多个比特同时发送，需要n条传输线路、计算机内部总线等采用并行传输</p>
+<p>同步传输：发送方和接收方的时钟频率同步保证不会出现误差累积</p>
+<p>​	1.外同步：收发双发加一条单独的时钟信号先</p>
+<p>​	2.内同步：发送方将时钟同步信号编码到发送的数据中，如曼彻斯特编码</p>
+<p>异步传输：以字节为单位独立传输，接受发从每个字节起始处对字节内比特实现同步，所以每个字节前后要加上起始位和结束位，异步是指字节之间异步</p>
+<p><img src="/images/image-20210305144617911.png" alt="image-20210305144617911" /></p>
+<p>单向通信：</p>
+<p>双向交替通信：</p>
+<p>双向同步通信：</p>
+<h4 id="编码与调制"><a class="markdownIt-Anchor" href="#编码与调制"></a> 编码与调制</h4>
+<p>编码：把数字/模拟信号变为数字信号</p>
+<p>调制：把数字/模拟信号变为模拟信号</p>
+<p>码元：代表不同离散数值的基本波形</p>
+<p>信道：一般是传输媒体中的传递通道</p>
+<p>计算机一般采用将数字基带信号编码调制再发送</p>
+<p><img src="/images/image-20210305144944031.png" alt="image-20210305144944031" /></p>
+<p>常见编码：</p>
+<p><img src="/images/image-20210305145223370.png" alt="image-20210305145223370" /></p>
+<p>基本调制：</p>
+<p><img src="/images/image-20210305145258592.png" alt="image-20210305145258592" /></p>
+<p>混合调制：使一个码元包含多个比特信息</p>
+<h4 id="信道极限容量"><a class="markdownIt-Anchor" href="#信道极限容量"></a> 信道极限容量</h4>
+<p>传输失真：<img src="/images/image-20210305145421893.png" alt="image-20210305145421893" /></p>
+<p>乃式准则：为了避免码间干扰，传输速度是有上限的</p>
+<p><img src="/images/image-20210305145602936.png" alt="image-20210305145602936" /></p>
+<p>香农公式：带宽受限且有高斯白噪声干扰的信道的极限信息速传输速率</p>
+<p><img src="/images/image-20210305145656909.png" alt="image-20210305145656909" /></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/21/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/2.%E7%89%A9%E7%90%86%E5%B1%82/" data-id="ckmk7003r00124kvx3nqk9mn2" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/" rel="tag">计算机网络</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
 
 
   <nav id="page-nav">
@@ -1192,7 +1227,7 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>65</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>64</strong><br>文章</div></a>
       <a href="/categories"><div><strong>10</strong><br>分类</div></a>
       <a href="/tags"><div><strong>15</strong><br>标签</div></a>
     </div>

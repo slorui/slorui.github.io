@@ -44,7 +44,7 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>65</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>64</strong><br>文章</div></a>
       <a href="/categories"><div><strong>10</strong><br>分类</div></a>
       <a href="/tags"><div><strong>15</strong><br>标签</div></a>
     </div>
@@ -72,12 +72,12 @@
 
         <section id="main">
   
-    <article id="post-redis/新建文件夹/redis发布订阅" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-redis/redis持久化" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/" class="article-date">
-  <time class="post-time" datetime="2021-04-02T06:22:50.062Z" itemprop="datePublished">
+    <a href="/2021/04/06/redis/redis%E6%8C%81%E4%B9%85%E5%8C%96/" class="article-date">
+  <time class="post-time" datetime="2021-04-06T08:16:16.490Z" itemprop="datePublished">
     <span class="post-month">4月</span><br/>
-    <span class="post-day">02</span>
+    <span class="post-day">06</span>
   </time>
 </a>
    
@@ -89,7 +89,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/">redis发布订阅</a>
+      <a class="article-title" href="/2021/04/06/redis/redis%E6%8C%81%E4%B9%85%E5%8C%96/">redis持久化</a>
     </h1>
   
 
@@ -108,29 +108,60 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="redis发布订阅"><a class="markdownIt-Anchor" href="#redis发布订阅"></a> redis发布订阅</h3>
-<p>redis发布订阅(pub/sub)是一种消息通信模式：发送者(pub)发生信息，订阅者(sub)接收消息。</p>
-<p>redis客户端可以订阅任意数量的频道</p>
-<p><code>subscribe channel</code>  订阅一个频道（如果没有，频道会自动创建），每次等待接收三条信息（消息，频道、内容）</p>
-<p><code>publish cahnnel message</code> 向频道发送一个信息</p>
-<p><code>psubcribe pattern</code> 订阅多个满足pattern的频道</p>
-<p><code>unsubscribe channel</code> 取消订阅</p>
-<p><code>punsubscribe pattern</code>取消满足pattern的频道</p>
-<p>当订阅一个频道后，redis维护一个字典，key就是channel，值是一个链表，维护了订阅频道的客户端</p>
-<p>subscribe就是将客户端添加到channel的链表</p>
-<p>publish向对应的channel链表所有客户端发送消息</p>
-<p>场景：</p>
+        <h3 id="redis-持久化"><a class="markdownIt-Anchor" href="#redis-持久化"></a> redis 持久化</h3>
+<h4 id="rdb持久化"><a class="markdownIt-Anchor" href="#rdb持久化"></a> RDB持久化</h4>
+<p>rdb持久化既可以手动执行，也可以配置定期执行。将数据库状态变成一个压缩的二进制文件（看是否开启压缩）。</p>
+<p><code>SAVE</code>阻塞redis服务器进行创建，阻塞其他请求。</p>
+<p><code>BGSAVE</code>开启子进程创建RDB，会禁用其他的save、bgsave、bgrewriteaof等命令</p>
+<p>因为AOF的更新频率更高，如果开启了AOF，优先使用AOF还原数据。</p>
+<p>redis可以通过配置服务器的save选项，决定服务器多长时间执行一次bgsave命令</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">save 900 1		900秒内至少修改了一次</span><br><span class="line">save 300 10		300秒内至少修改了十次</span><br><span class="line">save 60 10000	60秒内至少修改了10000次</span><br></pre></td></tr></table></figure>
+<p>redis维护了dirty和lastsave</p>
+<p>dirty：距离上一次save进行了多少次修改</p>
+<p>lastsave：上一次save的时间</p>
+<p>redis周期性进行检测是否满足save选项，满足就执行bgsave命令。</p>
+<h5 id="rdb文件结构"><a class="markdownIt-Anchor" href="#rdb文件结构"></a> rdb文件结构</h5>
+<p><img src="/images/image-20210406162854872.png" alt="image-20210406162854872" /></p>
+<p>REDIS：记录着REDIS这几个字符，检测是否是RDB文件</p>
+<p>db_version：保存redis版本</p>
+<p>databases：保存数据库的数据</p>
+<p>EOF：结束符</p>
+<p>check_sum：检测rdb文件是否损坏或出错</p>
+<p><img src="/images/image-20210406163115354.png" alt="image-20210406163115354" /></p>
+<p>databases部分由SELECTDB+数据库编号+键值对组成（包含过期时间）。</p>
+<p><img src="/images/image-20210406163230536.png" alt="image-20210406163230536" /></p>
+<p><img src="/images/image-20210406163445154.png" alt="image-20210406163445154" /></p>
+<p>其他类型的存储方式略</p>
+<h4 id="aof持久化"><a class="markdownIt-Anchor" href="#aof持久化"></a> AOF持久化</h4>
+<p>AOF通过保存redis服务器执行的写命令记录数据库状态。</p>
+<p>AOF持久化实现分为：</p>
 <ol>
-<li>实时消息系统</li>
-<li>实时聊天（频道当作聊天室）</li>
-<li>订阅、关注系统都可以</li>
+<li>命令追加：执行一个命令后，会以协议格式将命令追加到redisServer的aof_buf缓冲区末尾</li>
+<li>文件写入：每个服务器Loop周期中，会调用flushAppednOnlyFile（），考虑是否将缓冲区内容保存到文件</li>
+<li>文件同步：将系统缓冲区内容刷到磁盘
+<ol>
+<li>always：每次都将缓冲区内容写入到AOF文件并同步</li>
+<li>everysec：将缓冲区内容写入系统缓冲区，如果距离上次同步超过1秒，进行同步。同步由一个线程专门执行</li>
+<li>no：写入aof文件，不进行同步。</li>
 </ol>
-<p>稍微复杂的场景使用消息中间件MQ做</p>
+</li>
+</ol>
+<p>写入：用户调用write（）函数，将数据写入文件，操作系统会写入缓冲区，等待之后写入磁盘</p>
+<p>同步：强制刷新缓冲区内容到磁盘</p>
+<p>aof文件载入：</p>
+<ol>
+<li>创建一个不带网络连接的伪客户端（reids命令只能再客户端指向）</li>
+<li>从aof文件取出一条写命令指向</li>
+</ol>
+<p>aof重写：</p>
+<p>为了解决aof文件体积膨胀问题，reids提高了aof重写功能。创建一个新的aof文件替代旧的aof文件，新的aof不保存冗余命令。</p>
+<p>新的aof文件并不读取旧aof文件，直接读取数据库状态，然后创建新的插入操作即可（对于多元素的键，如果数量超过设定的常量64，将变成多条写入语句）。</p>
+<p>redis重写在子进程执行，这时服务器的命令会保存到aof缓冲区，最后将aof缓冲区也写入aof文件</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E5%8F%91%E5%B8%83%E8%AE%A2%E9%98%85/" data-id="cknd877zn000k0kvxd9f5fn85" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/04/06/redis/redis%E6%8C%81%E4%B9%85%E5%8C%96/" data-id="ckn63k6o800004wvx2pdc5u6s" class="article-share-link">分享</a>
       
       
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
@@ -144,12 +175,12 @@
 
 
   
-    <article id="post-redis/新建文件夹/redis事务" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+    <article id="post-redis/redis数据库" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
-    <a href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E4%BA%8B%E5%8A%A1/" class="article-date">
-  <time class="post-time" datetime="2021-04-02T06:02:03.208Z" itemprop="datePublished">
+    <a href="/2021/04/06/redis/redis%E6%95%B0%E6%8D%AE%E5%BA%93/" class="article-date">
+  <time class="post-time" datetime="2021-04-06T07:39:56.843Z" itemprop="datePublished">
     <span class="post-month">4月</span><br/>
-    <span class="post-day">02</span>
+    <span class="post-day">06</span>
   </time>
 </a>
    
@@ -161,7 +192,7 @@
         
   
     <h1 itemprop="name">
-      <a class="article-title" href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E4%BA%8B%E5%8A%A1/">redis事务</a>
+      <a class="article-title" href="/2021/04/06/redis/redis%E6%95%B0%E6%8D%AE%E5%BA%93/">redis数据库</a>
     </h1>
   
 
@@ -180,222 +211,287 @@
     
     <div class="article-entry" itemprop="articleBody">
       
-        <h3 id="redis事务"><a class="markdownIt-Anchor" href="#redis事务"></a> redis事务</h3>
-<p>redis事务的本质：一直命令的集合。一个事务中所有命令被序列化，事务执行过程种，按顺序执行。</p>
-<p>一次性、顺序写、排他性执行一些里列的命令</p>
-<p><font color='red'> redis单条命令保存原子性，但事务不保证原子性</font></p>
-<p><font color='red'>redis事务没有隔离级别的概念，命令会进入队列，只有发起执行时才执行</font></p>
-<p>reids的事务：</p>
+        <h3 id="redis数据库"><a class="markdownIt-Anchor" href="#redis数据库"></a> redis数据库</h3>
+<h4 id="91-服务器中的数据库"><a class="markdownIt-Anchor" href="#91-服务器中的数据库"></a> 9.1 服务器中的数据库</h4>
+<p>redisServer对象中保存着一个数据库数组，数组的内容是每个数据库的对象。</p>
+<p>redis启动时根据dbnum决定数据库创建数目</p>
+<h4 id="92-切换数据库"><a class="markdownIt-Anchor" href="#92-切换数据库"></a> 9.2 切换数据库</h4>
+<p><code>select x</code>切换到x数据库</p>
+<p>客户端对象redisClient保存着当前客户端对应的数据库指针，select就是切换该指针的值</p>
+<p><font color='red'>如果仔其他客户端执行redis命令，一定要显式执行select，防止操作错误数据库</font></p>
+<h4 id="93-数据库键空间"><a class="markdownIt-Anchor" href="#93-数据库键空间"></a> 9.3 数据库键空间</h4>
+<p>每个redisDb对象保存着一个字典对象（键空间），字典内部存着当前数据库的所有键值对。</p>
+<p>读写键空间的维护</p>
+<ol>
+<li>读取一个键后，服务器会根据key是否存在更新hit和miss</li>
+<li>读取一个键后，会更新键的LRU</li>
+<li>如果键过期，删除该键，再执行后续操作</li>
+<li>如果watch了该键，对该键的修改会把该键标记为dirty，每次修改dirty+1</li>
+<li>如果开启了数据库通知功能，发送数据库通知</li>
+</ol>
+<h4 id="94-键的过期时间"><a class="markdownIt-Anchor" href="#94-键的过期时间"></a> 9.4 键的过期时间</h4>
+<p>无论设置的时间单位是什么，最终都会化成毫秒</p>
+<p>redisDb的expires字典保存了键的过期时间。key是数据库键，value是long long类型的整数，保存了过期时间。</p>
+<p>键的剩余时间是过期时间-当前时间计算得出的。</p>
+<p>过期删除策略：</p>
+<ol>
+<li>
+<p>定时策略：创建一个定时器进行，过期就删除。对于内存友好，cpu不友好。</p>
+</li>
+<li>
+<p>惰性删除：取出键时才删除。对cpu友好，对内存不友好，相对于内存泄漏。</p>
+<p>每个函数执行前执行<code>expireIfNeeded</code>，判断键是否存在</p>
+</li>
+<li>
+<p>定期删除：每过一段时间进行一次删除操作，限制删除的时间的频率。难以确定时长和频率。</p>
+<p>定期遍历所有数据库，选择一部分键检测，删除过期键</p>
+</li>
+</ol>
+<p>redis采用惰性删除和定期删除。</p>
+<h4 id="95-aof和rdb对过期键的处理"><a class="markdownIt-Anchor" href="#95-aof和rdb对过期键的处理"></a> 9.5 AOF和RDB对过期键的处理</h4>
+<p>生成rdb文件时，如果键过期，不会被保存。</p>
+<p>载入rdb文件时：</p>
+<ol>
+<li>如果服务器以主服务器运行，程序会对所有键检查，忽略过期键。</li>
+<li>如果服务器以从服务器运行，所有键都被载入。当主服务器同步时，从服务器会被清空，不影响。</li>
+</ol>
+<p>当以AOF持久化模式运行时，键未被删除，不会有影响。当过期键被删除时，程序会对aof追加一个del命令。记录该键删除</p>
+<p>当进行AOF重写时，数据库会对键检查，过期的键不被保存到重写的AOF文件</p>
+<p>当服务器运行再复制模式下，从服务器过期键删除由主服务器控制</p>
+<ol>
+<li>主服务器删除一个过期键，向从服务器发送del命令</li>
+<li>从服务器执行读，碰到过期键也不删除，当作未过期进行处理，返回该值</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/06/redis/redis%E6%95%B0%E6%8D%AE%E5%BA%93/" data-id="ckn63k6r000054wvx128h4v89" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-linux/linux网络IO" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/06/linux/linux%E7%BD%91%E7%BB%9CIO/" class="article-date">
+  <time class="post-time" datetime="2021-04-06T05:20:52.162Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">06</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/06/linux/linux%E7%BD%91%E7%BB%9CIO/">linux网络IO</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/linux/">linux</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="linux网络io"><a class="markdownIt-Anchor" href="#linux网络io"></a> linux网络IO</h3>
+<p>数据需要从硬件设备拷贝到内核空间的缓冲区，然后从内核缓冲区拷贝到用户进程空间。</p>
+<h4 id="bio"><a class="markdownIt-Anchor" href="#bio"></a> BIO</h4>
+<p>在进程空间中调用recvfrom，其系统调用直到数据从硬件设备拷贝到内核缓冲区并且从内核拷贝到用户进程空间时才会返回，在此期间一直是阻塞的，进程在从调用recvfrom到他返回这段时间一直都是阻塞的，故称为阻塞IO。</p>
+<p><img src="/images/image-20210406132711360.png" alt="image-20210406132711360" /></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">ServerSocket server = <span class="keyword">null</span>;</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    server = <span class="keyword">new</span> ServerSocket(<span class="number">9090</span>);</span><br><span class="line">    <span class="comment">// server.bind(new InetSocketAddress(&quot;localhost&quot;,9009));</span></span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">        Socket client = server.accept();</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">                 * 每次获取客户端后启动线程执行任务，防止了recv阻塞</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">        <span class="keyword">new</span> Thread(<span class="keyword">new</span> Runnable() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">                System.out.println(<span class="string">&quot;accept new client&quot;</span>);</span><br><span class="line">                <span class="keyword">try</span> &#123;</span><br><span class="line">                    <span class="keyword">byte</span>[] buffer = <span class="keyword">new</span> <span class="keyword">byte</span>[<span class="number">1024</span>];</span><br><span class="line">                    InputStream in = client.getInputStream();</span><br><span class="line">                    <span class="keyword">int</span> len = <span class="number">0</span>;</span><br><span class="line">                    <span class="keyword">while</span>( (len = in.read(buffer)) != -<span class="number">1</span>)&#123;</span><br><span class="line">                        System.out.write(buffer,<span class="number">0</span>,len);</span><br><span class="line">                    &#125;</span><br><span class="line">                    System.out.println();</span><br><span class="line">                &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">                    e.printStackTrace();</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;).start();</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        server.close();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="nio"><a class="markdownIt-Anchor" href="#nio"></a> NIO</h4>
+<p>用户进程发起一个recvfrom调用的时候，如果内核缓冲区的数据还没有准备好(没有完全从硬件拷贝到内核)，那么他不会阻塞用户进程，而是立刻返回一个error。用户发起一个recvfrom操作之后，不需要等待，而是马上会得到一个结果，用户可以判断这个结果，如果是一个error，表示数据还没有准备好，于是可以再次发起recvfrom操作，一旦内核数据准备好了，就可以把数据拷贝到用户进程空间，然后返回。</p>
+<p><img src="/images/image-20210406132854009.png" alt="image-20210406132854009" /></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">List&lt;SocketChannel&gt; list = <span class="keyword">new</span> ArrayList&lt;&gt;();</span><br><span class="line">ServerSocketChannel server = <span class="keyword">null</span>;</span><br><span class="line">ByteBuffer buffer = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">    server = ServerSocketChannel.open();</span><br><span class="line">    server.bind(<span class="keyword">new</span> InetSocketAddress(<span class="string">&quot;localhost&quot;</span>,<span class="number">9090</span>));</span><br><span class="line">    server.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">    <span class="keyword">while</span> (<span class="keyword">true</span>)&#123;</span><br><span class="line">        SocketChannel client = server.accept();</span><br><span class="line">        <span class="keyword">if</span>(client == <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                Thread.sleep(<span class="number">5000</span>);</span><br><span class="line">            &#125; <span class="keyword">catch</span> (InterruptedException e) &#123;</span><br><span class="line">                e.printStackTrace();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">            System.out.println(<span class="string">&quot;accept new client&quot;</span>);</span><br><span class="line">            client.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">            list.add(client);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">for</span> (SocketChannel channel : list)&#123;</span><br><span class="line">            <span class="keyword">if</span> (channel.read(buffer) != <span class="number">0</span>)&#123;</span><br><span class="line">                <span class="comment">/**</span></span><br><span class="line"><span class="comment">                         * 将buffer读模式变为写模式，读写指针回到buffer头部</span></span><br><span class="line"><span class="comment">                         * 只能读取到之前写入的长度 即limit位置（写模式limit是最大容量）</span></span><br><span class="line"><span class="comment">                         */</span></span><br><span class="line">                buffer.flip();</span><br><span class="line">                <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[buffer.limit()];</span><br><span class="line">                buffer.get(bytes);</span><br><span class="line">                System.out.println(<span class="keyword">new</span> String(bytes).trim());</span><br><span class="line">                buffer.clear();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">    e.printStackTrace();</span><br><span class="line">&#125;<span class="keyword">finally</span> &#123;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        server.close();</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="io复用"><a class="markdownIt-Anchor" href="#io复用"></a> IO复用</h4>
+<p>Linux 提供了select/poll/epoll，进程将一个或多个fd传递给select或poll系统调用，并且阻塞在select或poll方法上。同时，kernel会侦测所有select负责的fd是否处于就绪状态，如果有任何一个fd就绪，select或poll就会返回，这个时候用户进程再调用recvfrom，将数据从内核缓冲区拷贝到用户进程空间。<br />
+<img src="/images/image-20210406133321695.png" alt="image-20210406133321695" /></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">    Selector selector = <span class="keyword">null</span>;</span><br><span class="line">    <span class="keyword">try</span> &#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">             * 创建一个Selector和SocketServer</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">        selector = Selector.open();</span><br><span class="line">        ServerSocketChannel server = ServerSocketChannel.open();</span><br><span class="line">        server.bind(<span class="keyword">new</span> InetSocketAddress(<span class="string">&quot;localhost&quot;</span>,<span class="number">9090</span>));</span><br><span class="line">        server.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">             * 服务器注册Selector，处理模式为accept的请求</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">        server.register(selector, SelectionKey.OP_ACCEPT);</span><br><span class="line">        System.out.println(<span class="string">&quot;create server&quot;</span>);</span><br><span class="line">        <span class="keyword">while</span> (!Thread.currentThread().isInterrupted())&#123;</span><br><span class="line">            <span class="comment">/**</span></span><br><span class="line"><span class="comment">                 * 进行查询是否有accept，会阻塞</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">            selector.select();</span><br><span class="line">            <span class="comment">/**</span></span><br><span class="line"><span class="comment">                 * 获取所有有时间的key</span></span><br><span class="line"><span class="comment">                 */</span></span><br><span class="line">            Set&lt;SelectionKey&gt; selectionKeys = selector.selectedKeys();</span><br><span class="line">            Iterator&lt;SelectionKey&gt; iterator = selectionKeys.iterator();</span><br><span class="line">            SelectionKey key = <span class="keyword">null</span>;</span><br><span class="line">            <span class="keyword">while</span> (iterator.hasNext())&#123;</span><br><span class="line">                key = iterator.next();</span><br><span class="line">                <span class="comment">/**</span></span><br><span class="line"><span class="comment">                     * 删除重复key 防止重复处理</span></span><br><span class="line"><span class="comment">                     */</span></span><br><span class="line">                iterator.remove();</span><br><span class="line">                handlerKey(key,selector);</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">        &#125;</span><br><span class="line">    &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">        e.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">handlerKey</span><span class="params">(SelectionKey key,Selector selector)</span> <span class="keyword">throws</span> IOException </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (key.isValid())&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">             * 如果是accept，创建client并注册到selector</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">        <span class="keyword">if</span> (key.isAcceptable())&#123;</span><br><span class="line">            ServerSocketChannel channel = (ServerSocketChannel)key.channel();</span><br><span class="line">            SocketChannel client = channel.accept();</span><br><span class="line">            client.configureBlocking(<span class="keyword">false</span>);</span><br><span class="line">            client.register(selector,SelectionKey.OP_READ);</span><br><span class="line">            System.out.println(<span class="string">&quot;create new client&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">             * 如果是read，判断缓冲区长度</span></span><br><span class="line"><span class="comment">             * 如果大于0，进行读取</span></span><br><span class="line"><span class="comment">             * 如果等于0，表水数据位准备好</span></span><br><span class="line"><span class="comment">             * 如果小于0，断开连接</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">        <span class="keyword">if</span> (key.isReadable())&#123;</span><br><span class="line">            SocketChannel client = (SocketChannel) key.channel();</span><br><span class="line">            ByteBuffer buffer = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">            <span class="keyword">int</span> len = client.read(buffer);</span><br><span class="line">            <span class="keyword">if</span> (len &gt; <span class="number">0</span>)&#123;</span><br><span class="line">                buffer.flip();</span><br><span class="line">                <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[buffer.remaining()];</span><br><span class="line">                buffer.get(bytes);</span><br><span class="line">                System.out.write(bytes);</span><br><span class="line">                buffer.clear();</span><br><span class="line">            &#125;<span class="keyword">else</span> <span class="keyword">if</span>(len == <span class="number">0</span>) &#123;</span><br><span class="line">                ;</span><br><span class="line">            &#125;<span class="keyword">else</span> &#123;</span><br><span class="line">                key.cancel();</span><br><span class="line">                client.close();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h5 id="select"><a class="markdownIt-Anchor" href="#select"></a> select</h5>
+<p>select需要使用两个system call (select 和 recvfrom)。select就是巧妙的利用等待队列机制让用户进程适当在没有资源可读/写时睡眠，有资源可读/写时/异常时唤醒。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">select</span><span class="params">(<span class="keyword">int</span> maxfdp1, fd_set *readset, fd_set *writeset, fd_set *exceptset,struct timeval *timeout)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>驱动程序提供的poll函数首先会将调用select的用户进程插入到该设备驱动对应资源的等待队列(如读/写等待队列)，然后返回一个bitmask告诉select当前资源哪些可用。当select循环遍历完所有fd_set内指定的文件描述符对应的poll函数后，如果没有一个资源可用(即没有一个文件可供操作)，则select让该进程睡眠。一直等到有资源可用为止，进程被唤醒(或者timeout)继续往下执行。驱动程序维护了针对自身资源读写的等待队列。当设备驱动发现自身资源变为可读写并且有进程睡眠在该资源的等待队列上时，就会唤醒这个资源等待队列上的进程。</p>
+<p>select返回信息：</p>
 <ul>
-<li>开启事务（multi）</li>
-<li>命令入队（使用命令）</li>
-<li>执行事务（exec）</li>
-<li>取消事务(discard)</li>
+<li>对我们的要求已经做好准备的描述符的个数</li>
+<li>对于三种条件哪些描述符已经做好准备.(读，写，异常)</li>
 </ul>
-<p><font color='red'> redis事务编译时异常，事务会取消</font></p>
-<p><font color='red'> redis事务运行时异常，错误命令会报错，不会影响其他命令的执行</font>（需要加锁监控）</p>
-<p><code>watch key</code>对key加监视，乐观锁，当执行事务时发现key被修改，事务执行失败</p>
-<p><code>unwatch</code>放弃监视</p>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E4%BA%8B%E5%8A%A1/" data-id="cknd877zk000b0kvx8lme2pgy" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-redis/新建文件夹/redis五大数据类型" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" class="article-date">
-  <time class="post-time" datetime="2021-04-02T05:29:25.357Z" itemprop="datePublished">
-    <span class="post-month">4月</span><br/>
-    <span class="post-day">02</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/">redis五大数据类型</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="redis五大数据类型"><a class="markdownIt-Anchor" href="#redis五大数据类型"></a> redis五大数据类型</h3>
-<p>redis是一个内存数据结构存储系统，可以作为数据库、缓存和消息中间件MQ。</p>
-<p>redis支持多种数据结构：字符串（String）、散列（hash）、列表（list）、集合（sets）、有序集合（sorted sets）和范围查询，bitmaps、hypeloglogs和地理空间（geospatial）索引半径查询。</p>
-<p>redis内置了复制（replication），LUA脚本（lua scripting），LRU驱动事件（LRU eviction）、事务（transaction）和不同级别的持久化（persistence）</p>
-<p>redis通过哨兵（Sentinel）和自动分区（Cluster）提供高可用性</p>
-<h4 id="string"><a class="markdownIt-Anchor" href="#string"></a> String</h4>
-<p><code>append key val</code>往key的value后面追加val，如果不存在key，相对于<code>set key</code></p>
-<p><code>strlen key</code>获取key的value的字符串长度</p>
-<p><code>incr key</code> key的value值加1</p>
-<p><code>derc key</code>key的value值减1</p>
-<p><code>incrby key size</code>key的value值加size</p>
-<p><code>decrby key size</code>key的value值减size</p>
-<p><code>getrange key start stop</code>截取字符串，可以得到stop位置，stop为-1表示全部字符串</p>
-<p><code>setrange key start val</code>用val替换key的value从start开始的值</p>
-<p><code>setex(set with expire) key second value</code>设置带过期事件的字符串</p>
-<p><code>setnx(set if not exist) key value</code>如果不存在就设置，分布式锁常常使用</p>
-<p><code>mset k1 v1 k2 v2 k3 v3</code>一次性设置多个 <code>mset user:1:key value user:1:key1 value1</code></p>
-<p><code>mget k1 k2 k3</code>一次获取多个</p>
-<p><code>msetxnx k1 v1 k2 v2</code>一次设置多个，如果不存在就设置，原子性操作，一个失败全部失败</p>
-<p><code>getset key value</code>先获取再设置，不存在就返回nil，存在就获取原值，并设置为新值</p>
-<p>使用场景：value是字符串，还可以是数字</p>
+<p>select有如下缺点</p>
 <ul>
-<li>计数器</li>
-<li>统计多单位的数量 uid:keys::value</li>
-<li>粉丝数</li>
-<li>对象缓存存储</li>
+<li>单个进程能够监视的文件描述符的数量存在最大限制，通常是1024，当然可以更改数量，但由于select采用轮询的方式扫描文件描述符，文件描述符数量越多，性能越差；(在linux内核头文件中，有这样的定义：#define __FD_SETSIZE 1024)</li>
+<li>内核 / 用户空间内存拷贝问题，select需要复制大量的句柄数据结构，产生巨大的开销；</li>
+<li>select返回的是含有整个句柄的数组，应用程序需要遍历整个数组才能发现哪些句柄发生了事件；</li>
+<li>应用程序如果没有完成对一个已经就绪的文件描述符进行IO操作，那么之后每次select调用还是会将这些文件描述符通知进程。</li>
 </ul>
+<h5 id="poll"><a class="markdownIt-Anchor" href="#poll"></a> poll</h5>
+<p>和select一样，如果事件未发生，则等待事件发生，放弃cpu，直到被唤醒。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">nt <span class="title">poll</span> <span class="params">(struct pollfd *fds, <span class="keyword">unsigned</span> <span class="keyword">int</span> nfds, <span class="keyword">int</span> timeout)</span></span>;</span><br></pre></td></tr></table></figure>
+<p>poll用一个pollfd链表代替了select中的三个参数。此外，他没有最大监视文件的限制。</p>
+<p>select和poll都需要在返回后，通过遍历文件描述符来获取已经就绪的socket。事实上，同时连接的大量客户端在一时刻可能只有很少的处于就绪状态，因此随着监视的描述符数量的增长，其效率也会线性下降。</p>
+<h5 id="epoll"><a class="markdownIt-Anchor" href="#epoll"></a> epoll</h5>
+<p>内核&gt;=2.6，eopll分成了三个系统调用</p>
+<ol>
+<li>调用epoll_create()建立一个epoll对象(在epoll文件系统中为这个句柄对象分配资源)</li>
+<li>调用epoll_ctl向epoll对象中添加这100万个连接的套接字</li>
+<li>调用epoll_wait收集发生的事件的连接</li>
+</ol>
+<p><img src="/images/image-20210406134602223.png" alt="image-20210406134602223" /></p>
+<p>epoll实现机理的三大核心是：<strong>mmap、红黑树、链表。</strong></p>
+<ul>
+<li>mmap将用户空间的一块地址和内核空间的一块地址同时映射到相同的一块物理内存地址（不管是用户空间还是内核空间都是虚拟地址，最终要通过地址映射映射到物理地址），使得这块物理内存对内核和对用户均可见，减少用户态和内核态之间的数据交换。内核可以直接看到epoll监听的句柄，效率高。下面的红黑树和链表，都存储在这样的内存中。</li>
+<li>epoll在实现上采用红黑树去存储所有套接字，当添加或者删除一个套接字时（epoll_ctl），都在红黑树上去处理，红黑树本身插入和删除性能比较好，时间复杂度O(logN)。</li>
+<li>红黑树中每插入一个事件，该事件都会与相应的设备（网卡）驱动程序建立回调关系，当相应的事件发生后，就会调用这个回调函数（ep_poll_callback）, 这个回调函数负责就所把这个事件添加到rdllist这个双向链表中。一旦有事件发生，epoll就会将该事件添加到双向链表中。那么当我们调用epoll_wait时，epoll_wait只需要检查rdlist双向链表中是否有存在注册的事件，效率非常可观</li>
+</ul>
+<p>操作系统启动时，就会初始化epoll系统。主要工作是第一为epoll机制创造其专用的文件系统（调用epollcreate就是在这个文件系统中创建文件），第二就是为其准备一个专用的告诉cache区。我们的文件句柄被以红黑树的形式存放在这里。</p>
+<p>每一个epoll对象都有一个独立的eventpoll结构体，用于存放通过epoll_ctl方法向epoll对象中添加进来的事件。这些事件都会挂载在上述红黑树中，如此，重复添加的事件就可以通过红黑树而高效的识别出来(红黑树的插入时间效率是lgn，其中n为树的高度)。<br />
+而所有添加到epoll对象中的事件都会与设备(网卡)驱动程序建立回调关系，也就是说，当相应的事件发生时会调用这个回调方法。这个回调方法在内核中叫ep_poll_callback,它会将发生的事件添加到rdlist双链表中。</p>
+<p>epoll 支持两种模式,Edge Triggered边缘触发，仅当状态发生变化时才会通知(简称 ET) 和 Level Triggered条件触发，只要还有没有处理的事件就会一直通知(简称 LT)。JAVA NIO便采用了LT模式，NETTY自己实现的EPOLL。JAVA库则使用ET模式。</p>
+<p>**仅当对方的动作(发出数据,关闭连接等)造成的事件才能导致状态发生变化,而本方协议栈中已经处理的事件(包括接收了对方的数据,接收了对方的主动连接请求)并不是造成状态发生变化的必要条件,状态变化一定是对方造成的.所以在ET模式下的,必须一直处理到出错或者完全处理完毕,才能进行下一个动作,否则可能会发生错误. **</p>
+<p>LT(level triggered)是缺省的工作方式，并且同时支持block和no-block socket.在这种做法中，内核告诉你一个文件描述符是否就绪了，然后你可以对这个就绪的fd进行IO操作。如果你不作任何操作，内核还是会继续通知你的，所以，这种模式编程出错误可能性要小一点。传统的select/poll都是这种模型的代表．</p>
+<p>ET(edge-triggered)是高速工作方式，只支持no-block socket。在这种模式下，当描述符从未就绪变为就绪时，内核通过epoll告诉你。然后它会假设你知道文件描述符已经就绪，并且不会再为那个文件描述符发送更多的就绪通知，直到你做了某些操作导致那个文件描述符不再为就绪状态了(比如，你在发送，接收或者接收请求，或者发送接收的数据少于一定量时导致了一个EWOULDBLOCK 错误）。但是请注意，如果一直不对这个fd作IO操作(从而导致它再次变成未就绪)，内核不会发送更多的通知(only once),不过在TCP协议中，ET模式的加速效用仍需要更多的benchmark确认</p>
+<p>假如有这样一个例子：</p>
+<ol>
+<li>我们已经把一个用来从管道中读取数据的文件句柄(RFD)添加到epoll描述符</li>
+<li>这个时候从管道的另一端被写入了2KB的数据</li>
+<li>调用epoll_wait(2)，并且它会返回RFD，说明它已经准备好读取操作</li>
+<li>然后我们读取了1KB的数据</li>
+<li>调用epoll_wait(2)…</li>
+</ol>
+<p>Edge Triggered 工作模式：<br />
+如果我们在第1步将RFD添加到epoll描述符的时候使用了EPOLLET标志，那么在第5步调用epoll_wait(2)之后将有可能会挂起，因为剩余的数据还存在于文件的输入缓冲区内，而且数据发出端还在等待一个针对已经发出数据的反馈信息。只有在监视的文件句柄上发生了某个事件的时候 ET 工作模式才会汇报事件。因此在第5步的时候，调用者可能会放弃等待仍在存在于文件输入缓冲区内的剩余数据。在上面的例子中，会有一个事件产生在RFD句柄上，因为在第2步执行了一个写操作，然后，事件将会在第3步被销毁。因为第4步的读取操作没有读空文件输入缓冲区内的数据，因此我们在第5步调用 epoll_wait(2)完成后，是否挂起是不确定的。epoll工作在ET模式的时候，必须使用非阻塞套接口，以避免由于一个文件句柄的阻塞读/阻塞写操作把处理多个文件描述符的任务饿死。最好以下面的方式调用ET模式的epoll接口，在后面会介绍避免可能的缺陷。<br />
+i  基于非阻塞文件句柄<br />
+ii  只有当read(2)或者write(2)返回EAGAIN时才需要挂起，等待。但这并不是说每次read()时都需要循环读，直到读到产生一个EAGAIN才认为此次事件处理完成，当read()返回的读到的数据长度小于请求的数据长度时，就可以确定此时缓冲中已没有数据了，也就可以认为此事读事件已处理完成。</p>
+<p>相反的，以LT方式调用epoll接口的时候，它就相当于一个速度比较快的poll(2)，并且无论后面的数据是否被使用，因此他们具有同样的职能。因为即使使用ET模式的epoll，在收到多个chunk的数据的时候仍然会产生多个事件。调用者可以设定EPOLLONESHOT标志，在 epoll_wait(2)收到事件后epoll会与事件关联的文件句柄从epoll描述符中禁止掉。因此当EPOLLONESHOT设定后，使用带有 EPOLL_CTL_MOD标志的epoll_ctl(2)处理文件句柄就成为调用者必须作的事情。</p>
+<p>另外，当使用epoll的ET模型来工作时，当产生了一个EPOLLIN事件后，<br />
+读数据的时候需要考虑的是当recv()返回的大小如果等于请求的大小，那么很有可能是缓冲区还有数据未读完，也意味着该次事件还没有处理完，所以还需要再次读取</p>
+<p>还有，假如发送端流量大于接收端的流量(意思是epoll所在的程序读比转发的socket要快),由于是非阻塞的socket,那么send()函数虽然返回,但实际缓冲区的数据并未真正发给接收端,这样不断的读和发，当缓冲区满后会产生EAGAIN错误(参考man send),同时,不理会这次请求发送的数据.所以,需要封装socket_send()的函数用来处理这种情况,该函数会尽量将数据写完再返回，返回-1表示出错。在socket_send()内部,当写缓冲已满(send()返回-1,且errno为EAGAIN),那么会等待后再重试.这种方式并不很完美,在理论上可能会长时间的阻塞在socket_send()内部,但暂没有更好的办法.</p>
+<h4 id="信号驱动io"><a class="markdownIt-Anchor" href="#信号驱动io"></a> 信号驱动IO</h4>
+<p>首先开启套接口信号驱动IO功能，并通过系统调用sigaction执行一个信号处理函数，此系统调用立即返回。当数据准备就绪时，就为该进程生成一个sigio信号，通过信号回调通知进程。进程调用recvfrom读取数据，将数据从内核缓冲区拷贝到用户进程空间。</p>
+<p><img src="/images/image-20210406140839388.png" alt="image-20210406140839388" /></p>
+<h4 id="异步io"><a class="markdownIt-Anchor" href="#异步io"></a> 异步IO</h4>
+<p>用户进程发起recvfrom操作之后，立刻就可以开始去做其它的事。而另一方面，从kernel的角度，当它收到一个asynchronous read之后，首先它会立刻返回，所以不会对用户进程产生任何block。然后，kernel会等待数据准备完成，然后将数据拷贝到用户内存，当这一切都完成之后，kernel会给用户进程发送一个signal，告诉它read操作完成了。</p>
+<p>这种IO模式与信号驱动IO的区别在于：信号驱动IO由内核通知我们什么时候可以开始一个IO操作，异步IO则由内核告诉我们IO操作何时完成。</p>
+<p><img src="/images/image-20210406140926215.png" alt="image-20210406140926215" /></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AioServer</span> <span class="keyword">implements</span> <span class="title">Runnable</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> </span>&#123;</span><br><span class="line">        AioServer aioServer = <span class="keyword">new</span> AioServer();</span><br><span class="line">        <span class="keyword">new</span> Thread(aioServer).start();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> AsynchronousServerSocketChannel server = <span class="keyword">null</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">             server = AsynchronousServerSocketChannel.open();</span><br><span class="line">             server.bind(<span class="keyword">new</span> InetSocketAddress(<span class="string">&quot;localhost&quot;</span>,<span class="number">9090</span>));</span><br><span class="line">            System.out.println(<span class="string">&quot;create server&quot;</span>);</span><br><span class="line">            CountDownLatch latch = <span class="keyword">new</span> CountDownLatch(<span class="number">1</span>);</span><br><span class="line">            <span class="comment">/**</span></span><br><span class="line"><span class="comment">             * 传入attachment的对象和一个接收处理器</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            server.accept(<span class="keyword">this</span>, <span class="keyword">new</span> AcceptHandler());</span><br><span class="line">            <span class="comment">/**</span></span><br><span class="line"><span class="comment">             * 阻塞线程</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            latch.await();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException | InterruptedException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AcceptHandler</span> <span class="keyword">implements</span> <span class="title">CompletionHandler</span>&lt;<span class="title">AsynchronousSocketChannel</span>, <span class="title">AioServer</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">completed</span><span class="params">(AsynchronousSocketChannel channel, AioServer attachment)</span> </span>&#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;create client&quot;</span>);</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * server接收成功之后再次调用accept去异步接收新的channel到来</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        attachment.server.accept(attachment,<span class="keyword">this</span>);</span><br><span class="line">        ByteBuffer buffer = ByteBuffer.allocate(<span class="number">1024</span>);</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 调用read进行异步读取</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        channel.read(buffer,buffer,<span class="keyword">new</span> ReadHandler(channel));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">failed</span><span class="params">(Throwable exc, AioServer attachment)</span> </span>&#123;</span><br><span class="line">        exc.printStackTrace();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ReadHandler</span> <span class="keyword">implements</span> <span class="title">CompletionHandler</span>&lt;<span class="title">Integer</span>, <span class="title">ByteBuffer</span>&gt; </span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 保存channel对象后续使用</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> AsynchronousSocketChannel channel;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="title">ReadHandler</span><span class="params">(AsynchronousSocketChannel channel)</span></span>&#123;</span><br><span class="line">        <span class="keyword">if</span>(channel != <span class="keyword">null</span>)&#123;</span><br><span class="line">            <span class="keyword">this</span>.channel = channel;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">completed</span><span class="params">(Integer result, ByteBuffer attachment)</span> </span>&#123;</span><br><span class="line">        <span class="comment">/**</span></span><br><span class="line"><span class="comment">         * 执行读取操作</span></span><br><span class="line"><span class="comment">         */</span></span><br><span class="line">        attachment.flip();</span><br><span class="line">        <span class="keyword">byte</span>[] bytes = <span class="keyword">new</span> <span class="keyword">byte</span>[attachment.limit()];</span><br><span class="line">        attachment.get(bytes);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            System.out.write(bytes);</span><br><span class="line">            attachment.clear();</span><br><span class="line">            <span class="comment">/**</span></span><br><span class="line"><span class="comment">             * 再次异步读取</span></span><br><span class="line"><span class="comment">             */</span></span><br><span class="line">            channel.read(attachment,attachment,<span class="keyword">new</span> ReadHandler(channel));</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">failed</span><span class="params">(Throwable exc, ByteBuffer attachment)</span> </span>&#123;</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="keyword">this</span>.channel.close();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (IOException e) &#123;</span><br><span class="line">            e.printStackTrace();</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h4 id="redis"><a class="markdownIt-Anchor" href="#redis"></a> redis</h4>
+<p>Redis 会优先选择时间复杂度为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo stretchy="false">(</mo><mn>1</mn><mo stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">O(1)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord">1</span><span class="mclose">)</span></span></span></span> 的 I/O 多路复用函数作为底层实现</p>
+<p>在socket模型中，不同操作调用后会返回不同的套接字(看做是不同主机之间的进程进行双向通信的端点，简单的说就是通信的两方的一种约定，用套接字中的相关函数来完成通信过程。)类型。socket()方法会返回主动套接字，然后调用listen()方法，将主动套接字转化为监听套接字，此时，可以监听来自客户端的连接请求。最后，调用accept()方法接收到达的客户端连接，并返回已连接套接字。</p>
+<p><img src="/images/image-20210406151123502.png" alt="image-20210406151123502" /></p>
+<p>针对监听套接字，我们可以设置非阻塞模式：当Redis调用accept()但一直未有连接请求到达时，Redis线程可以返回处理其他操作，而不用一直等待。但是，你要注意的是，调用accept()时，已经存在监听套接字了。</p>
+<p>Redis网络框架调用epoll机制，让内核监听这些套接字。此时，Redis线程不会阻塞在某一个特定的监听或已连接套接字上，也就是说，不会阻塞在某一个特定的客户端请求处理上。正因为此，Redis可以同时和多个客户端连接并处理请求，从而提升并发性。</p>
+<p><img src="/images/image-20210406151245606.png" alt="image-20210406151245606" /></p>
+<h4 id="nginx"><a class="markdownIt-Anchor" href="#nginx"></a> nginx</h4>
+<p>nginx 支持多种并发模型，并发模型的具体实现根据系统平台而有所不同。<br />
+在支持多种并发模型的平台上，nginx 自动选择最高效的模型。</p>
+<p>nginx在启动后，在unix系统中会以daemon的方式在后台运行，后台进程包含一个master进程和多个worker进程。我们也可以手动地关掉后台模式，让nginx在前台运行，并且通过配置让nginx取消master进程，从而可以使nginx以单进程方式运行。很显然，生产环境下我们肯定不会这么做，所以关闭后台模式，一般是用来调试用的。所以，我们可以看到，nginx是以多进程的方式来工作的，当然nginx也是支持多线程的方式的，只是我们主流的方式还是多进程的方式，也是nginx的默认方式。nginx采用多进程的方式有诸多好处，所以我就主要讲解nginx的多进程模式吧。</p>
+<img src="/images/image-20210406152918284.png" alt="image-20210406152918284" style="zoom: 80%;" />
+<p>Nginx 服务器，正常运行过程中：</p>
+<p>多进程：一个 Master 进程、多个 Worker 进程。</p>
+<p>Master 进程：管理 Worker 进程。对外接口：接收外部的操作（信号）；对内转发：根据外部的操作的不同，通过信号管理 Worker；监控：监控 Worker 进程的运行状态，Worker 进程异常终止后，自动重启 Worker 进程。</p>
+<p>Worker 进程：所有 Worker 进程都是平等的。实际处理：网络请求，由 Worker 进程处理。Worker 进程数量：在 nginx.conf 中配置，一般设置为核心数，充分利用 CPU 资源，同时，避免进程数量过多，避免进程竞争 CPU 资源，增加上下文切换的损耗。</p>
+<blockquote>
+<ul>
+<li>请求是连接到 Nginx，Master 进程负责处理和转发？</li>
+<li>如何选定哪个 Worker 进程处理请求？请求的处理结果，是否还要经过 Master 进程？</li>
+</ul>
+</blockquote>
+<p><img src="/images/image-20210406153136480.png" alt="image-20210406153136480" /></p>
+<h5 id="nginx最大连接数"><a class="markdownIt-Anchor" href="#nginx最大连接数"></a> nginx最大连接数</h5>
+<p>基础背景：</p>
+<ul>
+<li>Nginx 是多进程模型，Worker 进程用于处理请求。</li>
+<li>单个进程的连接数（文件描述符 fd），有上限（nofile）：ulimit -n。</li>
+<li>Nginx 上配置单个 Worker 进程的最大连接数：worker_connections 上限为 nofile。</li>
+<li>Nginx 上配置 Worker 进程的数量：worker_processes。</li>
+</ul>
+<p>因此，Nginx 的最大连接数：</p>
+<ul>
+<li>Nginx 的最大连接数：Worker 进程数量 x 单个 Worker 进程的最大连接数。</li>
+<li>上面是 Nginx 作为通用服务器时，最大的连接数。</li>
+<li>Nginx 作为反向代理服务器时，能够服务的最大连接数：（Worker 进程数量 x 单个 Worker 进程的最大连接数）/ 2。</li>
+<li>Nginx 反向代理时，会建立 Client 的连接和后端 Web Server 的连接，占用 2 个连接。</li>
+</ul>
+<h5 id="http连接建立和请求处理过程"><a class="markdownIt-Anchor" href="#http连接建立和请求处理过程"></a> HTTP连接建立和请求处理过程</h5>
+<p>HTTP 连接建立和请求处理过程如下：</p>
+<ul>
+<li>Nginx 启动时，Master 进程，加载配置文件。</li>
+<li>Master 进程，初始化监听的 Socket。</li>
+<li>Master 进程，Fork 出多个 Worker 进程。</li>
+<li>Worker 进程，竞争新的连接，获胜方通过三次握手，建立 Socket 连接，并处理请求。</li>
+</ul>
+<h5 id="进程控制"><a class="markdownIt-Anchor" href="#进程控制"></a> 进程控制</h5>
+<p>在nginx启动后，如果我们要操作nginx，要怎么做呢？从上文中我们可以看到，master来管理worker进程，所以我们只需要与master进程通信就行了。master进程会接收来自外界发来的信号，再根据信号做不同的事情。所以我们要控制nginx，只需要通过kill向master进程发送信号就行了。<font color='red'>比如kill -HUP pid，则是告诉nginx，从容地重启nginx，我们一般用这个信号来重启nginx，或重新加载配置，因为是从容地重启，因此服务是不中断的。master进程在接收到HUP信号后是怎么做的呢？首先master进程在接到信号后，会先重新加载配置文件，然后再启动新的worker进程，并向所有老的worker进程发送信号，告诉他们可以光荣退休了。新的worker在启动后，就开始接收新的请求，而老的worker在收到来自master的信号后，就不再接收新的请求，并且在当前进程中的所有未处理完的请求处理完成后，再退出。</font>当然，直接给master进程发送信号，这是比较老的操作方式，nginx在0.8版本之后，引入了一系列命令行参数，来方便我们管理。比如，./nginx -s reload，就是来重启nginx，./nginx -s stop，就是来停止nginx的运行。如何做到的呢？我们还是拿reload来说，我们看到，执行命令时，我们是启动一个新的nginx进程，而新的nginx进程在解析到reload参数后，就知道我们的目的是控制nginx来重新加载配置文件了，它会向master进程发送信号，然后接下来的动作，就和我们直接向master进程发送信号一样了。</p>
+<p>现在，我们知道了当我们在操作nginx的时候，nginx内部做了些什么事情，那么，worker进程又是如何处理请求的呢？我们前面有提到，worker进程之间是平等的，每个进程，处理请求的机会也是一样的。当我们提供80端口的http服务时，一个连接请求过来，每个进程都有可能处理这个连接，怎么做到的呢？首先，每个worker进程都是从master进程fork过来，<font color='red'>在master进程里面，先建立好需要listen的socket（listenfd）之后，然后再fork出多个worker进程。所有worker进程的listenfd会在新连接到来时变得可读，为保证只有一个进程处理该连接，所有worker进程在注册listenfd读事件前抢accept_mutex，抢到互斥锁的那个进程注册listenfd读事件，在读事件里调用accept接受该连接。当一个worker进程在accept这个连接之后，就开始读取请求，解析请求，处理请求，产生数据后，再返回给客户端，最后才断开连接，这样一个完整的请求就是这样的了。我们可以看到，一个请求，完全由worker进程来处理，而且只在一个worker进程中处理。</font></p>
+<p>那么，nginx采用这种进程模型有什么好处呢？当然，好处肯定会很多了。首先，对于每个worker进程来说，<font color='blue'>独立的进程，不需要加锁，所以省掉了锁带来的开销</font>，同时在编程以及问题查找时，也会方便很多。其次，采用独立的进程，可以让互相之间不会影响，<font color='blue'>一个进程退出后，其它进程还在工作，服务不会中断</font>，master进程则很快启动新的worker进程。当然，worker进程的异常退出，肯定是程序有bug了，异常退出，会导致当前worker上的所有请求失败，不过不会影响到所有请求，所以降低了风险。当然，好处还有很多，大家可以慢慢体会。<br />
+Nginx 要保证它的高可用 高可靠性, 如果Nginx 使用了多线程的时候,由于线程之间是共享同一个地址空间的,当某一个第三方模块引发了一个地址空间导致的断错时 (eg: 地址越界), 会导致整个Nginx全部挂掉; 当采用多进程来实现时, 往往不会出现这个问题.</p>
+<h4 id="netty"><a class="markdownIt-Anchor" href="#netty"></a> netty</h4>
+<p>netty的线程模型是基于Reactor模型的。</p>
+<h5 id="reactor-单线程模型"><a class="markdownIt-Anchor" href="#reactor-单线程模型"></a> Reactor 单线程模型</h5>
+<p>Reactor 单线程模型，是指所有的 I/O 操作都在同一个 NIO 线程上面完成的，此时NIO线程职责包括：接收新建连接请求、读写操作等。</p>
+<p><img src="/images/image-20210406151654638.png" alt="image-20210406151654638" /></p>
+<p>但是对于高负载、大并发的应用场景却不合适，主要原因如下：</p>
+<ul>
+<li>一个NIO线程同时处理成百上千的连接，性能上无法支撑，即便NIO线程的CPU负荷达到100%，也无法满足海量消息的编码、解码、读取和发送。</li>
+<li>当NIO线程负载过重之后，处理速度将变慢，这会导致大量客户端连接超时，超时之后往往会进行重发，这更加重了NIO线程的负载，最终会导致大量消息积压和处理超时，成为系统的性能瓶颈。</li>
+<li>可靠性问题：一旦NIO线程意外跑飞，或者进入死循环，会导致整个系统通信模块不可用，不能接收和处理外部消息，造成节点故障。</li>
+</ul>
+<h5 id="reactor多线程模型"><a class="markdownIt-Anchor" href="#reactor多线程模型"></a> Reactor多线程模型</h5>
+<p>Rector 多线程模型与单线程模型最大的区别就是有一组 NIO 线程来处理连接读写操作，一个NIO线程处理Accept。一个NIO线程可以处理多个连接事件，一个连接的事件只能属于一个NIO线程。</p>
+<p>在绝大多数场景下，Reactor 多线程模型可以满足性能需求。但是，在个别特殊场景中，一个 NIO 线程负责监听和处理所有的客户端连接可能会存在性能问题。例如并发百万客户端连接，或者服务端需要对客户端握手进行安全认证，但是认证本身非常损耗性能。在这类场景下，单独一个 Acceptor 线程可能会存在性能不足的问题，为了解决性能问题，产生了第三种 Reactor 线程模型——主从Reactor 多线程模型</p>
+<p><img src="/images/image-20210406151802750.png" alt="image-20210406151802750" /></p>
+<h5 id="reactor主从多线程模型"><a class="markdownIt-Anchor" href="#reactor主从多线程模型"></a> Reactor主从多线程模型</h5>
+<p>主从 Reactor 线程模型的特点是：服务端用于接收客户端连接的不再是一个单独的 NIO 线程，而是一个独立的 NIO 线程池。Acceptor 接收到客户端 TCP连接请求并处理完成后（可能包含接入认证等），将新创建的 SocketChannel注 册 到 I/O 线 程 池（sub reactor 线 程 池）的某个I/O线程上， 由它负责SocketChannel 的读写和编解码工作。Acceptor 线程池仅仅用于客户端的登录、握手和安全认证，一旦链路建立成功，就将链路注册到后端 subReactor 线程池的 I/O 线程上，由 I/O 线程负责后续的 I/O 操作。</p>
+<p><img src="/images/image-20210406152035626.png" alt="image-20210406152035626" /></p>
+<h5 id="netty模型"><a class="markdownIt-Anchor" href="#netty模型"></a> netty模型</h5>
+<p>netty 的线程模型并不是一成不变的，它实际取决于用户的启动参数配置。通过设置不同的启动参数，Netty 可以同时支持 Reactor 单线程模型、多线程模型。</p>
+<p>为了尽可能地提升性能，Netty 在很多地方进行了无锁化的设计，例如在 I/O 线程内部进行串行操作，避免多线程竞争导致的性能下降问题。表面上看，串行化设计似乎 CPU 利用率不高，并发程度不够。但是，通过调整 NIO 线程池的线程参数，可以同时启动多个串行化的线程并行运行，这种局部无锁化的串行线程设计相比一个队列多个工作线程的模型性能更优。</p>
+<p><img src="/images/image-20210406152212670.png" alt="image-20210406152212670" /></p>
+<p>Netty 的 NioEventLoop 读取到消息之后，直接调用 ChannelPipeline 的<code>fireChannelRead (Object msg)</code>。 只要用户不主动切换线程， 一直都是由NioEventLoop 调用用户的 ChannelHandler，期间不进行线程切换。这种串行化处理方式避免了多线程操作导致的锁的竞争，从性能角度看是最优的。</p>
+<p>Netty拥有两个NIO线程池，分别是<code>bossGroup</code>和<code>workerGroup</code>，前者处理新建连接请求，然后将新建立的连接轮询交给workerGroup中的其中一个NioEventLoop来处理，后续该连接上的读写操作都是由同一个NioEventLoop来处理。注意，虽然bossGroup也能指定多个NioEventLoop（一个NioEventLoop对应一个线程），但是默认情况下只会有一个线程，因为一般情况下应用程序只会使用一个对外监听端口。</p>
+<blockquote>
+<p>这里试想一下，难道不能使用多线程来监听同一个对外端口么，即多线程epoll_wait到同一个epoll实例上？</p>
+</blockquote>
+<p>epoll相关的主要两个方法是epoll_wait和epoll_ctl，多线程同时操作同一个epoll实例，那么首先需要确认epoll相关方法是否线程安全：<strong>简单来说，epoll是通过锁来保证线程安全的, epoll中粒度最小的自旋锁ep-&gt;lock(spinlock)用来保护就绪的队列, 互斥锁ep-&gt;mtx用来保护epoll的重要数据结构红黑树</strong>。</p>
+<p>看到这里，可能有的小伙伴想到了Nginx多进程针对监听端口的处理策略，Nginx是通过accept_mutex机制来保证的。accept_mutex是nginx的(新建连接)负载均衡锁，让多个worker进程轮流处理与client的新连接。当某个worker进程的连接数达到worker_connections配置（单个worker进程的最大处理连接数）的最大连接数的7/8时，会大大减小获取该worker获取accept锁的概率，以此实现各worker进程间的连接数的负载均衡。accept锁默认打开，关闭它时nginx处理新建连接耗时会更短，但是worker进程之间可能连接不均衡，并且存在“惊群”问题。只有在使能accept_mutex并且当前系统不支持原子锁时，才会用文件实现accept锁。注意，accept_mutex加锁失败时不会阻塞当前线程，类似tryLock。</p>
+<p>java中多线程来监听同一个对外端口，epoll方法是线程安全的，这样就可以使用使用多线程监听epoll_wait了么，当然是不建议这样干的，除了epoll的惊群问题之外，还有一个就是，一般开发中我们使用epoll设置的是LT模式（<code>水平触发方式，与之相对的是ET默认，前者只要连接事件未被处理就会在epoll_wait时始终触发，后者只会在真正有事件来时在epoll_wait触发一次</code>），这样的话，多线程epoll_wait时就会导致第一个线程epoll_wait之后还未处理完毕已发生的事件时，第二个线程也会epoll_wait返回。</p>
+<h5 id="netty模型实践"><a class="markdownIt-Anchor" href="#netty模型实践"></a> netty模型实践</h5>
+<p><strong>(1) 时间可控的简单业务直接在 I/O 线程上处理</strong></p>
+<p>时间可控的简单业务直接在 I/O 线程上处理，如果业务非常简单，执行时间非常短，不需要与外部网络交互、访问数据库和磁盘，不需要等待其它资源，则建议直接在业务 ChannelHandler 中执行，不需要再启业务的线程或者线程池。避免线程上下文切换，也不存在线程并发问题。</p>
+<p><strong>(2) 复杂和时间不可控业务建议投递到后端业务线程池统一处理</strong></p>
+<p>复杂度较高或者时间不可控业务建议投递到后端业务线程池统一处理，对于此类业务，不建议直接在业务 ChannelHandler 中启动线程或者线程池处理，建议将不同的业务统一封装成 Task，统一投递到后端的业务线程池中进行处理。过多的业务ChannelHandler 会带来开发效率和可维护性问题，不要把 Netty 当作业务容器，对于大多数复杂的业务产品，仍然需要集成或者开发自己的业务容器，做好和Netty 的架构分层。</p>
+<p><strong>(3) 业务线程避免直接操作 ChannelHandler</strong></p>
+<p>业务线程避免直接操作 ChannelHandler，对于 ChannelHandler，IO 线程和业务线程都可能会操作，因为业务通常是多线程模型，这样就会存在多线程操作ChannelHandler。为了尽量避免多线程并发问题，建议按照 Netty 自身的做法，通过将操作封装成独立的 Task 由 NioEventLoop 统一执行，而不是业务线程直接操作。</p>
 
       
     </div>
     <footer class="article-footer">
-      <a data-url="http://example.com/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E4%BA%94%E5%A4%A7%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/" data-id="cknd877zl000e0kvx94f7bqi5" class="article-share-link">分享</a>
+      <a data-url="http://example.com/2021/04/06/linux/linux%E7%BD%91%E7%BB%9CIO/" data-id="ckn63k6rs00104wvxc0167967" class="article-share-link">分享</a>
       
       
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-redis/新建文件夹/redis基础知识" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" class="article-date">
-  <time class="post-time" datetime="2021-04-02T05:14:08.276Z" itemprop="datePublished">
-    <span class="post-month">4月</span><br/>
-    <span class="post-day">02</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/">redis基础知识</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/redis/">redis</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="redis基础知识"><a class="markdownIt-Anchor" href="#redis基础知识"></a> redis基础知识</h4>
-<ol>
-<li>
-<p>共16个数据库，默认使用第0个数据库，使用<code>select x</code>使用不同数据库</p>
-</li>
-<li>
-<p><code>DBSIZE</code>查看当前数据库大小</p>
-</li>
-<li>
-<p><code>keys *</code>查看当前数据库所有的key</p>
-</li>
-<li>
-<p><code>flush all</code>清空全库</p>
-</li>
-<li>
-<p><code>flush db</code>清空当前数据库</p>
-</li>
-<li>
-<p><code>set key value</code>设置key-value</p>
-</li>
-<li>
-<p><code>exists key</code>是否存在一个key</p>
-</li>
-<li>
-<p><code>move key index</code>删除index数据库的key</p>
-</li>
-<li>
-<p><code>clear</code>清空屏幕</p>
-</li>
-<li>
-<p><code>expire key second</code>设置key的过期时间</p>
-</li>
-<li>
-<p><code>ttl key</code>获取key的过期时间</p>
-</li>
-<li>
-<p><code>type key</code>查看key类型</p>
-</li>
-<li>
-<p>为什么redis使用6379作为端口号：明星MERZ九宫格拼写</p>
-</li>
-<li>
-<p>redis是单线程的</p>
-</li>
-<li>
-<p>redis是基于内存操作的，cpu不是redis的性能瓶颈，瓶颈是机器的内存和网络带宽，所以单线程就可以</p>
-</li>
-<li>
-<p>redis单线程还这么快：</p>
-<ol>
-<li>c语言写的，10w+的QPS，完全不必k-v的memcache差</li>
-<li>高性能的服务器不一定是多线程的</li>
-<li>多线程不一定比单线程快，多线程会线程切换</li>
-<li>redis将所有数据放在内存，所有单线程取操作就是效率最高的，对于内存系统，如果没有上下文切换效率最高。多次读写都是在一个cpu上，在内存下，就是最佳方案</li>
-</ol>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/04/02/redis/%E6%96%B0%E5%BB%BA%E6%96%87%E4%BB%B6%E5%A4%B9/redis%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86/" data-id="cknd877zm000h0kvxebet6lsa" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/linux/" rel="tag">linux</a></li></ul>
 
     </footer>
   </div>
@@ -967,6 +1063,62 @@
 
 
   
+    <article id="post-spring/自定义注解" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/03/26/spring/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/" class="article-date">
+  <time class="post-time" datetime="2021-03-26T06:25:40.999Z" itemprop="datePublished">
+    <span class="post-month">3月</span><br/>
+    <span class="post-day">26</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/03/26/spring/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/">自定义注解</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/spring/">spring</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h4 id="自定义注解"><a class="markdownIt-Anchor" href="#自定义注解"></a> 自定义注解</h4>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设定声明周期 SOURCE:源代码java期  CLASS:class类期间  RUNTIME:运行期</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="comment">// 指定注解位置TYEP FIELD METHOD PARAMETER CONSTRUCTOR LOCAL_VARIABLE ANNOTATION_TYPE PACKAGE TYPE_PARAMETER TYPE_USE</span></span><br><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Slorui &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 不填default 必须@Slorui(&quot;XX&quot;) value不用显示写出来</span></span><br><span class="line">	<span class="comment">// 如果多个属性，value必须写出来</span></span><br><span class="line">	<span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> &quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">age</span><span class="params">()</span> <span class="keyword">default</span> 2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/03/26/spring/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/" data-id="ckmromksh0005awvxdli57uk1" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
 
 
   <nav id="page-nav">
@@ -1011,7 +1163,7 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>65</strong><br>文章</div></a>
+      <a href="/archives"><div><strong>64</strong><br>文章</div></a>
       <a href="/categories"><div><strong>10</strong><br>分类</div></a>
       <a href="/tags"><div><strong>15</strong><br>标签</div></a>
     </div>

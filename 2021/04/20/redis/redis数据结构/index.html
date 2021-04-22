@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Security-Policy" content="object-src 'self';">   
+  
+  <title>redis数据结构 | Blog</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="数据结构  简单动态字符串 redis没有使用c语言的字符串表示，自己构建了一种简单动态字符串类型SDS。 c的字符串只用在一些无须对字符串值修改的对方 SDS处理保存字符串值，还用作缓冲区：AOF缓冲区、客户端状态的输入缓冲区等  SDS定义  末尾加’\0’符合c的结构，可以使用c的api  区别 C字符串不保存长度，获取长度需要遍历字符串，SDS直接访问len即可 C字符串如果没有提前分配">
+<meta property="og:type" content="article">
+<meta property="og:title" content="redis数据结构">
+<meta property="og:url" content="http://example.com/2021/04/20/redis/redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:site_name" content="Blog">
+<meta property="og:description" content="数据结构  简单动态字符串 redis没有使用c语言的字符串表示，自己构建了一种简单动态字符串类型SDS。 c的字符串只用在一些无须对字符串值修改的对方 SDS处理保存字符串值，还用作缓冲区：AOF缓冲区、客户端状态的输入缓冲区等  SDS定义  末尾加’\0’符合c的结构，可以使用c的api  区别 C字符串不保存长度，获取长度需要遍历字符串，SDS直接访问len即可 C字符串如果没有提前分配">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/image-20210420111342078.png">
+<meta property="og:image" content="http://example.com/images/image-20210420143008716.png">
+<meta property="og:image" content="http://example.com/images/image-20210420142936220.png">
+<meta property="og:image" content="http://example.com/images/image-20210420142914588.png">
+<meta property="og:image" content="http://example.com/images/image-20210420141952584.png">
+<meta property="og:image" content="http://example.com/images/image-20210420142153502.png">
+<meta property="article:published_time" content="2021-04-20T03:07:32.150Z">
+<meta property="article:modified_time" content="2021-04-22T08:02:06.443Z">
+<meta property="article:author" content="Slorui">
+<meta property="article:tag" content="redis">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/images/image-20210420111342078.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Blog" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  
+<link rel="stylesheet" href="/plugin/bganimation/bg.css">
+
+  
+
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css" rel="stylesheet" type="text/css">
+<meta name="generator" content="Hexo 5.4.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <div class="outer">
+        <div class="widget-wrap mobile-header">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>64</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>15</strong><br>标签</div></a>
+    </div>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+        <section id="main"><article id="post-redis/redis数据结构" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/20/redis/redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" class="article-date">
+  <time class="post-time" datetime="2021-04-20T03:07:32.150Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">20</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      redis数据结构
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h2 id="数据结构"><a class="markdownIt-Anchor" href="#数据结构"></a> 数据结构</h2>
+<h3 id="简单动态字符串"><a class="markdownIt-Anchor" href="#简单动态字符串"></a> 简单动态字符串</h3>
+<p>redis没有使用c语言的字符串表示，自己构建了一种简单动态字符串类型SDS。</p>
+<p>c的字符串只用在一些无须对字符串值修改的对方</p>
+<p>SDS处理保存字符串值，还用作缓冲区：AOF缓冲区、客户端状态的输入缓冲区等</p>
+<h4 id="sds定义"><a class="markdownIt-Anchor" href="#sds定义"></a> SDS定义</h4>
+<p><img src="/images/image-20210420111342078.png" alt="image-20210420111342078" /></p>
+<p><strong>末尾加’\0’符合c的结构，可以使用c的api</strong></p>
+<h4 id="区别"><a class="markdownIt-Anchor" href="#区别"></a> 区别</h4>
+<p>C字符串不保存长度，获取长度需要遍历字符串，SDS直接访问len即可</p>
+<p>C字符串如果没有提前分配空间，会产生缓冲区溢出，覆盖相邻位置的值。SDS进行修改时，会检查空间是否足够，不够就会扩容。</p>
+<p>C每次对字符串修改，都会重新分配内存，否则会内存溢出或内存泄漏。</p>
+<p>由于redis经常对SDS修改，所以不能频繁进行内存分配，SDS使用了空间预分配和懒惰空间释放</p>
+<h5 id="空间预分配"><a class="markdownIt-Anchor" href="#空间预分配"></a> 空间预分配</h5>
+<p>当对SDS修改时并需要扩展时，不仅分配需要的空间，还额外分配未使用的空间</p>
+<ul>
+<li>如果修改后的值小于1MB，free大小和len大小相同</li>
+<li>如果大于1MB，则free空间为1Mb</li>
+</ul>
+<h5 id="惰性空间释放"><a class="markdownIt-Anchor" href="#惰性空间释放"></a> 惰性空间释放</h5>
+<p>当SDS缩短时，不会立即进行内存回收，使用free记录这些字节的数量，等待将来使用</p>
+<h4 id="二进制安全"><a class="markdownIt-Anchor" href="#二进制安全"></a> 二进制安全</h4>
+<p>C的字符串必须符合某种编码，除了末尾其他地方不能由空字符串，否则认为字符串结束。限制了C字符串保存的数据类型。</p>
+<p>SDS不会对数据进行任何限制，直接保存，并且不会有二进制安全问题。</p>
+<h3 id="链表"><a class="markdownIt-Anchor" href="#链表"></a> 链表</h3>
+<p>redis构建了自己的链表实现。列表键的底层实现之一就是链表</p>
+<p>包含链表和迭代器，是一个双向队列</p>
+<p>迭代器包含内存指针，0代表正方向迭代，从头开始，1代表反方向迭代，从尾开始</p>
+<p>可以传入的自定义dup、match、free等方法进行链表的复制、匹配、释放等</p>
+<h3 id="字典"><a class="markdownIt-Anchor" href="#字典"></a> 字典</h3>
+<p><img src="/images/image-20210420143008716.png" alt="image-20210420143008716" /></p>
+<p>字典是数组里存放了一个ditEntry，每个entry包含key和value对象类型，value链表的指针</p>
+<p>字典包含了：</p>
+<ul>
+<li>字典类型</li>
+<li>两个hash表，为了rehash，扩容时使用，一般放在h0</li>
+<li>rehashidx，rehash标识，是否正在rehash，-1不能rehash     当数量/容量 &gt;5 强制rehash</li>
+</ul>
+<p>hash表：</p>
+<ul>
+<li>entry：指向指针集合，可以理解为数组</li>
+<li>hash表大小</li>
+<li>计算掩码（size-1）等同于java</li>
+<li>use，已使用大小</li>
+</ul>
+<p>迭代器：</p>
+<ul>
+<li>d：指向的字典</li>
+<li>index：索引的位置</li>
+<li>safe：标识迭代器是否安全，某些操作会被禁止</li>
+<li>entry指针：当前和下一个两个指针</li>
+<li>fingerprint：hash值，判断hash表是否修改</li>
+</ul>
+<h4 id="逻辑"><a class="markdownIt-Anchor" href="#逻辑"></a> 逻辑</h4>
+<p>dictResize：把hashTable变成最小的包含所有元素的表，缩小hashTable</p>
+<ol>
+<li>判断是否可以reHash或是否正在reHash</li>
+<li>当使用/总bucket小于1时，进行缩小，最小是4</li>
+<li>计算新的hashTable的大小</li>
+<li>进行扩张
+<ol>
+<li>初始化新的hashTable</li>
+<li>如果已经有0号hashTable，就把新的hashTable付给1号，然后标记可以rehash，从0到1开始hash</li>
+</ol>
+</li>
+</ol>
+<p>rehash：将0号复制到1号。</p>
+<p>无论扩张还是收缩，都是变成大于used大小的下一个2^n</p>
+<p>条件：</p>
+<ol>
+<li>服务器没有执行BGSAVE或BGREWRITEAOF，并且负载因子大于1</li>
+<li>服务器正在执行BGSAVE或BGREWRITEAOF，并且负载因子大于5</li>
+<li>负载因子小于0.1，进行收缩</li>
+</ol>
+<p>定时任务，每个确定的ms内进行rehash，搬运100个，server启动时注册到了时间函数中</p>
+<ol>
+<li>循环所有bucket</li>
+<li>对每个链表的每个节点进行rehash并放入h1</li>
+<li>修改h0和h1的used数值</li>
+<li>h0和h1交换</li>
+</ol>
+<p>dictAddRaw：添加新的键值</p>
+<ol>
+<li>查找是否相同的key，如果有返回-1</li>
+<li>如果正在rehash，就确定要添加到h1，否则h0</li>
+<li>分配entry空间，头插法插入entry</li>
+<li>将entry填入key和val，如果已存在key，直接覆盖</li>
+</ol>
+<p>dictGenericDelete：删除</p>
+<ol>
+<li>对两个表进行删除</li>
+<li>对每个表循环，找到key相同的entry，并删除节点</li>
+<li>修改use值即可</li>
+</ol>
+<p>find和delete相同</p>
+<p>dicNext：迭代器</p>
+<ol>
+<li>初次迭代时初始化迭代器类型（安全还是不安全）</li>
+<li>如果迭代到表后，判断是否rehash，如果是，取h1表迭代</li>
+<li>如果entry为null，取下一个桶取，否则取链表的下一个entry</li>
+</ol>
+<h3 id="redis跳表"><a class="markdownIt-Anchor" href="#redis跳表"></a> redis跳表</h3>
+<p><img src="/images/image-20210420142936220.png" alt="image-20210420142936220" /></p>
+<h4 id="结构"><a class="markdownIt-Anchor" href="#结构"></a> 结构</h4>
+<p>zskiplist：跳表</p>
+<ul>
+<li>header：头指针</li>
+<li>tail：尾指针</li>
+<li>length：长度</li>
+<li>level：当前最高的层</li>
+</ul>
+<p>zskiplistNode：跳表节点</p>
+<ul>
+<li>sds：字符串值</li>
+<li>score：分值，排序zskiplistNode，可以相同</li>
+<li>backword：zskiplistNode指针</li>
+<li>zkiplistLevel[]：level数组，层高随机
+<ul>
+<li>forward：zskiplistNode指针，指向下一个同层</li>
+<li>span：到一个节点中间跳过了几个节点，没跳就是1</li>
+</ul>
+</li>
+</ul>
+<p>跳表的对象必须唯一，但是分值可以相同，按对象的字典序排序</p>
+<h4 id="逻辑-2"><a class="markdownIt-Anchor" href="#逻辑-2"></a> 逻辑</h4>
+<p>zslCreate：创建zskipList</p>
+<ol>
+<li>初始化空间，level=1，初始化头节点，level是32</li>
+</ol>
+<p>zslRandmomLevel：随机产生层数，最大是32层</p>
+<p>zslInsert：插入节点，传入string和分数</p>
+<ol>
+<li>从头节点的最高处开始查找，每层的rank表示上一层跳表的个数</li>
+<li>在每一次一直找到大于score或者score和string都相同的节点时退出</li>
+<li>创建新的节点，如果高度高于当前跳表高度，跳表头进行链接</li>
+<li>插入节点，修改跳表并计算跳表距离</li>
+<li>设置后退指针</li>
+</ol>
+<h3 id="整数集合"><a class="markdownIt-Anchor" href="#整数集合"></a> 整数集合</h3>
+<p>整数集合(intset)是集合键的底层实现之一，当一个集合只包含整数元素，并且集合元素数量不多时，使用整数集合作为集合键的底层实现</p>
+<p>整数集合的redis用于保存整数值的集合抽象数据结构，可以保存int16_t，int32_t，int64_t的整数值</p>
+<p>使用contents数组保存元素，且不包含整数项。</p>
+<p><img src="/images/image-20210420142914588.png" alt="image-20210420142914588" /></p>
+<h4 id="升级"><a class="markdownIt-Anchor" href="#升级"></a> 升级</h4>
+<p>当向整数集合添加新元素并且新元素类型长度比现有类型长度长时，需要先进行升级，重新分配数组空间，全部变成新元素类型在保存。</p>
+<p>整数数组不支持降级。</p>
+<p>好处：</p>
+<ol>
+<li>提升灵活性，可以随便放入任何类型的整数，不必担心类型错误</li>
+<li>节约内存，如果只有小类型整数，不必开大类型整数数组存储</li>
+</ol>
+<h3 id="压缩列表"><a class="markdownIt-Anchor" href="#压缩列表"></a> 压缩列表</h3>
+<p>压缩列表是列表键和哈希键的底层实现之一。当列表键只有少量列表项，并且列表项是小整数值或者短字符串，就用压缩列表实现列表键</p>
+<h4 id="构成"><a class="markdownIt-Anchor" href="#构成"></a> 构成</h4>
+<p>压缩列表是redis为了节约内存开发的，有一系列特殊编码的连续内存块组成的顺序数据结构。</p>
+<p>一个压缩列表包含任意多个节点，每个节点可以保存一个字节数组或一个整数值。</p>
+<p><img src="/images/image-20210420141952584.png" alt="image-20210420141952584" /></p>
+<p>分别是：列表字节数、列表尾部偏移、节点数量、节点、尾部标识</p>
+<p><img src="/images/image-20210420142153502.png" alt="image-20210420142153502" /></p>
+<p>每个节点记录了前一个节点长度（用于从后往前遍历）、当前节点的数据类型和长度、数据内容三部分</p>
+<h4 id="连锁更新"><a class="markdownIt-Anchor" href="#连锁更新"></a> 连锁更新</h4>
+<p>由于前面节点的长度发送变化导致的连续多次空间扩展（当前节点无法记录前面节点的长度，需要扩展）成为连锁更新。</p>
+<ol>
+<li>压缩列表需要多个连续的长度介于250-253的节点，才会可能触发连续更新，概率较低</li>
+<li>只有连续更新街道办剁，性能不会影响很大</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/20/redis/redis%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" data-id="cknslnnyr000e1svxekqicsr0" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2021/04/20/redis/redis%E5%AF%B9%E8%B1%A1/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">上一篇</strong>
+      <div class="article-nav-title">
+        
+          redis对象
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/04/20/redis/redis%E7%9B%91%E8%A7%86%E5%99%A8/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">下一篇</strong>
+      <div class="article-nav-title">redis监视器</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+</section>
+        
+          <aside id="sidebar">
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <h1 class="blog-title">Blog</h1>
+    <h2 class="blog-subtitle"></h2>
+    <ul class="blog-link">
+     
+          <a href="/" title="Home">
+            <li>主页</li>
+          </a>
+        
+          <a href="/archives" title="Archives">
+            <li>归档</li>
+          </a>
+        
+          <a href="/categories" title="Categories">
+            <li>分类</li>
+          </a>
+        
+          <a href="/tags" title="Tags">
+            <li>标签</li>
+          </a>
+        
+    </ul>
+  </div>
+</div>
+
+  
+    <div class="widget-wrap">
+  <h3 class="widget-title"></h3>
+  <div class="widget">
+    <img class="avatar" src="/images/20210321171549.jpg">
+    <h2 class="author">Slorui</h2>
+    <h3 class="description"></h3>
+    <div class="count-box">
+      <a href="/archives"><div><strong>64</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>15</strong><br>标签</div></a>
+    </div>
+
+
+
+    <div class="social-link">
+      
+        <a class="hvr-bounce-in" href="http://github.com/slorui" target="_blank" title="Github">
+          Github
+        </a>
+      
+    </div>
+
+    <div class="friend-link">
+      <h2>友情链接</h2>
+      
+        <a class="hvr-bounce-in" href="" target="_blank" title="ShanaMaid">
+          ShanaMaid
+        </a>
+      
+    </div>
+  </div>
+</div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy;2020 - 2021 Slorui<br>
+      由<a href="http://hexo.io/" target="_blank">Hexo</a>强力驱动 | 
+      主题-<a target="_blank" rel="noopener" href="https://github.com/ShanaMaid/hexo-theme-shana">Shana</a>
+      
+    </div>
+    
+  </div>
+</footer>
+    </div>
+    
+
+<script src="//apps.bdimg.com/libs/jquery/2.1.4/jquery.min.js"></script>
+<script src="//apps.bdimg.com/libs/wow/0.1.6/wow.min.js"></script>
+<script>
+new WOW().init();
+</script>   
+
+
+  
+<link rel="stylesheet" href="/plugin/fancybox/jquery.fancybox.css">
+
+  
+<script src="/plugin/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+  
+<link rel="stylesheet" href="/plugin/galmenu/GalMenu.css">
+
+  
+<script src="/plugin/galmenu/GalMenu.js"></script>
+
+  <div class="GalMenu GalDropDown">
+      <div class="circle" id="gal">
+        <div class="ring">
+          
+            <a href="/" title="" class="menuItem">首页</a>
+          
+            <a href="/tags" title="" class="menuItem">标签</a>
+          
+            <a href="/categories" title="" class="menuItem">分类</a>
+          
+            <a href="/archives" title="" class="menuItem">归档</a>
+          
+            <a href="/xxxxxxxxx" title="" class="menuItem">xxx</a>
+          
+            <a href="/xxxxxxx" title="" class="menuItem">xxxx</a>
+          
+        </div>
+        
+          <audio id="audio" src="#"></audio>
+        
+      </div> 
+</div>
+<div id="overlay" style="opacity: 1; cursor: pointer;"></div>
+  <script type="text/javascript">var items = document.querySelectorAll('.menuItem');
+    for (var i = 0,
+    l = items.length; i < l; i++) {
+      items[i].style.left = (50 - 35 * Math.cos( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%";
+      items[i].style.top = (50 + 35 * Math.sin( - 0.5 * Math.PI - 2 * (1 / l) * i * Math.PI)).toFixed(4) + "%"
+    }</script>
+<script type="text/javascript">
+  $(document).ready(function() {
+    $('body').GalMenu({
+      'menu': 'GalDropDown'
+    })
+  });
+</script>
+
+  <section class="hidden-xs"> 
+  <ul class="cb-slideshow"> 
+    <li><span>苟利</span></li> 
+    <li><span>国家</span></li> 
+    <li><span>生死以</span></li> 
+    <li><span>岂能</span></li> 
+    <li><span>祸福</span></li> 
+    <li><span>趋避之</span></li> 
+  </ul>
+</section>
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
