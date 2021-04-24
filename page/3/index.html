@@ -44,9 +44,9 @@
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>64</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>15</strong><br>标签</div></a>
+      <a href="/archives"><div><strong>68</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>16</strong><br>标签</div></a>
     </div>
     <ul class="blog-link">
      
@@ -71,6 +71,473 @@
 </div>
 
         <section id="main">
+  
+    <article id="post-redis/redis服务器" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/08/redis/redis%E6%9C%8D%E5%8A%A1%E5%99%A8/" class="article-date">
+  <time class="post-time" datetime="2021-04-08T08:53:54.421Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">08</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/08/redis/redis%E6%9C%8D%E5%8A%A1%E5%99%A8/">redis服务器</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="redis服务器"><a class="markdownIt-Anchor" href="#redis服务器"></a> redis服务器</h3>
+<p>redis服务器负责与多个客户端建立网络连接，处理客户端命令请求，在数据库保存客户端执行命令产生的数据，进行资源管理维护服务器运转。</p>
+<h4 id="命令请求执行过程"><a class="markdownIt-Anchor" href="#命令请求执行过程"></a> 命令请求执行过程</h4>
+<ol>
+<li>发送命令请求，客户端将用户输入的命令转成协议格式，然后通过socket发送给服务器</li>
+<li>读取命令请求，
+<ol>
+<li>当socket可读时，读入到客户端缓冲区</li>
+<li>进行命令解析，去redisCommand选取对应的函数</li>
+</ol>
+</li>
+<li>然后调用命令执行器执行
+<ol>
+<li>预检，检测cmd指针是否为空，判断参数是否匹配cmd，判断是否授权，是否需要内存回收，客户端是否正在发布订阅，服务器是否阻塞（执行lua脚本阻塞），客户端是否执行事务（是的话命令放入事务队列），是否打开监视器（将信息发送给监视器）</li>
+<li>执行命令</li>
+<li>写入发送缓冲区</li>
+</ol>
+</li>
+<li>执行后续工作，是否写入慢查询日志，更新redisCommand计数器，aof持久化，发送命令给从服务器</li>
+<li>命令发送给客户端，客户端解析并打印</li>
+</ol>
+<h4 id="servercron函数"><a class="markdownIt-Anchor" href="#servercron函数"></a> serverCron函数</h4>
+<p>默认每100ms执行一次，负责管理服务器资源</p>
+<ol>
+<li>
+<p>更新服务器时间缓存，redis不会每次发起系统调用获取系统时间，而是每次+100ms估算时间，只有键过期时间、慢查询日志等才会去调用系统调用获取时间</p>
+</li>
+<li>
+<p>更新LRU时钟，每10秒更新一次lruclock的值，键的空转时间=lurclock-键的lru时间</p>
+</li>
+<li>
+<p>更新服务器每秒执行次数</p>
+</li>
+<li>
+<p>更新服务器内存峰值</p>
+</li>
+<li>
+<p>处理sigterm信号，每次判断是否关闭服务器</p>
+</li>
+<li>
+<p>管理客户端资源，对一定量客户端检测，如果超时（长时间不互动），如果客户端缓冲区超过一定长度，会释放缓冲区，重新创建</p>
+</li>
+<li>
+<p>调用databaseCron，对一部分数据库检查，删除过期键，对字典收缩</p>
+</li>
+<li>
+<p>执行延迟的BGREWRITEAOF，如果BGWRITEAOF被BGSAVE阻塞，则现在执行</p>
+</li>
+<li>
+<p>检查持久化运行状态，查看rdb_child_pid和aof_child_pid，-1表示没用子进程，不为-1，要判断是否有持久化完成信号，完成执行后续替换文件操作，否则不操作，如果没用子进程，进行后续判断</p>
+<p><img src="/images/image-20210408173536506.png" alt="image-20210408173536506" /></p>
+<ol start="10">
+<li>将aof缓冲区内容写入aof文件</li>
+<li>关闭异步客户端，关闭超出缓冲区限制的客户端</li>
+<li>增加cronloops计数</li>
+</ol>
+</li>
+</ol>
+<h4 id="初始化服务器"><a class="markdownIt-Anchor" href="#初始化服务器"></a> 初始化服务器</h4>
+<ol>
+<li>初始化服务器状态结构
+<ol>
+<li>设置服务器运行id</li>
+<li>设置服务器运行频率</li>
+<li>设置默认配置文件路径</li>
+<li>设置服务器运行架构</li>
+<li>设置服务器默认端口号</li>
+<li>设置默认rdb和aof条件</li>
+<li>初始化lru时钟</li>
+<li>创建命令表</li>
+</ol>
+</li>
+<li>载入配置文件</li>
+<li>初始化服务器数据结构，
+<ol>
+<li>初始化clietns链表</li>
+<li>初始db数组</li>
+<li>初始化pubsub链表</li>
+<li>初始化lua脚本环境</li>
+<li>初始化慢查询日志等</li>
+<li>为服务器设则进程信号处理器</li>
+<li>创建共享对象，常用的ERR，OK等回复对象，以及0-9999字符串对象</li>
+<li>打开服务器监听端口，设则套接字监听</li>
+<li>为serverCron创建时间事件</li>
+<li>如果开启了aof持久化，打开或创建aof文件</li>
+<li>初始化服务器后台io模块(bio)</li>
+</ol>
+</li>
+<li>还原数据库状态，根据aof或rdb还原数据库，如果启用aof，使用aof还原，因为aof数据更全</li>
+<li>开始执行事件循环</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/08/redis/redis%E6%9C%8D%E5%8A%A1%E5%99%A8/" data-id="cknd877zh00050kvxcjkdhftc" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-redis/redis客户端" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/08/redis/redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" class="article-date">
+  <time class="post-time" datetime="2021-04-08T08:24:15.080Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">08</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/08/redis/redis%E5%AE%A2%E6%88%B7%E7%AB%AF/">redis客户端</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="redis客户端"><a class="markdownIt-Anchor" href="#redis客户端"></a> redis客户端</h3>
+<p>redisServer的clinets属性保存了连接的每个客户端的状态</p>
+<p><img src="/images/image-20210408162633071.png" alt="image-20210408162633071" /></p>
+<h4 id="客户端属性"><a class="markdownIt-Anchor" href="#客户端属性"></a> 客户端属性</h4>
+<p>套接字描述符：</p>
+<ol>
+<li>-1，表示是伪客户端，负责执行aof文件还原或者lua脚本</li>
+<li>大于-1的整数，描述普通客户端</li>
+</ol>
+<p>名字name：</p>
+<ul>
+<li>默认没用名字</li>
+<li>客户端使用<code>client setname</code>之后可以设定名字</li>
+</ul>
+<p>标志flag：</p>
+<p><img src="/images/image-20210408163250869.png" alt="image-20210408163250869" /></p>
+<p>输入缓冲区querybuffer：</p>
+<p>会根据输入内容动态的缩小或扩大，最大不能超过1G，否则服务器关闭客户端</p>
+<p>保存到服务器的客户端链表的querybuffer</p>
+<p>命令和参数：</p>
+<p>服务器会对querybuffer的内容分析，得出命令参数以及命令参数的个数，保存到客户端属性的argv和argc</p>
+<p>argv：字符串对象数组，0存放命令，后面的存放参数</p>
+<p>argc：记录argv的长度</p>
+<p>命令的实现函数：</p>
+<p>服务器根据命令查找命令表，得到命令对于的redisCommand结构，客户端使用指针指向它，然后服务器通过指针调用函数指向</p>
+<p>输出缓冲区：</p>
+<p>命令回复会放入redis缓冲区。每个客户端有两个缓冲区，一个固定，一个可变大小。</p>
+<p>固定的用于保存长度较小的回复，可变大小的保存长度较大的回复</p>
+<p>固定大小buf能使用16KB</p>
+<p>可变大小reply用链表连接多个字符串对象</p>
+<p>身份验证authenticated：<br />
+0表示没有通过验证，1表示通过验证。</p>
+<p>为0的客户端，只能被指向auth命令，其他都被拒绝。</p>
+<p>authenticated只有开启身份验证才能使用，如果没用启用，0也可以指向其他命令</p>
+<p>时间：</p>
+<p>ctime：记录和服务器连接的时间</p>
+<p>lastinteraction：最后一次交互时间</p>
+<p>obuf_soft_limit_reached_time：缓冲区第一次达到软性限制时间</p>
+<h4 id="客户端的开启和关闭"><a class="markdownIt-Anchor" href="#客户端的开启和关闭"></a> 客户端的开启和关闭</h4>
+<h5 id="创建普通客户端"><a class="markdownIt-Anchor" href="#创建普通客户端"></a> 创建普通客户端</h5>
+<p>通过connect函数连接服务器，服务器调用连接事件处理器，创建客户端对象并加入链表</p>
+<h5 id="关闭普通客户端"><a class="markdownIt-Anchor" href="#关闭普通客户端"></a> 关闭普通客户端</h5>
+<p>可能因为多种原因关闭：</p>
+<ul>
+<li>客户端进程退出或杀死</li>
+<li>客户端发送不符合协议的命令</li>
+<li>客户端变成了clinet kill目标</li>
+<li>服务器设置了timeout。例外：主从、BLPOP阻塞、监听发布订阅，不会关闭</li>
+<li>超过输入缓冲区大小（1G）</li>
+<li>超过了输出缓冲区，理论上任意长都可以，服务器做了限制
+<ul>
+<li>硬性限制：超过硬性限制大小就关闭</li>
+<li>软性限制：联系超过一段时间就关闭（obuf_soft_limit_reached_time）</li>
+</ul>
+</li>
+</ul>
+<h5 id="lua脚本伪客户端"><a class="markdownIt-Anchor" href="#lua脚本伪客户端"></a> Lua脚本伪客户端</h5>
+<p>服务器创建时就会创建，整个服务器生命周期一直存在</p>
+<h5 id="aof文件伪客户端"><a class="markdownIt-Anchor" href="#aof文件伪客户端"></a> AOF文件伪客户端</h5>
+<p>服务器载入AOF文件时，创建伪客户端，载入成功后关闭</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/08/redis/redis%E5%AE%A2%E6%88%B7%E7%AB%AF/" data-id="cknd877zg00030kvx4fea7kfp" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-spring/AnnotationBeanDefinitionReader" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/08/spring/AnnotationBeanDefinitionReader/" class="article-date">
+  <time class="post-time" datetime="2021-04-08T04:44:28.997Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">08</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/08/spring/AnnotationBeanDefinitionReader/">AnnotationBeanDefinitionReader</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/spring/">spring</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="annotationbeandefinitionreader"><a class="markdownIt-Anchor" href="#annotationbeandefinitionreader"></a> AnnotationBeanDefinitionReader</h3>
+<p>作用：注册beanDefinition</p>
+<h4 id="实例化"><a class="markdownIt-Anchor" href="#实例化"></a> 实例化</h4>
+<p>在<code>AnnotationConfigApplicationContext</code>容器构造方法中实例化</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">this</span>.reader = <span class="keyword">new</span> AnnotatedBeanDefinitionReader(<span class="keyword">this</span>);</span><br></pre></td></tr></table></figure>
+<h4 id="supplier"><a class="markdownIt-Anchor" href="#supplier"></a> supplier</h4>
+<p>spring提高了一种替代工厂方法（包括静态工厂）或构造器创建对象的方法，通过函数式编程接口supplier，可以提供一个自定义的supplier替代spring的创建方式</p>
+<h5 id="spring创建bean的三种方式"><a class="markdownIt-Anchor" href="#spring创建bean的三种方式"></a> spring创建bean的三种方式</h5>
+<ol>
+<li>
+<p>通过构造器创建</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    <span class="comment">&lt;!-- 指定class属性，通过构造方法创建Bean实例 --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;person&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.gouzao.Person&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 通过构造方法赋值 --&gt;</span>  </span><br><span class="line">     <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">name</span>=<span class="string">&quot;name&quot;</span> <span class="attr">value</span>=<span class="string">&quot;魔术师&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span> </span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>通过静态工厂创建</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">        <span class="comment">&lt;!-- 定义chinese Bean 由PersonFactory工厂的getPerson方法创建 --&gt;</span>  </span><br><span class="line">    	<span class="comment">&lt;!-- 不会实例化工厂，直接通过工厂创建该bean --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;chinese&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.staticFactory.PersonFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 为静态工厂的getPerson()方法传参 --&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;chinese&quot;</span>/&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 调用setMsg()方法为msg属性注入参数值 --&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;msg&quot;</span> <span class="attr">value</span>=<span class="string">&quot;我是中国人&quot;</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>     </span><br><span class="line">    <span class="comment">&lt;!-- 创建american Bean --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;american&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.staticFactory.PersonFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;american&quot;</span>/&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;msg&quot;</span> <span class="attr">value</span>=<span class="string">&quot;我是美国人&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">property</span>&gt;</span>  </span><br><span class="line">       <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span>  </span><br></pre></td></tr></table></figure>
+</li>
+<li>
+<p>通过工厂方法创建</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;GBK&quot;?&gt;</span>  </span><br><span class="line"><span class="tag">&lt;<span class="name">beans</span> <span class="attr">xmlns:xsi</span>=<span class="string">&quot;http://www.w3.org/2001/XMLSchema-instance&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xmlns</span>=<span class="string">&quot;http://www.springframework.org/schema/beans&quot;</span>  </span></span><br><span class="line"><span class="tag">    <span class="attr">xsi:schemaLocation</span>=<span class="string">&quot;http://www.springframework.org/schema/beans  </span></span></span><br><span class="line"><span class="tag"><span class="string">    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd&quot;</span>&gt;</span>  </span><br><span class="line">    </span><br><span class="line">        <span class="comment">&lt;!-- 配置工厂Bean，class指定该工厂的实现类，该Bean负责产生其他Bean实例 --&gt;</span>  </span><br><span class="line">    	<span class="comment">&lt;!-- 工厂会被创建，然后通过工厂创建bean --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;personFactory&quot;</span> <span class="attr">class</span>=<span class="string">&quot;com.mao.instanceFactory.PersonFactory&quot;</span>/&gt;</span> </span><br><span class="line">    </span><br><span class="line">    <span class="comment">&lt;!-- 由实例工厂Bean的getPerson()方法，创建Chinese Bean， --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;ch&quot;</span> <span class="attr">factory-bean</span>=<span class="string">&quot;personFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="comment">&lt;!-- 为该方法传入参数为chinese --&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;chinese&quot;</span>/&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line">    <span class="comment">&lt;!-- 由实例工厂Bean的getPerson()方法，创建American Bean， --&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;<span class="name">bean</span> <span class="attr">id</span>=<span class="string">&quot;usa&quot;</span> <span class="attr">factory-bean</span>=<span class="string">&quot;personFactory&quot;</span> <span class="attr">factory-method</span>=<span class="string">&quot;getPerson&quot;</span>&gt;</span>  </span><br><span class="line">      <span class="tag">&lt;<span class="name">constructor-arg</span> <span class="attr">value</span>=<span class="string">&quot;american&quot;</span>&gt;</span><span class="tag">&lt;/<span class="name">constructor-arg</span>&gt;</span>  </span><br><span class="line">    <span class="tag">&lt;/<span class="name">bean</span>&gt;</span>  </span><br><span class="line"><span class="tag">&lt;/<span class="name">beans</span>&gt;</span>  </span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>区别和联系：</p>
+<blockquote>
+<p>第一种，通过默认的无参构造方式创建，其本质就是把类交给Spring自带的工厂（BeanFactory）管理、由Spring自带的工厂模式帮我们维护和创建这个类。如果是有参的构造方法，也可以通过XML配置传入相应的初始化参数，这种也是开发中用的最多的。</p>
+<p>第二种，通过静态工厂创建，其本质就是把类交给我们自己的静态工厂管理，Spring只是帮我们调用了静态工厂创建实例的方法，而创建实例的这个过程是由我们自己的静态工厂实现的，在实际开发的过程中，很多时候我们需要使用到第三方jar包提供给我们的类,而这个类没有构造方法，而是通过第三方包提供的静态工厂创建的，这是时候，如果我们想把第三方jar里面的这个类交由spring来管理的话，就可以使用Spring提供的静态工厂创建实例的配置。</p>
+<p>第三种，通过实例工厂创建，其本质就是把创建实例的工厂类交由Spring管理，同时把调用工厂类的方法创建实例的这个过程也交由Spring管理，看创建实例的这个过程也是有我们自己配置的实例工厂内部实现的。在实际开发的过程中，如Spring整合Hibernate就是通过这种方式实现的。但对于没有与Spring整合过的工厂类，我们一般都是自己用代码来管理的。</p>
+<p>不管是静态工厂还是工厂方法，都需要通过反射调用目标方法创建对象，反射或多或少影响性能，如果不使用反射呢？</p>
+</blockquote>
+<h5 id="supplier创建方式"><a class="markdownIt-Anchor" href="#supplier创建方式"></a> supplier创建方式</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GenericBeanDefinition beanDefinition = <span class="keyword">new</span> GenericBeanDefinition();</span><br><span class="line">beanDefinition.setBeanClass(User.class);</span><br><span class="line">beanDefinition.setInstanceSupplier(SupplierBean::createUser);	<span class="comment">// 这样写craeteUser必须是静态方法</span></span><br></pre></td></tr></table></figure>
+<p>beanDefinition就会使用<code>SupplierBean::createUser</code>方法创建</p>
+<h4 id="beannamegenerator"><a class="markdownIt-Anchor" href="#beannamegenerator"></a> beanNameGenerator</h4>
+<p>spring默认的beanNameGenerator</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">private</span> BeanNameGenerator beanNameGenerator = AnnotationBeanNameGenerator.INSTANCE;</span><br></pre></td></tr></table></figure>
+<h5 id="自定义beannamegenerator"><a class="markdownIt-Anchor" href="#自定义beannamegenerator"></a> 自定义beanNameGenerator</h5>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">ac.setBeanNameGenerator(<span class="keyword">new</span> SloruiBeanNameGenerator());</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setBeanNameGenerator</span><span class="params">(BeanNameGenerator beanNameGenerator)</span> </span>&#123;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 给reader一个自定义的beanNameGenerator</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">this</span>.reader.setBeanNameGenerator(beanNameGenerator);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 给外部scanner一个自定义的beanNameGenerator</span></span><br><span class="line"><span class="comment">	 * spring内生成的scanner不适应这种beanNameGenerator</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="keyword">this</span>.scanner.setBeanNameGenerator(beanNameGenerator);</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 注册一个beanNameGenerator到单例池</span></span><br><span class="line"><span class="comment">	 * 方便内部生成的scanner使用</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	getBeanFactory().registerSingleton(</span><br><span class="line">			AnnotationConfigUtils.CONFIGURATION_BEAN_NAME_GENERATOR, beanNameGenerator);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>可以在@Component上单独指定beanNameGenerator类，spring会判断是否配置，如果没配置，会取默认的名字生成器（看前面有没有设置全局的名字生成器，如果有就使用，否则使用默认的名字生成器）</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@ComponentScan(value = &quot;com.slorui&quot;,nameGenerator = SloruiBeanNameGenerator1.class)</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 如果没有在<span class="doctag">@componentScan</span>内配置nameGenerator，默认就是BeanNameGenerator.class</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">Class&lt;? extends BeanNameGenerator&gt; generatorClass = componentScan.getClass(<span class="string">&quot;nameGenerator&quot;</span>);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 默认情况是true，如果是false，使用自定义的命名策略</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">boolean</span> useInheritedGenerator = (BeanNameGenerator.class == generatorClass);</span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 添加beanNameGenerator，默认的beanNameGenerator是创建ComponentScanAnnotationParser</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">scanner.setBeanNameGenerator(useInheritedGenerator ? <span class="keyword">this</span>.beanNameGenerator :</span><br><span class="line">		BeanUtils.instantiateClass(generatorClass));</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/08/spring/AnnotationBeanDefinitionReader/" data-id="cknd877zi00080kvx6megcs90" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
+  
+    <article id="post-redis/redis事件" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2021/04/06/redis/redis%E4%BA%8B%E4%BB%B6/" class="article-date">
+  <time class="post-time" datetime="2021-04-06T09:20:15.220Z" itemprop="datePublished">
+    <span class="post-month">4月</span><br/>
+    <span class="post-day">06</span>
+  </time>
+</a>
+   
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2021/04/06/redis/redis%E4%BA%8B%E4%BB%B6/">redis事件</a>
+    </h1>
+  
+
+        <div>
+          
+  <div class="article-category">
+    <a class="article-category-link" href="/categories/redis/">redis</a>
+  </div>
+
+          
+              
+
+          
+        </div>
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <h3 id="redis事件"><a class="markdownIt-Anchor" href="#redis事件"></a> redis事件</h3>
+<h4 id="文件事件"><a class="markdownIt-Anchor" href="#文件事件"></a> 文件事件</h4>
+<p>redis基于reactor模式开发了自己的网络事件处理器，被称为：文件事件处理器</p>
+<ol>
+<li>文件事件处理器使用I/O多路复用监听多个套接字，根据套接字目前执行的任务为套接字关联不同的事件处理器</li>
+<li>当被监听的套接字准备好执行连接应答accept、read、write、close等操作时，与操作对于的文件事件就会产生，调用之前准备好的事件处理器处理事件</li>
+</ol>
+<p>文件事件处理器有套接字、I/O多路复用程序、文件事件分配器、事件处理器组成</p>
+<p><img src="/images/image-20210406172512678.png" alt="image-20210406172512678" /></p>
+<p>I/O多路复用产生的套接字被放入一个队列，然后一个一个发给分配器，分配器根据不同的套接字调用不同的事件处理器</p>
+<p>redis在编译时选择系统中性能最优的I/O多路复用技术</p>
+<p>redis包括两种事件类型：读事件和写事件。</p>
+<ol>
+<li>当套接字变得可读（客户端执行了write或者close），或新的可accept套接字出现，产生读事件</li>
+<li>当套接字变得可写（客户端对套接字执行read操作），套接字产生写事件</li>
+</ol>
+<p>如果一个套接字同时产生读写事件，先读后写。</p>
+<p>事件处理器：</p>
+<ol>
+<li>连接处理器：处理对连接服务器监听套接字的应答，客户端执行connect连接服务器监听套接字，连接处理器执行并应答</li>
+<li>命令处理器：当客户端发送命令请求时，套接字产生读事件，命令处理器执行</li>
+<li>命令回复处理器：当服务器有命令回复客户端时，客户端将套接字的写事件和命令回复处理器关联，当客户端准备好读后，执行命令回复处理器</li>
+</ol>
+<p><img src="/images/image-20210406173904049.png" alt="image-20210406173904049" /></p>
+<h4 id="时间事件"><a class="markdownIt-Anchor" href="#时间事件"></a> 时间事件</h4>
+<p>redis时间时间分为：</p>
+<ol>
+<li>定时事件：程序指定时间之后执行一次，删除事件</li>
+<li>周期性事件：程序每隔一段时间执行一次，之后再次到达</li>
+</ol>
+<p>一个时间时间包括：</p>
+<ol>
+<li>id：时间事件的全局id，递增</li>
+<li>when：时间事件到达时间</li>
+<li>timeProc：时间事件处理器</li>
+</ol>
+<p>实现：</p>
+<p>所有时间事件都放在无序链表里，时间事件执行器执行时，遍历整个链表，查询所有到期事件并执行</p>
+<p><font color='red'>无序是指不按事件when排序</font></p>
+<p>时间事件实例：</p>
+<p>serverCron函数：持续运行的redis需要定期对自身的资源和状态检查调整。</p>
+<ol>
+<li>更新服务器统计信息</li>
+<li>清理过期键值对</li>
+<li>关闭和清理失效客户端</li>
+<li>尝试aof和rdb持久化</li>
+<li>如果是主服务器，对从服务器定期同步</li>
+<li>如果处于集群模式，对集群定期同步和连接测试</li>
+</ol>
+<p>默认每秒10次，每100毫秒一次</p>
+<h4 id="事件的调度和执行"><a class="markdownIt-Anchor" href="#事件的调度和执行"></a> 事件的调度和执行</h4>
+<p>服务器同时存在文件事件和时间事件，所以服务器必须对这两件事调度，有asProcessEvents执行</p>
+<ol>
+<li>查询距离当前事件最近的时间函数，计算相差时间remaind</li>
+<li>进行阻塞等待文件事件，阻塞时间为remaind</li>
+<li>处理文件事件</li>
+<li>处理时间事件</li>
+</ol>
+<p>阻塞最近时间可以防止服务器频繁轮询时间事件</p>
+<p>先执行文件事件，再执行时间事件。如果文件事件或者时间事件占用时间较长，例如写入字节数超过预设值，会跳出写循环，等待下次再写入。时间事件耗时久的持久化也会再子线程执行</p>
+<p>时间事件可能会比预设时间晚一点。</p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2021/04/06/redis/redis%E4%BA%8B%E4%BB%B6/" data-id="ckn63k6qp00014wvx1e7004e4" class="article-share-link">分享</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/redis/" rel="tag">redis</a></li></ul>
+
+    </footer>
+  </div>
+  
+</article>
+
+
+
+
   
     <article id="post-redis/redis持久化" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
@@ -794,331 +1261,6 @@ Nginx 要保证它的高可用 高可靠性, 如果Nginx 使用了多线程的�
 
 
   
-    <article id="post-spring/mybatis/mybatis扫描原理" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/" class="article-date">
-  <time class="post-time" datetime="2021-03-27T11:34:16.778Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">27</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/">mybatis扫描原理</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/mybatis/">mybatis</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="mybatis扫描原理"><a class="markdownIt-Anchor" href="#mybatis扫描原理"></a> mybatis扫描原理</h3>
-<ol>
-<li>
-<p>MapperScan导入了<code>MapperScannerRegistrar</code>类，该类继承了<code>ImportBeanDefinitionRegistrar</code>，可以进行新的<code>beanDefinition</code>注册</p>
-<p><img src="images/image-20210327193702843.png" alt="image-20210327193702843" /></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapperScannerRegistrar</span> <span class="keyword">implements</span> <span class="title">ImportBeanDefinitionRegistrar</span>, <span class="title">ResourceLoaderAware</span></span></span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p><code>MapperScannerRegistrar</code>注册了<code>MapperScannerConfigurer</code>类，该类实现了<code>BeanDefinitionRegistryPostProcessor</code>，在注册<code>beanDefinition</code>后进行了后置处理</p>
-<p><img src="images/image-20210329091956851.png" alt="image-20210329091956851" /></p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MapperScannerConfigurer</span></span></span><br><span class="line"><span class="class">    <span class="keyword">implements</span> <span class="title">BeanDefinitionRegistryPostProcessor</span>, <span class="title">InitializingBean</span>, <span class="title">ApplicationContextAware</span>, <span class="title">BeanNameAware</span></span></span><br></pre></td></tr></table></figure>
-</li>
-<li>
-<p><code>MapperScannerConfigurer</code>的<code>postProcessBeanDefinitionRegistry</code>进行了包扫描</p>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">ClassPathMapperScanner scanner = <span class="keyword">new</span> ClassPathMapperScanner(registry);</span><br><span class="line">scanner.scan()</span><br></pre></td></tr></table></figure>
-<p>**<code>ClassPathMapperScanner</code>是<code>ClassPathBeanDefinitionScanner</code>**的子类，这里scan调用了父类的scan方法，然后执行了子类的doScan</p>
-<p><code>ClassPathBeanDefinitionScanner</code></p>
-</li>
-</ol>
-<p><img src="images/image-20210327195223282.png" alt="image-20210327195223282" /></p>
-<p><code>ClassPathMapperScanner</code></p>
-<p><img src="images/image-20210327195433602.png" alt="image-20210327195433602" /></p>
-<ol start="4">
-<li>
-<p><code>processBeanDefinitions</code>进行了类的替换，把所有的mapper替换成了<code>mapperFacotryBean</code></p>
-<p><img src="images/image-20210327195533926.png" alt="image-20210327195533926" /></p>
-<ol>
-<li>
-<p>获取mapper的类名</p>
-</li>
-<li>
-<p>把mapper类放入<code>beanDefinition的</code>构造器中，作为<code>mapperFacotryBean</code>的<code>mapperInterface</code>，进行后续代理注入容器</p>
-<p><img src="images/image-20210327195745251.png" alt="image-20210327195745251" /></p>
-</li>
-<li>
-<p>把当前<code>beanDefinition</code>替换为<code>mapperFacotryBean</code></p>
-</li>
-</ol>
-</li>
-</ol>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/27/spring/mybatis/mybatis%E6%89%AB%E6%8F%8F%E5%8E%9F%E7%90%86/" data-id="ckmromktc000cawvxgr8t0m7q" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mybatis/" rel="tag">mybatis</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-spring/mybatis/mybatis基本配置" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/27/spring/mybatis/mybatis%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE/" class="article-date">
-  <time class="post-time" datetime="2021-03-27T06:20:24.316Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">27</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/27/spring/mybatis/mybatis%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE/">mybatis基本配置</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/mybatis/">mybatis</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="mybatis基本配置"><a class="markdownIt-Anchor" href="#mybatis基本配置"></a> mybatis基本配置</h3>
-<h4 id="使用xml"><a class="markdownIt-Anchor" href="#使用xml"></a> 使用xml</h4>
-<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot; ?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">configuration</span></span></span><br><span class="line"><span class="meta">  <span class="meta-keyword">PUBLIC</span> <span class="meta-string">&quot;-//mybatis.org//DTD Config 3.0//EN&quot;</span></span></span><br><span class="line"><span class="meta">  <span class="meta-string">&quot;http://mybatis.org/dtd/mybatis-3-config.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">  <span class="tag">&lt;<span class="name">environments</span> <span class="attr">default</span>=<span class="string">&quot;development&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">environment</span> <span class="attr">id</span>=<span class="string">&quot;development&quot;</span>&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">transactionManager</span> <span class="attr">type</span>=<span class="string">&quot;JDBC&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;<span class="name">dataSource</span> <span class="attr">type</span>=<span class="string">&quot;POOLED&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;driver&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;driver&#125;&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;url&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;url&#125;&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;username&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;username&#125;&quot;</span>/&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span> <span class="attr">value</span>=<span class="string">&quot;$&#123;password&#125;&quot;</span>/&gt;</span></span><br><span class="line">      <span class="tag">&lt;/<span class="name">dataSource</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">environment</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">environments</span>&gt;</span></span><br><span class="line">    </span><br><span class="line">  <span class="tag">&lt;<span class="name">mappers</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">mapper</span> <span class="attr">resource</span>=<span class="string">&quot;org/mybatis/example/BlogMapper.xml&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">mappers</span>&gt;</span></span><br><span class="line">    </span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">String resource = <span class="string">&quot;org/mybatis/example/mybatis-config.xml&quot;</span>;</span><br><span class="line">InputStream inputStream = Resources.getResourceAsStream(resource);</span><br><span class="line">SqlSessionFactory sqlSessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(inputStream);</span><br></pre></td></tr></table></figure>
-<h4 id="不使用xml"><a class="markdownIt-Anchor" href="#不使用xml"></a> 不使用xml</h4>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建数据域</span></span><br><span class="line">DataSource dataSource = <span class="keyword">new</span> DriverManagerDataSource();</span><br><span class="line"><span class="comment">// 构建事务工厂</span></span><br><span class="line">TransactionFactory transactionFactory = <span class="keyword">new</span> JdbcTransactionFactory();</span><br><span class="line"><span class="comment">// 创建环境</span></span><br><span class="line">Environment environment = <span class="keyword">new</span> Environment(<span class="string">&quot;development&quot;</span>, transactionFactory, dataSource);</span><br><span class="line"><span class="comment">// 构建配置类</span></span><br><span class="line">Configuration configuration = <span class="keyword">new</span> Configuration(environment);</span><br><span class="line"><span class="comment">// 添加mapper文件</span></span><br><span class="line">configuration.addMapper(BlogMapper.class);</span><br><span class="line"><span class="comment">// 获取sqlSession工厂</span></span><br><span class="line">SqlSessionFactory sqlSessionFactory = <span class="keyword">new</span> SqlSessionFactoryBuilder().build(configuration);</span><br></pre></td></tr></table></figure>
-<h4 id="执行sql"><a class="markdownIt-Anchor" href="#执行sql"></a> 执行sql</h4>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">SqlSession session = sqlSessionFactory.openSession();</span><br><span class="line">Blog blog = (Blog) session.selectOne(<span class="string">&quot;org.mybatis.example.BlogMapper.selectBlog&quot;</span>, <span class="number">101</span>);</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">BlogMapper mapper = session.getMapper(BlogMapper.class);</span><br><span class="line">Blog blog = mapper.selectBlog(<span class="number">101</span>);</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/27/spring/mybatis/mybatis%E5%9F%BA%E6%9C%AC%E9%85%8D%E7%BD%AE/" data-id="ckmromktc000bawvxgc3k02g8" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/mybatis/" rel="tag">mybatis</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-spring/动态代理" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/26/spring/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" class="article-date">
-  <time class="post-time" datetime="2021-03-26T08:12:42.541Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">26</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/26/spring/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/">动态代理</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/spring/">spring</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h3 id="动态代理"><a class="markdownIt-Anchor" href="#动态代理"></a> 动态代理</h3>
-<h4 id="静态代理"><a class="markdownIt-Anchor" href="#静态代理"></a> 静态代理</h4>
-<h5 id="继承"><a class="markdownIt-Anchor" href="#继承"></a> 继承</h5>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MDao</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function">String <span class="title">query</span><span class="params">(<span class="keyword">int</span> id,String name)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemberDao</span> <span class="keyword">implements</span> <span class="title">MDao</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">query</span><span class="params">(<span class="keyword">int</span> id,String name)</span></span>&#123;</span><br><span class="line">		log.debug(<span class="string">&quot;---------query-----------logic&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> name+<span class="string">&quot;-return&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"> * MDaoSubLog：代理类会继承目标类 代理对象是子孩子 目标对象是父亲</span><br><span class="line"> */</span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MDaoSubLog</span>  <span class="keyword">extends</span> <span class="title">MemberDao</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">query</span><span class="params">(<span class="keyword">int</span> id,String name)</span></span>&#123;</span><br><span class="line">		log.debug(<span class="string">&quot;xxx====proxy&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">super</span>.query(id,name);</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="接口"><a class="markdownIt-Anchor" href="#接口"></a> 接口</h5>
-<ol>
-<li><strong>代理类要实现和目标类同一个接口</strong></li>
-<li><strong>代理类包含目标对象</strong></li>
-</ol>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">MDao</span> </span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="function">String <span class="title">query</span><span class="params">(<span class="keyword">int</span> id,String name)</span></span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"> <span class="comment">/** </span></span><br><span class="line"><span class="comment"> * 目标对象</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MemberDao</span> <span class="keyword">implements</span> <span class="title">MDao</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">query</span><span class="params">(<span class="keyword">int</span> id,String name)</span></span>&#123;</span><br><span class="line">		log.debug(<span class="string">&quot;---------query-----------logic&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> name+<span class="string">&quot;-return&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"> * 代理对象 proxyObejct</span><br><span class="line"> */</span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">MDaoTime</span> <span class="keyword">implements</span> <span class="title">MDao</span></span>&#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 目标对象 targetObject</span></span><br><span class="line"><span class="comment">	 * 这里是逻辑写法 MemberDao memberDao</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	MDao mDao;</span><br><span class="line"></span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 * 初始化mDao</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> mDao</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> <span class="title">MDaoTime</span><span class="params">(MDao mDao)</span></span>&#123;</span><br><span class="line">		<span class="keyword">this</span>.mDao = mDao;</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> String <span class="title">query</span><span class="params">(<span class="keyword">int</span> id, String name)</span> </span>&#123;</span><br><span class="line">		String result = mDao.query(id,name);</span><br><span class="line">		log.debug(<span class="string">&quot;xxx====proxy&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> result;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="缺点"><a class="markdownIt-Anchor" href="#缺点"></a> 缺点</h5>
-<ol>
-<li>会产生很多代理类</li>
-<li>产生的代理类只能代理既定的接口</li>
-</ol>
-<h4 id="动态代理-2"><a class="markdownIt-Anchor" href="#动态代理-2"></a> 动态代理</h4>
-<h5 id="接口-2"><a class="markdownIt-Anchor" href="#接口-2"></a> 接口</h5>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line">MDao memberDao = <span class="keyword">new</span> MemberDao();</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * newPorxyInstance</span></span><br><span class="line"><span class="comment">		 * 1. 产生一段字符串 代理类的源码</span></span><br><span class="line"><span class="comment">		 * 2. 把字符串输出到.java($Proxy.java)文件中</span></span><br><span class="line"><span class="comment">		 * 3. 会把$Proxy.class动态编译成$Proxy.class文件</span></span><br><span class="line"><span class="comment">		 * 4. 会通过类加载器把$Proxy.class加载到JVM中</span></span><br><span class="line"><span class="comment">		 * 5. Class.forName(&quot;XXXX&quot;).newInstance 反射实例化这个对象</span></span><br><span class="line"><span class="comment">		 * 6. 直接在内存中产生了字节码，然后装载到jvm</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		MDao mDao = (MDao) Proxy.newProxyInstance(Test.class.getClassLoader(),</span><br><span class="line">				<span class="keyword">new</span> Class[]&#123;MDao.class&#125;,</span><br><span class="line">				<span class="keyword">new</span> InvocationHandler() &#123;</span><br><span class="line">					<span class="meta">@Override</span></span><br><span class="line">					<span class="function"><span class="keyword">public</span> Object <span class="title">invoke</span><span class="params">(Object proxy, Method method, Object[] args)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">						log.debug(<span class="string">&quot;before--------------xxxxxxxxxxx----------proxy&quot;</span>);</span><br><span class="line">						method.invoke(memberDao, args);</span><br><span class="line">						log.debug(<span class="string">&quot;after--------------xxxxxxxxxxx----------proxy&quot;</span>);</span><br><span class="line">						<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">					&#125;</span><br><span class="line">				&#125;);</span><br><span class="line">		mDao.query(<span class="number">1</span>,<span class="string">&quot;xxx&quot;</span>);</span><br><span class="line"></span><br><span class="line">		<span class="comment">/**</span></span><br><span class="line"><span class="comment">		 * 把内存字节码输出到文件 就可以看到代理类的内容</span></span><br><span class="line"><span class="comment">		 */</span></span><br><span class="line">		<span class="comment">// 获取当前类的跟路径</span></span><br><span class="line">		URL resource = Test.class.getClass().getResource(<span class="string">&quot;/&quot;</span>);</span><br><span class="line">		<span class="comment">// 获取代理类的字节</span></span><br><span class="line">		<span class="keyword">byte</span>[] bts = ProxyGenerator.generateProxyClass(<span class="string">&quot;$Proxy0&quot;</span>, <span class="keyword">new</span> Class[]&#123;MDao.class&#125;);</span><br><span class="line">		File file = <span class="keyword">new</span> File(resource.getPath(),<span class="string">&quot;$Proxy0.class&quot;</span>);</span><br><span class="line">		<span class="keyword">if</span>(!file.exists())&#123;</span><br><span class="line">			file.createNewFile();</span><br><span class="line">		&#125;</span><br><span class="line">		FileOutputStream fos = <span class="keyword">new</span> FileOutputStream(file);</span><br><span class="line">		fos.write(bts);</span><br><span class="line">		fos.flush();</span><br><span class="line">		fos.close();</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">		<span class="comment">//加载到内存 Class.forName会在classpath下寻找文件</span></span><br><span class="line">		Class.forName(<span class="string">&quot;com.slorui.$Proxy1&quot;</span>);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 从网络或磁盘加载类 可以不侵入用户目录</span></span><br><span class="line">		URL[] urls = <span class="keyword">new</span> URL[]&#123;<span class="keyword">new</span> URL(<span class="string">&quot;file:/d:/&quot;</span>)&#125;;</span><br><span class="line">		URLClassLoader ul = <span class="keyword">new</span> URLClassLoader(urls);</span><br><span class="line">		Class c = ul.loadClass(<span class="string">&quot;com.slorui.$Proxy1&quot;</span>);</span><br><span class="line"></span><br><span class="line">		<span class="comment">// 通过反射获取对应的构造器 然后创建对象</span></span><br><span class="line">		Constructor declaredConstructor = 				                    	c.getDeclaredConstructor(InvocationHandler.class);</span><br><span class="line">		Object o = declaredConstructor.newInstance(InvocationHandler.class);</span><br><span class="line">		</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
-<h5 id="继承-2"><a class="markdownIt-Anchor" href="#继承-2"></a> 继承</h5>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">Enhancer enhancer = <span class="keyword">new</span> Enhancer();</span><br><span class="line"><span class="comment">// MemberDao不能是final的，final类不能被继承 final方法不能被代理</span></span><br><span class="line">enhancer.setSuperclass(MemberDao.class);</span><br><span class="line">enhancer.setCallback(<span class="keyword">new</span> MethodInterceptor() &#123;</span><br><span class="line">	<span class="comment">/**</span></span><br><span class="line"><span class="comment">	 *</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> obj		代理对象</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> method	目标方法</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> args		参数</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@param</span> proxyMethod		代理方法</span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@return</span></span></span><br><span class="line"><span class="comment">	 * <span class="doctag">@throws</span> Throwable</span></span><br><span class="line"><span class="comment">	 */</span></span><br><span class="line">	<span class="meta">@Override</span></span><br><span class="line">	<span class="function"><span class="keyword">public</span> Object <span class="title">intercept</span><span class="params">(Object obj, Method method, Object[] args, MethodProxy proxyMethod)</span> <span class="keyword">throws</span> Throwable </span>&#123;</span><br><span class="line">		log.debug(<span class="string">&quot;before--------------xxxxxxxxxxx----------proxy&quot;</span>);</span><br><span class="line">              <span class="comment">// 不是通过反射调用，而是直接调用方法</span></span><br><span class="line">		proxyMethod.invokeSuper(obj,args);</span><br><span class="line">		log.debug(<span class="string">&quot;after--------------xxxxxxxxxxx----------proxy&quot;</span>);</span><br><span class="line">		<span class="keyword">return</span> <span class="keyword">null</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;);</span><br><span class="line">MemberDao memberDao = (MemberDao) enhancer.create();</span><br><span class="line">memberDao.query(<span class="number">1</span>,<span class="string">&quot;xx&quot;</span>);</span><br></pre></td></tr></table></figure>
-<h4 id="总结"><a class="markdownIt-Anchor" href="#总结"></a> 总结</h4>
-<table>
-<thead>
-<tr>
-<th style="text-align:left">代理方式</th>
-<th>实现</th>
-<th>优点</th>
-<th>缺点</th>
-<th>特点</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td style="text-align:left">JDK静态代理</td>
-<td>代理类与委托类实现同一接口，并且在代理类中需要硬编码接口</td>
-<td>实现简单，容易理解</td>
-<td>代理类需要硬编码接口，在实际应用中可能会导致重复编码，浪费存储空间并且效率很低</td>
-<td>好像没啥特点</td>
-</tr>
-<tr>
-<td style="text-align:left">JDK动态代理</td>
-<td>代理类与委托类实现同一接口，主要是通过代理类实现InvocationHandler并重写invoke方法来进行动态代理的，在invoke方法中将对方法进行增强处理</td>
-<td>不需要硬编码接口，代码复用率高</td>
-<td>只能够代理实现了接口的委托类</td>
-<td>底层使用反射机制进行方法的调用</td>
-</tr>
-<tr>
-<td style="text-align:left">CGLIB动态代理</td>
-<td>代理类将委托类作为自己的父类并为其中的非final委托方法创建两个方法，一个是与委托方法签名相同的方法，它在方法中会通过super调用委托方法；另一个是代理类独有的方法。在代理方法中，它会判断是否存在实现了MethodInterceptor接口的对象，若存在则将调用intercept方法对委托方法进行代理</td>
-<td>可以在运行时对类或者是接口进行增强操作，且委托类无需实现接口</td>
-<td>可以在运行时对类或者是接口进行增强操作，且委托类无需实现接口不能对final类以及final方法进行代理</td>
-<td>底层使用反射机制进行方法的调用</td>
-</tr>
-</tbody>
-</table>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/26/spring/%E5%8A%A8%E6%80%81%E4%BB%A3%E7%90%86/" data-id="ckmromksd0003awvxheso3nlz" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
-    <article id="post-spring/自定义注解" class="wow slideInRight article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2021/03/26/spring/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/" class="article-date">
-  <time class="post-time" datetime="2021-03-26T06:25:40.999Z" itemprop="datePublished">
-    <span class="post-month">3月</span><br/>
-    <span class="post-day">26</span>
-  </time>
-</a>
-   
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
-  
-    <h1 itemprop="name">
-      <a class="article-title" href="/2021/03/26/spring/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/">自定义注解</a>
-    </h1>
-  
-
-        <div>
-          
-  <div class="article-category">
-    <a class="article-category-link" href="/categories/spring/">spring</a>
-  </div>
-
-          
-              
-
-          
-        </div>
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h4 id="自定义注解"><a class="markdownIt-Anchor" href="#自定义注解"></a> 自定义注解</h4>
-<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 设定声明周期 SOURCE:源代码java期  CLASS:class类期间  RUNTIME:运行期</span></span><br><span class="line"><span class="meta">@Retention(RetentionPolicy.RUNTIME)</span></span><br><span class="line"><span class="comment">// 指定注解位置TYEP FIELD METHOD PARAMETER CONSTRUCTOR LOCAL_VARIABLE ANNOTATION_TYPE PACKAGE TYPE_PARAMETER TYPE_USE</span></span><br><span class="line"><span class="meta">@Target(ElementType.TYPE)</span></span><br><span class="line"><span class="keyword">public</span> <span class="meta">@interface</span> Slorui &#123;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 不填default 必须@Slorui(&quot;XX&quot;) value不用显示写出来</span></span><br><span class="line">	<span class="comment">// 如果多个属性，value必须写出来</span></span><br><span class="line">	<span class="function">String <span class="title">value</span><span class="params">()</span> <span class="keyword">default</span> &quot;&quot;</span>;</span><br><span class="line"></span><br><span class="line">	<span class="function"><span class="keyword">int</span> <span class="title">age</span><span class="params">()</span> <span class="keyword">default</span> 2</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2021/03/26/spring/%E8%87%AA%E5%AE%9A%E4%B9%89%E6%B3%A8%E8%A7%A3/" data-id="ckmromksh0005awvxdli57uk1" class="article-share-link">分享</a>
-      
-      
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/spring/" rel="tag">spring</a></li></ul>
-
-    </footer>
-  </div>
-  
-</article>
-
-
-
-
-  
 
 
   <nav id="page-nav">
@@ -1163,9 +1305,9 @@ Nginx 要保证它的高可用 高可靠性, 如果Nginx 使用了多线程的�
     <h2 class="author">Slorui</h2>
     <h3 class="description"></h3>
     <div class="count-box">
-      <a href="/archives"><div><strong>64</strong><br>文章</div></a>
-      <a href="/categories"><div><strong>10</strong><br>分类</div></a>
-      <a href="/tags"><div><strong>15</strong><br>标签</div></a>
+      <a href="/archives"><div><strong>68</strong><br>文章</div></a>
+      <a href="/categories"><div><strong>9</strong><br>分类</div></a>
+      <a href="/tags"><div><strong>16</strong><br>标签</div></a>
     </div>
 
 
